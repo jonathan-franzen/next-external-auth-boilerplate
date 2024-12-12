@@ -1,7 +1,7 @@
 'use server';
 
-import LogoutButton from '@/components/logout-button';
-import ResendVerifyEmailButton from '@/components/resend-verify-email-button';
+import LogoutButton from '@/components/features/logout-button';
+import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button';
 import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
 import cookieService from '@/services/cookie';
 import { ReactNode } from 'react';
@@ -17,7 +17,7 @@ export default async function VerifyEmailPage(): Promise<ReactNode> {
 			</div>
 			<p className='mt-12 text-center text-sm font-semibold text-gray-700'>Have you not received the email?</p>
 			<ResendVerifyEmailButton email={me.email} />
-			<div className='flex justify-center'>
+			<div className='mt-6 flex justify-center'>
 				<LogoutButton />
 			</div>
 		</>

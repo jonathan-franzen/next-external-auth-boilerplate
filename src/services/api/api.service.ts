@@ -41,7 +41,7 @@ export default class ApiService {
 			}
 
 			return response;
-		} catch (err: any) {
+		} catch (err) {
 			if (isAxiosError(err)) {
 				throw err;
 			}
@@ -50,7 +50,7 @@ export default class ApiService {
 		}
 	}
 
-	private async authenticatedApiRequest<T>(config: AxiosRequestConfig<any>): Promise<AxiosResponse<T>> {
+	private async authenticatedApiRequest<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
 		const accessToken: string | null = await this.cookieService.getCookie('accessToken');
 
 		if (!accessToken) {

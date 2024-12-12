@@ -10,7 +10,7 @@ export default function LoadingSpinner({ size = 'lg' }: LoadingSpinnerPropsReact
 				size === 'sm'
 					? 'h-4 w-4 border-2'
 					: size === 'md'
-						? 'h-6 w-6 border-2'
+						? 'h-6 w-6 border-3'
 						: size === 'lg'
 							? 'h-8 w-8 border-3'
 							: size === 'xl'

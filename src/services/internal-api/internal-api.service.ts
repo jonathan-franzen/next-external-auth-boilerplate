@@ -16,7 +16,7 @@ export default class InternalApiService {
 			const response: AxiosResponse<T> = await this.axiosInternalInstance(config);
 
 			return response.data;
-		} catch (err: any) {
+		} catch (err) {
 			if (isAxiosError(err)) {
 				throw err;
 			}

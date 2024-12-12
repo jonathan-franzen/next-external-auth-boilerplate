@@ -1,9 +1,9 @@
 'use server';
 
+import GhostLink from '@/components/common/ghost-link';
 import { UserObjectResponseUsersApiInterface, UserResponseUsersApiInterface } from '@/interfaces/api/users/response/user.response.users.api.interface';
 import apiService from '@/services/api';
 import { AxiosResponse } from 'axios';
-import Link from 'next/link';
 import { ReactElement, ReactNode } from 'react';
 
 export default async function AdminPage(): Promise<ReactNode> {
@@ -35,9 +35,7 @@ export default async function AdminPage(): Promise<ReactNode> {
 				</div>
 			</div>
 			<div className='mt-2 flex justify-center'>
-				<Link href='/dashboard' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-					Back to dashboard
-				</Link>
+				<GhostLink href='/dashboard'>Back to dashboard</GhostLink>
 			</div>
 		</div>
 	);

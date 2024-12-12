@@ -1,6 +1,6 @@
 'use client';
 
-import Form from '@/components/form';
+import Form from '@/components/common/form';
 import SendResetPasswordEmailRequestAuthApiInterface from '@/interfaces/api/auth/request/send-reset-password-email.request.auth.api.interface';
 import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
 import internalApiService from '@/services/internal-api';
@@ -9,10 +9,10 @@ import { ReactNode, useState } from 'react';
 export default function SendResetPasswordEmailForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, any>): Promise<void> => {
+	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await internalApiService.postSendResetPasswordEmail(formData as SendResetPasswordEmailRequestAuthApiInterface);
+			await internalApiService.postSendResetPasswordEmail(formData as unknown as SendResetPasswordEmailRequestAuthApiInterface);
 		} finally {
 			setIsLoading(false);
 		}

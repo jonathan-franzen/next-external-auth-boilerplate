@@ -1,6 +1,7 @@
 'use server';
 
-import GoBack from '@/components/go-back';
+import GhostButton from '@/components/common/ghost-button';
+import GoBack from '@/components/common/go-back';
 import { ReactNode } from 'react';
 
 export default async function UnauthorizedPage(): Promise<ReactNode> {
@@ -13,7 +14,9 @@ export default async function UnauthorizedPage(): Promise<ReactNode> {
 				</div>
 			</div>
 			<div className='mt-2 flex justify-center'>
-				<GoBack className='w-fit text-xs text-pink-900 hover:text-pink-700'>Go back</GoBack>
+				<GoBack>
+					<GhostButton>Go back</GhostButton>
+				</GoBack>
 			</div>
 		</div>
 	);

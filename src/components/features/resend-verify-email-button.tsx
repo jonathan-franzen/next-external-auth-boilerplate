@@ -1,9 +1,9 @@
 'use client';
 
-import Button from '@/components/button';
 import internalApiService from '@/services/internal-api';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
+import PrimaryButton from "@/components/common/primary-button";
 
 export default function ResendVerifyEmailButton({ email }: { email: string }): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
@@ -19,5 +19,5 @@ export default function ResendVerifyEmailButton({ email }: { email: string }): R
 		}
 	};
 
-	return <Button label='RESEND VERIFY EMAIL' isLoading={isLoading} className='mt-6' onClick={handleOnClick} />;
+	return <PrimaryButton isLoading={isLoading} className='mt-6' onClick={handleOnClick} >RESEND VERIFY EMAIL</PrimaryButton>;
 }

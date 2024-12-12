@@ -1,6 +1,6 @@
 'use client';
 
-import Form from '@/components/form';
+import Form from '@/components/common/form';
 import LoginRequestAuthApiInterface from '@/interfaces/api/auth/request/login.request.auth.api.interface';
 import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
 import internalApiService from '@/services/internal-api';
@@ -13,10 +13,10 @@ export default function LoginForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
-	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, any>): Promise<void> => {
+	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await internalApiService.postLogin(formData as LoginRequestAuthApiInterface);
+			await internalApiService.postLogin(formData as unknown as LoginRequestAuthApiInterface);
 			router.push('/dashboard');
 		} catch (err) {
 			throw err;

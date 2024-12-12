@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/button';
+import PrimaryButton from '@/components/common/primary-button';
 import internalApiService from '@/services/internal-api';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
@@ -20,5 +20,9 @@ export default function LogoutButton(): ReactNode {
 		}
 	};
 
-	return <Button label='SIGN OUT' onClick={handleOnClick} isLoading={isLoading} className='mt-6' />;
+	return (
+		<PrimaryButton onClick={handleOnClick} isLoading={isLoading} className='inline-flex w-full'>
+			SIGN OUT
+		</PrimaryButton>
+	);
 }

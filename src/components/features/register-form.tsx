@@ -1,6 +1,6 @@
 'use client';
 
-import Form from '@/components/form';
+import Form from '@/components/common/form';
 import RegisterRequestAuthApiInterface from '@/interfaces/api/auth/request/register.request.auth.api.interface';
 import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
 import internalApiService from '@/services/internal-api';
@@ -12,12 +12,12 @@ export default function RegisterForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
-	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, any>): Promise<void> => {
+	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		const { email, password } = formData;
 
 		try {
-			await internalApiService.postRegister(formData as RegisterRequestAuthApiInterface);
+			await internalApiService.postRegister(formData as unknown as RegisterRequestAuthApiInterface);
 			await internalApiService.postLogin({ email, password });
 			router.push('/verify-email');
 		} finally {

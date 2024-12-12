@@ -1,7 +1,7 @@
 'use server';
 
-import RegisterForm from '@/components/register-form';
-import Link from 'next/link';
+import GhostLink from '@/components/common/ghost-link';
+import RegisterForm from '@/components/features/register-form';
 import { ReactNode } from 'react';
 
 export default async function RegisterPage(): Promise<ReactNode> {
@@ -11,9 +11,7 @@ export default async function RegisterPage(): Promise<ReactNode> {
 			<RegisterForm />
 			<h3 className='mt-4 text-center text-xs text-gray-700'>Already have an account?</h3>
 			<div className='flex justify-center'>
-				<Link href='/login' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-					Sign in
-				</Link>
+				<GhostLink href='/login'>Sign in</GhostLink>
 			</div>
 		</>
 	);

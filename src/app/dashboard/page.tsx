@@ -1,10 +1,10 @@
 'use server';
 
-import LogoutButton from '@/components/logout-button';
+import GhostLink from '@/components/common/ghost-link';
+import LogoutButton from '@/components/features/logout-button';
 import { RolesEnum } from '@/enums/roles.enum';
 import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
 import cookieService from '@/services/cookie';
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 export default async function DashboardPage(): Promise<ReactNode> {
@@ -26,15 +26,11 @@ export default async function DashboardPage(): Promise<ReactNode> {
 				<LogoutButton />
 				<div className='mt-2 flex justify-center'>
 					{me.roles.includes(RolesEnum.ADMIN) ? (
-						<Link href='/admin' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-							View admin page
-						</Link>
+						<GhostLink href='/admin'>View admin page</GhostLink>
 					) : (
 						<div className='mt-2 flex flex-col items-center justify-center gap-2'>
 							<p className='w-fit text-xs'>This user is no admin. See what happens when you</p>
-							<Link href='/admin' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-								View admin page
-							</Link>
+							<GhostLink href='/admin'>View admin page</GhostLink>
 						</div>
 					)}
 				</div>

@@ -1,10 +1,10 @@
 'use server';
 
-import ResetPasswordForm from '@/components/reset-password-form';
+import GhostLink from '@/components/common/ghost-link';
+import ResetPasswordForm from '@/components/features/reset-password-form';
 import apiService from '@/services/api';
 import { AxiosError } from 'axios';
 import { Params } from 'next/dist/server/request/params';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
@@ -34,9 +34,7 @@ function RenderExpired(): ReactNode {
 			<h1 className='text-center text-sm font-semibold text-gray-700'>TOKEN EXPIRED</h1>
 			<p className='mt-12 text-center'>Your token has expired. Please request a new one from /reset-password.</p>
 			<div className='mt-4 flex justify-center'>
-				<Link href='/login' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-					Back to login
-				</Link>
+				<GhostLink href='/login'>Back to login</GhostLink>
 			</div>
 		</>
 	);
@@ -48,9 +46,7 @@ function RenderSuccess({ resetPasswordToken }: { resetPasswordToken: string }): 
 			<h1 className='text-center text-sm font-semibold text-gray-700'>SET YOUR NEW PASSWORD</h1>
 			<ResetPasswordForm resetPasswordToken={resetPasswordToken} />
 			<div className='mt-4 flex justify-center'>
-				<Link href='/login' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
-					Back to login
-				</Link>
+				<GhostLink href='/login'>Back to login</GhostLink>
 			</div>
 		</>
 	);

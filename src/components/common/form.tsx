@@ -1,6 +1,7 @@
-import Button from '@/components/button';
+import PrimaryButton from '@/components/common/primary-button';
 import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
 import FormPropsReactInterface from '@/interfaces/react/props/form.props.react.interface';
+import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import NextForm from 'next/form';
 import { ChangeEvent, FormEvent, ReactNode, useState } from 'react';
@@ -20,8 +21,12 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 
 		try {
 			await onSubmit(formData);
-		} catch (err: any) {
-			setErrorMessage(err.response?.data.error || 'Something went wrong.');
+		} catch (err) {
+			if (err instanceof AxiosError) {
+				setErrorMessage(err.response?.data.error || 'Something went wrong.');
+			} else {
+				setErrorMessage('Something went wrong.');
+			}
 		}
 	};
 
@@ -48,7 +53,9 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 				),
 			)}
 			{additionalContent && <div className='mt-2'>{additionalContent}</div>}
-			<Button label={submitLabel} type='submit' isLoading={isLoading} className='mt-6' />
+			<PrimaryButton type='submit' isLoading={isLoading} className='mt-6'>
+				{submitLabel}
+			</PrimaryButton>
 			{errorMessage && (
 				<div className='mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
 					<div className='text-2xs text-pink-900'>{errorMessage}</div>

@@ -1,6 +1,6 @@
 'use server';
 
-import VerifyEmail from '@/components/verify-email';
+import VerifyEmail from '@/components/page-specific/verify-email';
 import cookieService from '@/services/cookie';
 import { Params } from 'next/dist/server/request/params';
 import { ReactNode } from 'react';
