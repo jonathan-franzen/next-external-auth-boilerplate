@@ -20,8 +20,8 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 
 		try {
 			await onSubmit(formData);
-		} catch (error: any) {
-			setErrorMessage(error.message || 'Something went wrong.');
+		} catch (err: any) {
+			setErrorMessage(err.response?.data.error || 'Something went wrong.');
 		}
 	};
 
@@ -50,7 +50,7 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 			{additionalContent && <div className='mt-2'>{additionalContent}</div>}
 			<Button label={submitLabel} type='submit' isLoading={isLoading} className='mt-6' />
 			{errorMessage && (
-				<div className='mt-2 flex items-center gap-3 rounded-md bg-pink-50 p-2'>
+				<div className='mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
 					<div className='text-2xs text-pink-900'>{errorMessage}</div>
 				</div>
 			)}

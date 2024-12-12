@@ -3,6 +3,7 @@
 import Button from '@/components/button';
 import internalApiService from '@/services/internal-api';
 import { ReactNode, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ResendVerifyEmailButton({ email }: { email: string }): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +13,7 @@ export default function ResendVerifyEmailButton({ email }: { email: string }): R
 		try {
 			await internalApiService.postResendVerifyEmail({ email });
 		} catch {
-			// ToDO: Handle error
+			toast.error('Unable to send email.');
 		} finally {
 			setIsLoading(false);
 		}

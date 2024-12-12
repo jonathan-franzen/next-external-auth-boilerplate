@@ -1,4 +1,3 @@
-import StatusError from '@/errors/status.error';
 import LoginRequestAuthApiInterface from '@/interfaces/api/auth/request/login.request.auth.api.interface';
 import RegisterRequestAuthApiInterface from '@/interfaces/api/auth/request/register.request.auth.api.interface';
 import ResendVerifyEmailRequestAuthApiInterface from '@/interfaces/api/auth/request/resend-verify-email.request.auth.api.interface';
@@ -47,7 +46,7 @@ export default class ApiService {
 				throw err;
 			}
 
-			throw new StatusError('An unexpected error occurred.', 500);
+			throw new Error('Something went wrong.');
 		}
 	}
 

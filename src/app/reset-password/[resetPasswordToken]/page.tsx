@@ -1,7 +1,6 @@
 'use server';
 
 import ResetPasswordForm from '@/components/reset-password-form';
-import StatusError from '@/errors/status.error';
 import apiService from '@/services/api';
 import { AxiosError } from 'axios';
 import { Params } from 'next/dist/server/request/params';
@@ -14,7 +13,7 @@ export default async function ResetPasswordTokenPage(props: { params: Promise<Pa
 	const resetPasswordToken: string | undefined = Array.isArray(params.resetPasswordToken) ? params.resetPasswordToken[0] : params.resetPasswordToken;
 
 	if (!resetPasswordToken) {
-		throw new StatusError('Something unexpected happened.', 500);
+		throw new Error('Something went wrong.');
 	}
 
 	try {
@@ -23,7 +22,6 @@ export default async function ResetPasswordTokenPage(props: { params: Promise<Pa
 		if (err instanceof AxiosError && err.status === 410) {
 			return <RenderExpired />;
 		}
-		console.error(err);
 		return notFound();
 	}
 

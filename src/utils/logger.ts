@@ -1,6 +1,5 @@
 import * as os from 'os';
 import { APP_ENV } from '@/constants/environment.constants';
-import StatusError from '@/errors/status.error';
 import { Format, TransformableInfo } from 'logform';
 import winston, { createLogger, format, Logger, transports } from 'winston';
 
@@ -24,7 +23,7 @@ const logFormat: Format = printf(({ level, message, context, extra }: Transforma
 
 	if (typeof context !== 'object') {
 		console.error('Log message context wrong format.');
-		throw new StatusError('Something unexpected happened.', 500);
+		throw new Error('Something went wrong.');
 	}
 
 	level = level === 'emerg' ? 'emergency' : level === 'crit' ? 'critical' : level;

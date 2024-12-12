@@ -1,15 +1,14 @@
-import StatusError from '@/errors/status.error';
 import logger from '@/utils/logger';
 import { AxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
 export default function apiRouteErrorHandler(err: unknown, responseMessage: string): NextResponse {
 	let status: number = 500;
-	let errorMessage: string = 'Something unexpected happened.';
+	let errorMessage: string = 'Something went wrong.';
 
-	if (err instanceof AxiosError || err instanceof StatusError) {
+	if (err instanceof AxiosError) {
 		status = err.status || status;
-		errorMessage = err.message || errorMessage;
+		errorMessage = err.response?.data.error || errorMessage;
 	} else {
 		if (err && typeof err === 'object' && 'message' in err) {
 			errorMessage = err.message as string;
@@ -22,9 +21,9 @@ export default function apiRouteErrorHandler(err: unknown, responseMessage: stri
 		message: responseMessage,
 		context: {
 			status,
-			error: JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err))),
+			error: errorMessage,
 		},
 	});
 
-	return NextResponse.json({ message: responseMessage, error: errorMessage }, { status });
+	return NextResponse.json({ error: errorMessage }, { status });
 }

@@ -18,6 +18,8 @@ export default function LoginForm(): ReactNode {
 		try {
 			await internalApiService.postLogin(formData as LoginRequestAuthApiInterface);
 			router.push('/dashboard');
+		} catch (err) {
+			throw err;
 		} finally {
 			setIsLoading(false);
 		}
