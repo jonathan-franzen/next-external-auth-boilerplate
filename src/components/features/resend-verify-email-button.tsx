@@ -12,9 +12,11 @@ export default function ResendVerifyEmailButton({ email }: { email: string }): R
 		setIsLoading(true);
 		try {
 			await internalApiService.postResendVerifyEmail({ email });
+			toast.success('Email sent successfully.');
 		} catch {
-			setIsLoading(false);
 			toast.error('Unable to send email.');
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

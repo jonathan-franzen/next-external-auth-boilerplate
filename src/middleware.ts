@@ -1,5 +1,5 @@
+import verifyAndStoreMeMiddleware from '@/middlewares/verify-and-store-me.middleware';
 import { NextRequest, NextResponse } from 'next/server';
-import verifyAndStoreMeMiddleware from "@/middlewares/verify-and-store-me.middleware";
 
 export default async function middleware(req: NextRequest): Promise<NextResponse> {
 	// Middlewares defined after this won't run on server-actions

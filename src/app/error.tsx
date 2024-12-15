@@ -1,8 +1,8 @@
 'use client';
 
+import GhostButton from '@/components/common/ghost-button';
+import GoBack from '@/components/common/go-back';
 import { ReactNode } from 'react';
-import GoBack from "@/components/common/go-back";
-import GhostButton from "@/components/common/ghost-button";
 
 export default function HomeError(): ReactNode {
 	return (

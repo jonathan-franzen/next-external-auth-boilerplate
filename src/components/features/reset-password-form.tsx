@@ -7,10 +7,14 @@ import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form
 import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
 import internalApiService from '@/services/internal-api';
 import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
+import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ResetPasswordForm({ resetPasswordToken }: { resetPasswordToken: string }): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
+	const router: AppRouterInstance = useRouter();
 
 	const formFields: FormFieldReactInterface[] = [
 		{ name: 'password', type: 'password', placeholder: 'New password', autoComplete: 'current-password', required: true },
@@ -22,11 +26,12 @@ export default function ResetPasswordForm({ resetPasswordToken }: { resetPasswor
 
 	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
-		try {
-			await internalApiService.postResetPassword({ ...(formData as unknown as ResetPasswordRequestAuthApiInterface), resetPasswordToken });
-		} finally {
-			setIsLoading(false);
-		}
+
+		await internalApiService.postResetPassword({ ...(formData as unknown as ResetPasswordRequestAuthApiInterface), resetPasswordToken });
+
+		toast.success('Password reset successfully.');
+
+		router.push('/login');
 	};
 
 	return <Form fields={formFields} submitLabel='UPDATE PASSWORD' onSubmit={handleOnSubmit} isLoading={isLoading} validationSchema={formValidationSchema} />;

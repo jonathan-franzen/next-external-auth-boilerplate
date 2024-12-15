@@ -7,6 +7,7 @@ import internalApiService from '@/services/internal-api';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function VerifyEmail({ verifyEmailToken, isAuthenticated }: VerifyEmailPropsReactInterface): ReactNode {
 	const router: AppRouterInstance = useRouter();
@@ -16,6 +17,7 @@ export default function VerifyEmail({ verifyEmailToken, isAuthenticated }: Verif
 		const verify: () => Promise<void> = async (): Promise<void> => {
 			try {
 				await internalApiService.postVerifyEmail({ verifyEmailToken });
+				toast.success('Email verified.');
 				router.push('/dashboard');
 			} catch {
 				setIsError(true);

@@ -8,6 +8,7 @@ import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/for
 import internalApiService from '@/services/internal-api';
 import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
 import { ReactNode, useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function SendResetPasswordEmailForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ export default function SendResetPasswordEmailForm(): ReactNode {
 		setIsLoading(true);
 
 		await internalApiService.postSendResetPasswordEmail(formData as unknown as SendResetPasswordEmailRequestAuthApiInterface);
+		toast.success('Email sent successfully.');
 		setIsLoading(false);
 	};
 

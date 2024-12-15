@@ -1,7 +1,7 @@
 'use server';
 
-import {ReactNode} from "react";
-import GhostLink from "@/components/common/ghost-link";
+import GhostLink from '@/components/common/ghost-link';
+import { ReactNode } from 'react';
 
 export default async function NotFound(): Promise<ReactNode> {
 	return (
@@ -16,5 +16,5 @@ export default async function NotFound(): Promise<ReactNode> {
 				<GhostLink href='/'>Back to home</GhostLink>
 			</div>
 		</div>
-	)
+	);
 }
