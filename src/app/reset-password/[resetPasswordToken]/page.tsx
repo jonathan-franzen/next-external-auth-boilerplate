@@ -19,7 +19,7 @@ export default async function ResetPasswordTokenPage(props: { params: Promise<Pa
 	try {
 		await apiService.getVerifyResetPasswordToken(resetPasswordToken);
 	} catch (err) {
-		if (err instanceof AxiosError && err.status === 410) {
+		if (err instanceof AxiosError && err.message === 'Token expired.') {
 			return <RenderExpired />;
 		}
 		return notFound();

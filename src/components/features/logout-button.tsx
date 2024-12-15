@@ -16,7 +16,6 @@ export default function LogoutButton(): ReactNode {
 			await internalApiService.deleteLogout();
 		} finally {
 			router.push('/login');
-			setIsLoading(false);
 		}
 	};
 

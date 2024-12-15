@@ -1,12 +1,23 @@
 'use client';
 
 import { ReactNode } from 'react';
+import GoBack from "@/components/common/go-back";
+import GhostButton from "@/components/common/ghost-button";
 
 export default function HomeError(): ReactNode {
 	return (
-		<>
-			<h1 className='text-center text-sm font-semibold text-gray-700'>ERROR PAGE</h1>
-			<h3 className='mt-12 text-center'>Something unexpected happened.</h3>
-		</>
+		<div className='flex h-full flex-col justify-between'>
+			<div>
+				<h1 className='text-center text-sm font-semibold text-gray-700'>ERROR PAGE</h1>
+				<div className='mt-2 flex flex-col gap-2 overflow-y-scroll'>
+					<p className='text-center'>Something unexpected happened...</p>
+				</div>
+			</div>
+			<div className='mt-2 flex justify-center'>
+				<GoBack>
+					<GhostButton>Go back</GhostButton>
+				</GoBack>
+			</div>
+		</div>
 	);
 }
