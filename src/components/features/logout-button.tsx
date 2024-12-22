@@ -6,7 +6,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
-export default function LogoutButton(): ReactNode {
+function LogoutButton(): ReactNode {
 	const router: AppRouterInstance = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -25,3 +25,5 @@ export default function LogoutButton(): ReactNode {
 		</PrimaryButton>
 	);
 }
+
+export default LogoutButton;

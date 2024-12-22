@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 	description: 'Boilerplate for Next.js Authentication with external API',
 };
 
-export default function RootLayout({
+function RootLayout({
 	children,
 }: Readonly<{
 	children: ReactNode;
@@ -24,3 +24,5 @@ export default function RootLayout({
 		</html>
 	);
 }
+
+export default RootLayout;

@@ -11,14 +11,14 @@ import ResetPasswordResponseAuthApiInterface from '@/interfaces/api/auth/respons
 import SendResetPasswordEmailResponseAuthApiInterface from '@/interfaces/api/auth/response/send-reset-password-email.response.auth.api.interface';
 import VerifyEmailResponseAuthApiInterface from '@/interfaces/api/auth/response/verify-email.response.auth.api.interface';
 import VerifyResetPasswordTokenResponseAuthApiInterface from '@/interfaces/api/auth/response/verify-reset-password-token.response.auth.api.interface';
-import { MeResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
-import { UserResponseUsersApiInterface } from '@/interfaces/api/users/response/user.response.users.api.interface';
+import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
+import UserResponseUsersApiInterface from '@/interfaces/api/users/response/user.response.users.api.interface';
 import CookieService from '@/services/cookie/cookie.service';
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-export default class ApiService {
+class ApiService {
 	constructor(
 		private readonly axiosExternalInstance: AxiosInstance,
 		private readonly cookieService: CookieService,
@@ -26,6 +26,7 @@ export default class ApiService {
 
 	private async axiosRequest<T>(config: AxiosRequestConfig, setCookies: boolean = false, res?: NextResponse): Promise<AxiosResponse<T>> {
 		try {
+			console.log(config.url);
 			const response: AxiosResponse<T> = await this.axiosExternalInstance(config);
 
 			if (setCookies) {
@@ -43,6 +44,17 @@ export default class ApiService {
 			return response;
 		} catch (err) {
 			if (isAxiosError(err)) {
+				if (setCookies) {
+					const setCookieHeader: string[] | null = err.response?.headers['set-cookie']
+						? Array.isArray(err.response.headers['set-cookie'])
+							? err.response.headers['set-cookie']
+							: [err.response.headers['set-cookie']]
+						: null;
+
+					if (setCookieHeader) {
+						await this.cookieService.setCookiesFromHeader(setCookieHeader, res);
+					}
+				}
 				throw err;
 			}
 
@@ -166,7 +178,7 @@ export default class ApiService {
 			withCredentials: true,
 		};
 
-		return await this.axiosRequest<void>(config);
+		return await this.axiosRequest<void>(config, true);
 	}
 
 	// /users start here
@@ -187,3 +199,5 @@ export default class ApiService {
 		return await this.axiosRequest<MeResponseUsersApiInterface>(config);
 	}
 }
+
+export default ApiService;

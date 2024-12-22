@@ -1,3 +1,5 @@
-export default interface ResendVerifyEmailRequestAuthApiInterface {
+interface ResendVerifyEmailRequestAuthApiInterface {
 	email: string;
 }
+
+export default ResendVerifyEmailRequestAuthApiInterface;

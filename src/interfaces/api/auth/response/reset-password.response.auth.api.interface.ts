@@ -1,3 +1,5 @@
-export default interface ResetPasswordResponseAuthApiInterface {
+interface ResetPasswordResponseAuthApiInterface {
 	message: string;
 }
+
+export default ResetPasswordResponseAuthApiInterface;

@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export default function VerifyEmail({ verifyEmailToken, isAuthenticated }: VerifyEmailPropsReactInterface): ReactNode {
+function VerifyEmail({ verifyEmailToken, isAuthenticated }: VerifyEmailPropsReactInterface): ReactNode {
 	const router: AppRouterInstance = useRouter();
 	const [isError, setIsError] = useState(false);
 
@@ -38,3 +38,5 @@ export default function VerifyEmail({ verifyEmailToken, isAuthenticated }: Verif
 
 	return null;
 }
+
+export default VerifyEmail;

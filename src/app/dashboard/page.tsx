@@ -2,12 +2,12 @@
 
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
-import { RolesEnum } from '@/enums/roles.enum';
+import RolesEnum from '@/enums/roles.enum';
 import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
 import cookieService from '@/services/cookie';
 import { ReactNode } from 'react';
 
-export default async function DashboardPage(): Promise<ReactNode> {
+async function DashboardPage(): Promise<ReactNode> {
 	const me: MeObjectResponseUsersApiInterface = await cookieService.getMeFromCookie();
 
 	return (
@@ -38,3 +38,5 @@ export default async function DashboardPage(): Promise<ReactNode> {
 		</div>
 	);
 }
+
+export default DashboardPage;

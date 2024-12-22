@@ -1,3 +1,5 @@
-export default interface FormOnSubmitFunctionReactInterface {
+interface FormOnSubmitFunctionReactInterface {
 	(formData: Record<string, string>): Promise<void>;
 }
+
+export default FormOnSubmitFunctionReactInterface;

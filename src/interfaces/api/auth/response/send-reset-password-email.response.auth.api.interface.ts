@@ -1,3 +1,5 @@
-export default interface SendResetPasswordEmailResponseAuthApiInterface {
+interface SendResetPasswordEmailResponseAuthApiInterface {
 	message: string;
 }
+
+export default SendResetPasswordEmailResponseAuthApiInterface;

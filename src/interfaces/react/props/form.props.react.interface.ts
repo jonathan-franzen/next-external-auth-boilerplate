@@ -3,7 +3,7 @@ import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form
 import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
 import { ReactElement } from 'react';
 
-export default interface FormPropsReactInterface {
+interface FormPropsReactInterface {
 	fields: FormFieldReactInterface[];
 	submitLabel: string;
 	onSubmit: FormOnSubmitFunctionReactInterface;
@@ -11,3 +11,5 @@ export default interface FormPropsReactInterface {
 	validationSchema?: FormValidationSchemaFormReactInterface;
 	additionalContent?: ReactElement;
 }
+
+export default FormPropsReactInterface;

@@ -8,26 +8,6 @@ import { Params } from 'next/dist/server/request/params';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
-export default async function ResetPasswordTokenPage(props: { params: Promise<Params> }): Promise<ReactNode> {
-	const params: Params = await props.params;
-	const resetPasswordToken: string | undefined = Array.isArray(params.resetPasswordToken) ? params.resetPasswordToken[0] : params.resetPasswordToken;
-
-	if (!resetPasswordToken) {
-		throw new Error('Something went wrong.');
-	}
-
-	try {
-		await apiService.getVerifyResetPasswordToken(resetPasswordToken);
-	} catch (err) {
-		if (err instanceof AxiosError && err.message === 'Token expired.') {
-			return <RenderExpired />;
-		}
-		return notFound();
-	}
-
-	return <RenderSuccess resetPasswordToken={resetPasswordToken} />;
-}
-
 function RenderExpired(): ReactNode {
 	return (
 		<>
@@ -51,3 +31,25 @@ function RenderSuccess({ resetPasswordToken }: { resetPasswordToken: string }): 
 		</>
 	);
 }
+
+async function ResetPasswordTokenPage(props: { params: Promise<Params> }): Promise<ReactNode> {
+	const params: Params = await props.params;
+	const resetPasswordToken: string | undefined = Array.isArray(params.resetPasswordToken) ? params.resetPasswordToken[0] : params.resetPasswordToken;
+
+	if (!resetPasswordToken) {
+		throw new Error('Something went wrong.');
+	}
+
+	try {
+		await apiService.getVerifyResetPasswordToken(resetPasswordToken);
+	} catch (err) {
+		if (err instanceof AxiosError && err.message === 'Token expired.') {
+			return <RenderExpired />;
+		}
+		return notFound();
+	}
+
+	return <RenderSuccess resetPasswordToken={resetPasswordToken} />;
+}
+
+export default ResetPasswordTokenPage;

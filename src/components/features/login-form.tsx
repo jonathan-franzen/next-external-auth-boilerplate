@@ -1,6 +1,7 @@
 'use client';
 
 import Form from '@/components/common/form';
+import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import LoginRequestAuthApiInterface from '@/interfaces/api/auth/request/login.request.auth.api.interface';
 import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
 import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form-validation-schema.form.react.interface';
@@ -12,7 +13,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
-export default function LoginForm(): ReactNode {
+function LoginForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
@@ -22,7 +23,7 @@ export default function LoginForm(): ReactNode {
 	];
 
 	const formValidationSchema: FormValidationSchemaFormReactInterface = {
-		...getFormValidationSchema('email', /^\S+@\S+\.\S+$/, 'Invalid credentials.', false),
+		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Invalid credentials.', false),
 	};
 
 	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
@@ -53,3 +54,5 @@ export default function LoginForm(): ReactNode {
 		/>
 	);
 }
+
+export default LoginForm;

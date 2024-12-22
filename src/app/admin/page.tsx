@@ -6,7 +6,7 @@ import apiService from '@/services/api';
 import { AxiosResponse } from 'axios';
 import { ReactElement, ReactNode } from 'react';
 
-export default async function AdminPage(): Promise<ReactNode> {
+async function AdminPage(): Promise<ReactNode> {
 	const response: AxiosResponse<UserResponseUsersApiInterface> = await apiService.getUsers();
 	const { users } = response.data;
 
@@ -40,3 +40,5 @@ export default async function AdminPage(): Promise<ReactNode> {
 		</div>
 	);
 }
+
+export default AdminPage;

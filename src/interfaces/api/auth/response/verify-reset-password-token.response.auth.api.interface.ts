@@ -1,3 +1,5 @@
-export default interface VerifyResetPasswordTokenResponseAuthApiInterface {
+interface VerifyResetPasswordTokenResponseAuthApiInterface {
 	message: string;
 }
+
+export default VerifyResetPasswordTokenResponseAuthApiInterface;

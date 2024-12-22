@@ -1,3 +1,5 @@
-export default interface GeneralMessageResponseAuthInternalApiInterface {
+interface GeneralMessageResponseAuthInternalApiInterface {
 	message: string;
 }
+
+export default GeneralMessageResponseAuthInternalApiInterface;

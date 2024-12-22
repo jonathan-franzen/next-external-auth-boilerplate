@@ -4,7 +4,7 @@ import GhostLink from '@/components/common/ghost-link';
 import SendResetPasswordEmailForm from '@/components/features/send-reset-password-email-form';
 import { ReactNode } from 'react';
 
-export default async function ResetPasswordPage(): Promise<ReactNode> {
+async function ResetPasswordPage(): Promise<ReactNode> {
 	return (
 		<>
 			<h1 className='text-center text-sm font-semibold text-gray-700'>RESET YOUR PASSWORD</h1>
@@ -15,3 +15,5 @@ export default async function ResetPasswordPage(): Promise<ReactNode> {
 		</>
 	);
 }
+
+export default ResetPasswordPage;

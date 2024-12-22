@@ -5,7 +5,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
-export default function GoBack({ children }: ReactChildrenReactInterface): ReactNode {
+function GoBack({ children }: ReactChildrenReactInterface): ReactNode {
 	const router: AppRouterInstance = useRouter();
 	return (
 		<div className='inline-flex' onClick={(): void => router.back()}>
@@ -13,3 +13,5 @@ export default function GoBack({ children }: ReactChildrenReactInterface): React
 		</div>
 	);
 }
+
+export default GoBack;

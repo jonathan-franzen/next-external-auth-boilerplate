@@ -3,7 +3,7 @@ import ButtonPropsReactInterface from '@/interfaces/react/props/button.props.rea
 import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-export default function PrimaryButton(props: ButtonPropsReactInterface): ReactNode {
+function PrimaryButton(props: ButtonPropsReactInterface): ReactNode {
 	return (
 		<Button
 			{...props}
@@ -16,3 +16,5 @@ export default function PrimaryButton(props: ButtonPropsReactInterface): ReactNo
 		</Button>
 	);
 }
+
+export default PrimaryButton;

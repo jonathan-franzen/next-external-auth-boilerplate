@@ -2,7 +2,7 @@ import LoadingSpinnerPropsReactInterface from '@/interfaces/react/loading-spinne
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 
-export default function LoadingSpinner({ size = 'lg' }: LoadingSpinnerPropsReactInterface): ReactNode {
+function LoadingSpinner({ size = 'lg' }: LoadingSpinnerPropsReactInterface): ReactNode {
 	return (
 		<div
 			className={clsx(
@@ -22,3 +22,5 @@ export default function LoadingSpinner({ size = 'lg' }: LoadingSpinnerPropsReact
 		/>
 	);
 }
+
+export default LoadingSpinner;

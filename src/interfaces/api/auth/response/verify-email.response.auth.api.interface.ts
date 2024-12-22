@@ -1,3 +1,5 @@
-export default interface VerifyEmailResponseAuthApiInterface {
+interface VerifyEmailResponseAuthApiInterface {
 	message: string;
 }
+
+export default VerifyEmailResponseAuthApiInterface;

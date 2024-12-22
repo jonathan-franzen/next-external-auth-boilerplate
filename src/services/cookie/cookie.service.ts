@@ -1,4 +1,4 @@
-import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
+import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
 import CookieConfigCookiesInterface from '@/interfaces/cookies/cookie-config.cookies.interface';
 import { parse } from 'cookie';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
-export default class CookieService {
+class CookieService {
 	private readonly cookieConfig: CookieConfigCookiesInterface = {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === 'production',
@@ -88,9 +88,9 @@ export default class CookieService {
 			const cookieName: string = Object.keys(parsedCookie)[0];
 			const cookieValue: string | undefined = parsedCookie[cookieName];
 
-			if (cookieValue) {
-				await this.setCookie(cookieName, cookieValue, parsedCookie['Max-Age'] ? parseInt(parsedCookie['Max-Age']) : 'session', parsedCookie['Path'], res);
-			}
+			await this.setCookie(cookieName, cookieValue || '', parsedCookie['Max-Age'] ? parseInt(parsedCookie['Max-Age']) : 'session', parsedCookie['Path'], res);
 		});
 	}
 }
+
+export default CookieService;

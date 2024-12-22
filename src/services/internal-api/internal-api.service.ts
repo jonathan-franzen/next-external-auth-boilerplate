@@ -8,7 +8,7 @@ import GeneralMessageResponseAuthInternalApiInterface from '@/interfaces/interna
 import { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
-export default class InternalApiService {
+class InternalApiService {
 	constructor(private readonly axiosInternalInstance: AxiosInstance) {}
 
 	private async axiosInternalRequest<T>(config: AxiosRequestConfig): Promise<T> {
@@ -94,3 +94,5 @@ export default class InternalApiService {
 		return await this.axiosInternalRequest<NextResponse<GeneralMessageResponseAuthInternalApiInterface>>(config);
 	}
 }
+
+export default InternalApiService;

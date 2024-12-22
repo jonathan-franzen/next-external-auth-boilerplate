@@ -7,11 +7,11 @@ import clsx from 'clsx';
 import NextForm from 'next/form';
 import { ChangeEvent, FormEvent, ReactNode, useState } from 'react';
 
-export default function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSchema, additionalContent }: FormPropsReactInterface): ReactNode {
+function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSchema, additionalContent }: FormPropsReactInterface): ReactNode {
 	const [formData, setFormData] = useState<Record<string, string>>({});
 	const [formErrors, setFormErrors] = useState<Record<string, string | null>>({});
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
-	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
 	const validateField: (fieldName: string, value: string) => string | null = (fieldName: string, value: string): string | null => {
 		return (validationSchema && validationSchema[fieldName]?.validate(value)) || null;
@@ -34,30 +34,33 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 		setIsSubmitting(true);
 
 		const newErrors: Record<string, string | null> = {};
+
 		for (const field of fields) {
 			const value: string = formData[field.name] || '';
 			newErrors[field.name] = validateField(field.name, value);
 		}
+
 		setFormErrors(newErrors);
 
-		const message: string | undefined = Object.values(newErrors).find((error: string | null): error is string => error !== null);
-		if (message) {
-			setErrorMessage(message);
-			await sleep(200);
+		const errorMessage: string | undefined = Object.values(newErrors).find((error: string | null): error is string => error !== null);
+
+		if (errorMessage) {
+			await sleep(100 + Math.random() * 100);
+			setErrorMessage(errorMessage);
 			setIsSubmitting(false);
 			return;
 		}
 
 		try {
 			await onSubmit(formData);
-			setIsSubmitting(false);
 		} catch (err) {
-			setIsSubmitting(false);
 			if (err instanceof AxiosError) {
 				setErrorMessage(err.response?.data.error || 'Something went wrong.');
 			} else {
 				setErrorMessage('Something went wrong.');
 			}
+		} finally {
+			setIsSubmitting(false);
 		}
 	};
 
@@ -87,7 +90,7 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 				),
 			)}
 			{additionalContent && <div className='mt-2'>{additionalContent}</div>}
-			<PrimaryButton type='submit' isLoading={isLoading || isSubmitting} className='mt-6'>
+			<PrimaryButton type='submit' isLoading={isSubmitting || isLoading} className='mt-6'>
 				{submitLabel}
 			</PrimaryButton>
 			{errorMessage && (
@@ -98,3 +101,5 @@ export default function Form({ fields, submitLabel, onSubmit, isLoading = false,
 		</NextForm>
 	);
 }
+
+export default Form;

@@ -1,6 +1,7 @@
 'use client';
 
 import Form from '@/components/common/form';
+import { EMAIL_VALIDATION_REGEX, PASSWORD_VALIDATION_REGEX } from '@/constants/regex.constants';
 import RegisterRequestAuthApiInterface from '@/interfaces/api/auth/request/register.request.auth.api.interface';
 import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
 import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form-validation-schema.form.react.interface';
@@ -11,7 +12,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
-export default function RegisterForm(): ReactNode {
+function RegisterForm(): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
@@ -23,8 +24,8 @@ export default function RegisterForm(): ReactNode {
 	];
 
 	const formValidationSchema: FormValidationSchemaFormReactInterface = {
-		...getFormValidationSchema('email', /^\S+@\S+\.\S+$/, 'Not a valid email address.', true),
-		...getFormValidationSchema('password', /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/, 'Password too weak.', true),
+		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Not a valid email address.', true),
+		...getFormValidationSchema('password', PASSWORD_VALIDATION_REGEX, 'Password too weak.', true),
 	};
 
 	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
@@ -32,9 +33,14 @@ export default function RegisterForm(): ReactNode {
 
 		const { email, password } = formData;
 
-		await internalApiService.postRegister(formData as unknown as RegisterRequestAuthApiInterface);
-		await internalApiService.postLogin({ email, password });
-		router.push('/verify-email');
+		try {
+			await internalApiService.postRegister(formData as unknown as RegisterRequestAuthApiInterface);
+			await internalApiService.postLogin({ email, password });
+			router.push('/verify-email');
+		} catch (err) {
+			setIsLoading(false);
+			throw err;
+		}
 	};
 
 	return (
@@ -43,3 +49,5 @@ export default function RegisterForm(): ReactNode {
 		</>
 	);
 }
+
+export default RegisterForm;

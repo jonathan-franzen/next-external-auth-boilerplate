@@ -1,3 +1,5 @@
-export default interface VerifyEmailRequestAuthInternalApiInterface {
+interface VerifyEmailRequestAuthInternalApiInterface {
 	verifyEmailToken: string;
 }
+
+export default VerifyEmailRequestAuthInternalApiInterface;

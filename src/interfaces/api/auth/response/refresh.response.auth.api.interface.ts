@@ -1,4 +1,6 @@
-export default interface RefreshResponseAuthApiInterface {
+interface RefreshResponseAuthApiInterface {
 	message: string;
 	accessToken: string;
 }
+
+export default RefreshResponseAuthApiInterface;

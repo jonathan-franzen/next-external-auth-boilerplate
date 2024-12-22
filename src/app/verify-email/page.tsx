@@ -6,7 +6,7 @@ import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/respon
 import cookieService from '@/services/cookie';
 import { ReactNode } from 'react';
 
-export default async function VerifyEmailPage(): Promise<ReactNode> {
+async function VerifyEmailPage(): Promise<ReactNode> {
 	const me: MeObjectResponseUsersApiInterface = await cookieService.getMeFromCookie();
 
 	return (
@@ -23,3 +23,5 @@ export default async function VerifyEmailPage(): Promise<ReactNode> {
 		</>
 	);
 }
+
+export default VerifyEmailPage;

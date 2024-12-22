@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
 
-export default function HomePage(): ReactNode {
+function RootPage(): ReactNode {
 	return <></>;
 }
+
+export default RootPage;

@@ -5,7 +5,7 @@ import internalApiService from '@/services/internal-api';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export default function ResendVerifyEmailButton({ email }: { email: string }): ReactNode {
+function ResendVerifyEmailButton({ email }: { email: string }): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleOnClick: () => Promise<void> = async (): Promise<void> => {
@@ -26,3 +26,5 @@ export default function ResendVerifyEmailButton({ email }: { email: string }): R
 		</PrimaryButton>
 	);
 }
+
+export default ResendVerifyEmailButton;

@@ -1,11 +1,12 @@
 import RefreshResponseAuthApiInterface from '@/interfaces/api/auth/response/refresh.response.auth.api.interface';
-import { MeObjectResponseUsersApiInterface, MeResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
+import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
+import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
 import apiService from '@/services/api';
 import CookieService from '@/services/cookie/cookie.service';
 import { AxiosError, AxiosResponse } from 'axios';
 import { NextResponse } from 'next/server';
 
-export default class ValidationService {
+class ValidationService {
 	constructor(private readonly cookieService: CookieService) {}
 
 	private async refreshTokenAndGetUser(res: NextResponse): Promise<MeObjectResponseUsersApiInterface | null> {
@@ -39,3 +40,5 @@ export default class ValidationService {
 		}
 	}
 }
+
+export default ValidationService;

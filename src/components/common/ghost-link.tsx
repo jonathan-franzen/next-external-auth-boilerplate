@@ -3,10 +3,12 @@ import GhostLinkPropsReactInterface from '@/interfaces/react/props/ghost-link-pr
 import Link from 'next/link';
 import { ReactNode } from 'react';
 
-export default function GhostLink(props: GhostLinkPropsReactInterface): ReactNode {
+function GhostLink(props: GhostLinkPropsReactInterface): ReactNode {
 	return (
 		<Link href={props.href} className='inline-flex'>
 			<GhostButton>{props.children}</GhostButton>
 		</Link>
 	);
 }
+
+export default GhostLink;

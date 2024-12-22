@@ -2,7 +2,7 @@ import logger from '@/utils/logger';
 import { AxiosError } from 'axios';
 import { NextResponse } from 'next/server';
 
-export default function apiRouteErrorHandler(err: unknown, responseMessage: string): NextResponse {
+function apiRouteErrorHandler(err: unknown, responseMessage: string): NextResponse {
 	let status: number = 500;
 	let errorMessage: string = 'Something went wrong.';
 
@@ -27,3 +27,5 @@ export default function apiRouteErrorHandler(err: unknown, responseMessage: stri
 
 	return NextResponse.json({ error: errorMessage }, { status });
 }
+
+export default apiRouteErrorHandler;

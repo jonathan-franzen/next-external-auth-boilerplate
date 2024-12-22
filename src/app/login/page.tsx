@@ -4,7 +4,7 @@ import GhostLink from '@/components/common/ghost-link';
 import LoginForm from '@/components/features/login-form';
 import { ReactNode } from 'react';
 
-export default async function LoginPage(): Promise<ReactNode> {
+async function LoginPage(): Promise<ReactNode> {
 	return (
 		<>
 			<h1 className='text-center text-sm font-semibold text-gray-700'>SIGN INTO YOUR ACCOUNT</h1>
@@ -16,3 +16,5 @@ export default async function LoginPage(): Promise<ReactNode> {
 		</>
 	);
 }
+
+export default LoginPage;

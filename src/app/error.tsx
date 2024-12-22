@@ -4,7 +4,7 @@ import GhostButton from '@/components/common/ghost-button';
 import GoBack from '@/components/common/go-back';
 import { ReactNode } from 'react';
 
-export default function HomeError(): ReactNode {
+function RootError(): ReactNode {
 	return (
 		<div className='flex h-full flex-col justify-between'>
 			<div>
@@ -21,3 +21,5 @@ export default function HomeError(): ReactNode {
 		</div>
 	);
 }
+
+export default RootError;
