@@ -1,14 +1,14 @@
 import logger from '@/utils/logger';
-import { AxiosError } from 'axios';
 import { NextResponse } from 'next/server';
+import { XiorError as AxiosError, isXiorError as isAxiosError } from 'xior';
 
 function apiRouteErrorHandler(err: unknown, responseMessage: string): NextResponse {
 	let status: number = 500;
 	let errorMessage: string = 'Something went wrong.';
 
-	if (err instanceof AxiosError) {
-		status = err.status || status;
-		errorMessage = err.response?.data.error || errorMessage;
+	if (isAxiosError(err)) {
+		status = (err as AxiosError).response?.status || status;
+		errorMessage = (err as AxiosError).response?.data.error || errorMessage;
 	} else {
 		if (err && typeof err === 'object' && 'message' in err) {
 			errorMessage = err.message as string;

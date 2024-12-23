@@ -14,9 +14,9 @@ import VerifyResetPasswordTokenResponseAuthApiInterface from '@/interfaces/api/a
 import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
 import UserResponseUsersApiInterface from '@/interfaces/api/users/response/user.response.users.api.interface';
 import CookieService from '@/services/cookie/cookie.service';
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
+import { XiorInstance as AxiosInstance, XiorRequestConfig as AxiosRequestConfig, XiorResponse as AxiosResponse, isXiorError as isAxiosError } from 'xior';
 
 class ApiService {
 	constructor(
@@ -27,14 +27,10 @@ class ApiService {
 	private async axiosRequest<T>(config: AxiosRequestConfig, setCookies: boolean = false, res?: NextResponse): Promise<AxiosResponse<T>> {
 		try {
 			console.log(config.url);
-			const response: AxiosResponse<T> = await this.axiosExternalInstance(config);
-
+			const response: AxiosResponse<T> = await this.axiosExternalInstance.request<T>(config);
 			if (setCookies) {
-				const setCookieHeader: string[] | null = response.headers['set-cookie']
-					? Array.isArray(response.headers['set-cookie'])
-						? response.headers['set-cookie']
-						: [response.headers['set-cookie']]
-					: null;
+				const cookie = response.headers.get('set-cookie');
+				const setCookieHeader: string[] | null = cookie ? (Array.isArray(cookie) ? cookie : [cookie]) : null;
 
 				if (setCookieHeader) {
 					await this.cookieService.setCookiesFromHeader(setCookieHeader, res);
@@ -45,11 +41,8 @@ class ApiService {
 		} catch (err) {
 			if (isAxiosError(err)) {
 				if (setCookies) {
-					const setCookieHeader: string[] | null = err.response?.headers['set-cookie']
-						? Array.isArray(err.response.headers['set-cookie'])
-							? err.response.headers['set-cookie']
-							: [err.response.headers['set-cookie']]
-						: null;
+					const cookie = (err as AxiosResponse)?.response.headers.get('set-cookie');
+					const setCookieHeader: string[] | null = cookie ? (Array.isArray(cookie) ? cookie : [cookie]) : null;
 
 					if (setCookieHeader) {
 						await this.cookieService.setCookiesFromHeader(setCookieHeader, res);

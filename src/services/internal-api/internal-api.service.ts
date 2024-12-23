@@ -5,15 +5,15 @@ import SendResetPasswordEmailRequestAuthApiInterface from '@/interfaces/api/auth
 import ResetPasswordRequestAuthInternalApiInterface from '@/interfaces/internal-api/auth/request/reset-password.request.auth.internal-api.interface';
 import VerifyEmailRequestAuthInternalApiInterface from '@/interfaces/internal-api/auth/request/verify-email.request.auth.internal-api.interface';
 import GeneralMessageResponseAuthInternalApiInterface from '@/interfaces/internal-api/auth/response/general-message.response.auth.internal-api.interface';
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 import { NextResponse } from 'next/server';
+import { XiorInstance as AxiosInstance, XiorRequestConfig as AxiosRequestConfig, isXiorError as isAxiosError } from 'xior';
 
 class InternalApiService {
 	constructor(private readonly axiosInternalInstance: AxiosInstance) {}
 
 	private async axiosInternalRequest<T>(config: AxiosRequestConfig): Promise<T> {
 		try {
-			const response: AxiosResponse<T> = await this.axiosInternalInstance(config);
+			const response = await this.axiosInternalInstance.request<T>(config);
 
 			return response.data;
 		} catch (err) {

@@ -2,10 +2,10 @@ import PrimaryButton from '@/components/common/primary-button';
 import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
 import FormPropsReactInterface from '@/interfaces/react/props/form.props.react.interface';
 import sleep from '@/utils/sleep';
-import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import NextForm from 'next/form';
 import { ChangeEvent, FormEvent, ReactNode, useState } from 'react';
+import { XiorError as AxiosError, isXiorError as isAxiosError } from 'xior';
 
 function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSchema, additionalContent }: FormPropsReactInterface): ReactNode {
 	const [formData, setFormData] = useState<Record<string, string>>({});
@@ -54,8 +54,8 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 		try {
 			await onSubmit(formData);
 		} catch (err) {
-			if (err instanceof AxiosError) {
-				setErrorMessage(err.response?.data.error || 'Something went wrong.');
+			if (isAxiosError(err)) {
+				setErrorMessage((err as AxiosError).response?.data.error || 'Something went wrong.');
 			} else {
 				setErrorMessage('Something went wrong.');
 			}
@@ -65,7 +65,7 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 	};
 
 	return (
-		<NextForm action='/login' onSubmit={handleOnSubmit} className='mt-8 flex w-full flex-col'>
+		<NextForm action='/login' onSubmit={handleOnSubmit} className='flex flex-col mt-8 w-full'>
 			{fields.map(
 				(field: FormFieldReactInterface): ReactNode => (
 					<div key={field.name} className='mt-2'>
@@ -79,12 +79,12 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 							value={formData[field.name] || ''}
 							onChange={handleOnChange}
 							className={clsx(
-								'mt-1.5 block w-full rounded-lg border-none bg-neutral-100 px-3 py-3 text-xs opacity-80',
+								'block bg-neutral-100 opacity-80 mt-1.5 px-3 py-3 border-none rounded-lg w-full text-xs',
 								'focus:outline-none data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-gray-400',
 							)}
 						/>
 						{formErrors[field.name] && validationSchema && validationSchema[field.name]?.showError && (
-							<div className='mt-1 text-xs text-pink-900'>{formErrors[field.name]}</div>
+							<div className='mt-1 text-pink-900 text-xs'>{formErrors[field.name]}</div>
 						)}
 					</div>
 				),
@@ -94,7 +94,7 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 				{submitLabel}
 			</PrimaryButton>
 			{errorMessage && (
-				<div className='mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
+				<div className='flex justify-center items-center gap-3 bg-pink-50 mt-2 p-2 rounded-md'>
 					<div className='text-2xs text-pink-900'>{errorMessage}</div>
 				</div>
 			)}
