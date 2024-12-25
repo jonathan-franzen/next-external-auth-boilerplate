@@ -1,3 +1,5 @@
+import { USERS_DEFAULT_PAGE_LIMIT } from '@/constants/api.constants';
+import { BACKEND_URL } from '@/constants/environment.constants';
 import LoginRequestAuthApiInterface from '@/interfaces/api/auth/request/login.request.auth.api.interface';
 import RegisterRequestAuthApiInterface from '@/interfaces/api/auth/request/register.request.auth.api.interface';
 import ResendVerifyEmailRequestAuthApiInterface from '@/interfaces/api/auth/request/resend-verify-email.request.auth.api.interface';
@@ -13,8 +15,10 @@ import VerifyEmailResponseAuthApiInterface from '@/interfaces/api/auth/response/
 import VerifyResetPasswordTokenResponseAuthApiInterface from '@/interfaces/api/auth/response/verify-reset-password-token.response.auth.api.interface';
 import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
 import UserResponseUsersApiInterface from '@/interfaces/api/users/response/user.response.users.api.interface';
+import apiService from '@/services/api/index';
 import CookieService from '@/services/cookie/cookie.service';
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+import buildUrl from '@/utils/build-url';
+import { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
 import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
@@ -24,9 +28,33 @@ class ApiService {
 		private readonly cookieService: CookieService,
 	) {}
 
+	private async refreshTokenAndMakeRequest<T>(config: AxiosRequestConfig, res?: NextResponse): Promise<AxiosResponse<T>> {
+		const refreshResponse: AxiosResponse<RefreshResponseAuthApiInterface> = await apiService.postRefresh(res);
+		const { accessToken } = refreshResponse.data;
+
+		const headers = {
+			['Authorization']: `Bearer ${accessToken}`,
+		};
+
+		config = {
+			...config,
+			headers: {
+				...config.headers,
+				...headers,
+			},
+		};
+
+		if (!accessToken) {
+			throw new Error('Unauthorized');
+		}
+
+		await this.cookieService.setCookie('accessToken', accessToken, 60 * 60 * 1000, '/', res);
+
+		return await this.axiosRequest<T>(config);
+	}
+
 	private async axiosRequest<T>(config: AxiosRequestConfig, setCookies: boolean = false, res?: NextResponse): Promise<AxiosResponse<T>> {
 		try {
-			console.log(config.url);
 			const response: AxiosResponse<T> = await this.axiosExternalInstance(config);
 
 			if (setCookies) {
@@ -62,13 +90,8 @@ class ApiService {
 		}
 	}
 
-	private async authenticatedApiRequest<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async authenticatedAxiosRequest<T>(config: AxiosRequestConfig, refresh: boolean = false, res?: NextResponse): Promise<AxiosResponse<T>> {
 		const accessToken: string | null = await this.cookieService.getCookie('accessToken');
-
-		if (!accessToken) {
-			await this.cookieService.deleteAuthCookies();
-			redirect('/login');
-		}
 
 		const headers = {
 			['Authorization']: `Bearer ${accessToken}`,
@@ -82,7 +105,22 @@ class ApiService {
 			},
 		};
 
-		return await this.axiosRequest<T>(config);
+		try {
+			if (accessToken) {
+				return await this.axiosRequest<T>(config);
+			}
+			if (refresh) {
+				return await this.refreshTokenAndMakeRequest(config, res);
+			} else {
+				await this.cookieService.deleteAuthCookies();
+				redirect('/login');
+			}
+		} catch (err) {
+			if ((err as AxiosError)?.response?.status === 401 && refresh) {
+				return await this.refreshTokenAndMakeRequest(config, res);
+			}
+			throw err;
+		}
 	}
 
 	async postRegister(data: RegisterRequestAuthApiInterface): Promise<AxiosResponse<RegisterResponseAuthApiInterface>> {
@@ -125,7 +163,7 @@ class ApiService {
 		return await this.axiosRequest<LoginResponseAuthApiInterface>(config, true);
 	}
 
-	async postRefresh(res: NextResponse): Promise<AxiosResponse<RefreshResponseAuthApiInterface>> {
+	async postRefresh(res?: NextResponse): Promise<AxiosResponse<RefreshResponseAuthApiInterface>> {
 		const config = {
 			method: 'POST',
 			url: '/refresh',
@@ -183,20 +221,21 @@ class ApiService {
 
 	// /users start here
 
-	async getUsers(): Promise<AxiosResponse<UserResponseUsersApiInterface>> {
-		const config = { url: '/users', method: 'GET' };
-		return await this.authenticatedApiRequest<UserResponseUsersApiInterface>(config);
+	async getUsers(page: number = 0, limit: number = USERS_DEFAULT_PAGE_LIMIT, refresh?: boolean): Promise<AxiosResponse<UserResponseUsersApiInterface>> {
+		const url: string = buildUrl(BACKEND_URL, '/users', {
+			...(page && { page: page.toString() }),
+			...(limit && { limit: limit.toString() }),
+		});
+		const config = { url, method: 'GET' };
+		return await this.authenticatedAxiosRequest<UserResponseUsersApiInterface>(config, refresh);
 	}
 
-	async getMeUsers(accessToken: string): Promise<AxiosResponse<MeResponseUsersApiInterface>> {
+	async getMeUsers(refresh?: boolean, res?: NextResponse): Promise<AxiosResponse<MeResponseUsersApiInterface>> {
 		const config = {
 			url: '/users/me',
 			method: 'GET',
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
 		};
-		return await this.axiosRequest<MeResponseUsersApiInterface>(config);
+		return await this.authenticatedAxiosRequest<MeResponseUsersApiInterface>(config, refresh, res);
 	}
 }
 

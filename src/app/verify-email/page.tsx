@@ -2,7 +2,7 @@
 
 import LogoutButton from '@/components/features/logout-button';
 import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button';
-import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
+import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
 import cookieService from '@/services/cookie';
 import { ReactNode } from 'react';
 

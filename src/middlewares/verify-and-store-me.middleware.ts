@@ -1,9 +1,11 @@
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';
+import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
 import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
+import apiService from '@/services/api';
 import cookieService from '@/services/cookie';
-import validationService from '@/services/validation';
 import middlewareRedirect from '@/utils/middleware-redirect';
+import { AxiosResponse } from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
 
 async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextResponse> {
@@ -25,7 +27,9 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 	}
 
 	try {
-		const meData: MeObjectResponseUsersApiInterface | null = await validationService.validateAndGetMe(nextResponse);
+		const response: AxiosResponse<MeResponseUsersApiInterface> = await apiService.getMeUsers(true, nextResponse);
+
+		const meData: MeObjectResponseUsersApiInterface = response.data.me;
 
 		if (!meData || !meData.id || !meData.email || meData.roles.length < 1 || !meData.firstName || !meData.lastName) {
 			await cookieService.deleteAuthCookies();

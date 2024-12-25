@@ -3,7 +3,7 @@
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
 import RolesEnum from '@/enums/roles.enum';
-import { MeObjectResponseUsersApiInterface } from '@/interfaces/api/users/response/me.response.users.api.interface';
+import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
 import cookieService from '@/services/cookie';
 import { ReactNode } from 'react';
 

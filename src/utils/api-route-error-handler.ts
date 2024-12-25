@@ -1,8 +1,8 @@
+import ErrorOtherGeneralInternalApiInterface from '@/interfaces/internal-api/general/other/error.other.general.internal-api.interface';
 import logger from '@/utils/logger';
 import { AxiosError } from 'axios';
-import { NextResponse } from 'next/server';
 
-function apiRouteErrorHandler(err: unknown, responseMessage: string): NextResponse {
+function apiRouteErrorHandler(err: unknown, responseMessage: string): ErrorOtherGeneralInternalApiInterface {
 	let status: number = 500;
 	let errorMessage: string = 'Something went wrong.';
 
@@ -25,7 +25,7 @@ function apiRouteErrorHandler(err: unknown, responseMessage: string): NextRespon
 		},
 	});
 
-	return NextResponse.json({ error: errorMessage }, { status });
+	return { error: errorMessage, status };
 }
 
 export default apiRouteErrorHandler;
