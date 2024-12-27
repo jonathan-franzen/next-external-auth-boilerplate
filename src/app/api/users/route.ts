@@ -14,7 +14,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<UserRespon
 		const limitParam: string | null = request.nextUrl.searchParams.get('limit');
 		const limit: number | undefined = limitParam ? parseInt(limitParam) : undefined;
 
-		const response: AxiosResponse<UserResponseUsersApiInterface> = await apiService.getUsers(page, limit, true);
+		const sortBy: string | undefined = request.nextUrl.searchParams.get('sortBy') || undefined;
+
+		const response: AxiosResponse<UserResponseUsersApiInterface> = await apiService.getUsers({ page, limit, sortBy }, true);
 
 		return NextResponse.json(response.data, { status: response.status });
 	} catch (err) {

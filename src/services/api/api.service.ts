@@ -13,6 +13,7 @@ import ResetPasswordResponseAuthApiInterface from '@/interfaces/api/auth/respons
 import SendResetPasswordEmailResponseAuthApiInterface from '@/interfaces/api/auth/response/send-reset-password-email.response.auth.api.interface';
 import VerifyEmailResponseAuthApiInterface from '@/interfaces/api/auth/response/verify-email.response.auth.api.interface';
 import VerifyResetPasswordTokenResponseAuthApiInterface from '@/interfaces/api/auth/response/verify-reset-password-token.response.auth.api.interface';
+import GetUsersRequestAuthApiInterface from '@/interfaces/api/users/request/get-users.request.auth.api.interface';
 import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
 import UserResponseUsersApiInterface from '@/interfaces/api/users/response/user.response.users.api.interface';
 import apiService from '@/services/api/index';
@@ -219,12 +220,16 @@ class ApiService {
 		return await this.axiosRequest<void>(config, true);
 	}
 
-	// /users start here
+	// users start here
 
-	async getUsers(page: number = 0, limit: number = USERS_DEFAULT_PAGE_LIMIT, refresh?: boolean): Promise<AxiosResponse<UserResponseUsersApiInterface>> {
+	async getUsers(
+		{ page = 1, limit = USERS_DEFAULT_PAGE_LIMIT, sortBy }: Partial<GetUsersRequestAuthApiInterface> = {},
+		refresh?: boolean,
+	): Promise<AxiosResponse<UserResponseUsersApiInterface>> {
 		const url: string = buildUrl(BACKEND_URL, '/users', {
 			...(page && { page: page.toString() }),
 			...(limit && { limit: limit.toString() }),
+			...(sortBy && { sortBy: sortBy.toString() }),
 		});
 		const config = { url, method: 'GET' };
 		return await this.authenticatedAxiosRequest<UserResponseUsersApiInterface>(config, refresh);

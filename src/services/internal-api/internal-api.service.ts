@@ -101,6 +101,7 @@ class InternalApiService {
 		const url: string = buildUrl(PUBLIC_FRONTEND_URL, '/api/users', {
 			...(data.page && { page: data.page.toString() }),
 			...(data.limit && { limit: data.limit.toString() }),
+			...(data.sortBy && { sortBy: data.sortBy }),
 		});
 
 		const config = {
