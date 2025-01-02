@@ -1,6 +1,7 @@
 'use server';
 
 import { getCookieStore } from '@/actions/cookies/cookies.actions';
+import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestPostLoginAuthApiInterface,
 	RequestPostRegisterAuthApiInterface,
@@ -16,7 +17,6 @@ import {
 	ResponseResendVerifyEmailAuthApiInterface,
 	ResponseTokenVerifyEmailAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
-import { BACKEND_URL } from '@/constants/environment.constants';
 import buildUrl from '@/utils/build-url';
 import { fetchRequest } from '@/utils/fetch';
 import { isHttpError } from 'http-errors';

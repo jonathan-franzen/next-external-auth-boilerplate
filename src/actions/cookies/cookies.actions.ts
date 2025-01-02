@@ -1,7 +1,7 @@
 'use server';
 
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { DEFAULT_COOKIE_CONFIG } from '@/constants/cookies.constants';
+import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { parse } from 'cookie';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { cookies } from 'next/headers';

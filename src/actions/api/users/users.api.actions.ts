@@ -1,5 +1,7 @@
 'use server';
 
+import { USERS_DEFAULT_PAGE_LIMIT } from '@/constants/api.constants';
+import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestGetUsersApiInterface,
 	RequestPatchIdUsersApiInterface,
@@ -7,8 +9,6 @@ import {
 	ResponseGetUsersApiInterface,
 	ResponsePatchIdUsersApiInterface,
 } from '@/interfaces/api/users/users.api.interfaces';
-import { USERS_DEFAULT_PAGE_LIMIT } from '@/constants/api.constants';
-import { BACKEND_URL } from '@/constants/environment.constants';
 import buildUrl from '@/utils/build-url';
 import { authenticatedFetchRequest } from '@/utils/fetch';
 import { isHttpError } from 'http-errors';
