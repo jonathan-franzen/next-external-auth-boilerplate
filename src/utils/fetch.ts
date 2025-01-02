@@ -1,14 +1,14 @@
 import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import { getCookie, setCookie, setCookies } from '@/actions/cookies/cookies.actions';
 import { ResponsePostRefreshAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import createHttpError, { isHttpError } from 'http-errors';
+import createError, { isHttpError } from 'http-errors';
 import { NextResponse } from 'next/server';
 
 const defaultHeaders = { 'Content-Type': 'application/json' };
 
 async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: RequestInit, res?: NextResponse): Promise<Response> {
-	const refreshResponse: ResponsePostRefreshAuthApiInterface = await postRefreshAuthApiAction(res);
-	const { accessToken } = refreshResponse;
+	const response: ResponsePostRefreshAuthApiInterface = await postRefreshAuthApiAction(res);
+	const { accessToken } = response;
 
 	const authHeaders = { ['Authorization']: `Bearer ${accessToken}` };
 
@@ -19,10 +19,6 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 			...authHeaders,
 		},
 	};
-
-	if (!accessToken) {
-		throw new Error('Unauthorized');
-	}
 
 	await setCookie('accessToken', accessToken, 60 * 60 * 1000, '/', res);
 
@@ -44,6 +40,7 @@ export async function fetchRequest(
 	};
 
 	const response: Response = await fetch(url, config);
+	console.log('request to send', url);
 
 	if (setCookiesFromResponse) {
 		const cookies: string[] | null = response.headers.getSetCookie();
@@ -53,8 +50,16 @@ export async function fetchRequest(
 	}
 
 	if (!response.ok) {
-		const data: { error: string } = await response.json();
-		throw createHttpError(response.status, data.error);
+		let errorMessage: string = 'Something went wrong.';
+
+		try {
+			const data: { error?: string } = await response.json();
+			errorMessage = data.error || errorMessage;
+		} catch {
+			errorMessage = response.statusText;
+		}
+
+		throw createError(response.status, errorMessage);
 	}
 
 	return response;

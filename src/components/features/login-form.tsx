@@ -5,7 +5,7 @@ import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { RequestPostLoginAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
-import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
+import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -12,7 +12,6 @@
 		"prettier:check": "prettier --check --ignore-unknown ."
 	},
 	"dependencies": {
-		"axios": "^1.7.9",
 		"clsx": "^2.1.1",
 		"cookie": "^1.0.2",
 		"http-errors": "^2.0.0",

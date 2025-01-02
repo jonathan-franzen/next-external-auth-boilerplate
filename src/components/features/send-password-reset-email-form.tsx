@@ -5,7 +5,7 @@ import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { RequestPostResetPasswordAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
-import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
+import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
 

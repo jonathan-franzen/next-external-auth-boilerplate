@@ -2,7 +2,6 @@ import PrimaryButton from '@/components/common/primary-button';
 import SecondaryButton from '@/components/common/secondary-button';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import sleep from '@/utils/sleep';
-import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import NextForm from 'next/form';
 import { ChangeEvent, FormEvent, ReactElement, ReactNode, useState } from 'react';
@@ -79,9 +78,7 @@ function Form({
 		try {
 			await onSubmit(formData);
 		} catch (err) {
-			if (err instanceof AxiosError) {
-				setErrorMessage(err.response?.data.error || err.message || 'Something went wrong.');
-			} else if (err instanceof Error) {
+			if (err instanceof Error) {
 				setErrorMessage(err.message);
 			} else {
 				setErrorMessage('Something went wrong.');

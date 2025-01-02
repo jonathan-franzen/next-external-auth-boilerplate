@@ -23,7 +23,7 @@ import { isHttpError } from 'http-errors';
 import { NextResponse } from 'next/server';
 
 export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApiInterface): Promise<ResponsePostRegisterAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, '/register');
+	const url: string = buildUrl(BACKEND_URL, '/register');
 	const config = {
 		method: 'POST',
 		body: JSON.stringify(data),
@@ -42,7 +42,7 @@ export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApi
 }
 
 export async function postResendVerifyEmailAuthApiAction(data: RequestResendVerifyEmailAuthApiInterface): Promise<ResponseResendVerifyEmailAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, '/resend-verify-email');
+	const url: string = buildUrl(BACKEND_URL, '/resend-verify-email');
 	const config = {
 		method: 'POST',
 		body: JSON.stringify(data),
@@ -61,7 +61,7 @@ export async function postResendVerifyEmailAuthApiAction(data: RequestResendVeri
 }
 
 export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string): Promise<ResponseTokenVerifyEmailAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, `/verify-email/${verifyEmailToken}`);
+	const url: string = buildUrl(BACKEND_URL, `/verify-email/${verifyEmailToken}`);
 	const config = {
 		method: 'POST',
 	};
@@ -79,7 +79,7 @@ export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string
 }
 
 export async function postLoginAuthApiAction(data: RequestPostLoginAuthApiInterface): Promise<ResponsePostLoginAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, '/login');
+	const url: string = buildUrl(BACKEND_URL, '/login');
 	const config = {
 		method: 'POST',
 		body: JSON.stringify(data),
@@ -99,7 +99,7 @@ export async function postLoginAuthApiAction(data: RequestPostLoginAuthApiInterf
 }
 
 export async function postResetPasswordAuthApiAction(data: RequestPostResetPasswordAuthApiInterface): Promise<ResponsePostResetPasswordAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, '/reset-password');
+	const url: string = buildUrl(BACKEND_URL, '/reset-password');
 	const config = {
 		method: 'POST',
 		body: JSON.stringify(data),
@@ -118,7 +118,7 @@ export async function postResetPasswordAuthApiAction(data: RequestPostResetPassw
 }
 
 export async function getTokenResetPasswordAuthApiAction(resetPasswordToken: string): Promise<ResponseGetTokenResetPasswordAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, `/reset-password/${resetPasswordToken}`);
+	const url: string = buildUrl(BACKEND_URL, `/reset-password/${resetPasswordToken}`);
 	const config = {
 		method: 'GET',
 	};
@@ -139,7 +139,7 @@ export async function postTokenResetPasswordAuthApiAction(
 	resetPasswordToken: string,
 	data: RequestPostTokenResetPasswordAuthApiInterface,
 ): Promise<ResponsePostTokenResetPasswordAuthApiInterface> {
-	const url = buildUrl(BACKEND_URL, `/reset-password/${resetPasswordToken}`);
+	const url: string = buildUrl(BACKEND_URL, `/reset-password/${resetPasswordToken}`);
 	const config = {
 		method: 'GET',
 		body: JSON.stringify(data),
@@ -159,7 +159,7 @@ export async function postTokenResetPasswordAuthApiAction(
 
 export async function postRefreshAuthApiAction(res?: NextResponse): Promise<ResponsePostRefreshAuthApiInterface> {
 	try {
-		const url = buildUrl(BACKEND_URL, '/refresh');
+		const url: string = buildUrl(BACKEND_URL, '/refresh');
 		const config = {
 			method: 'POST',
 			headers: { Cookie: await getCookieStore() },
@@ -179,7 +179,7 @@ export async function postRefreshAuthApiAction(res?: NextResponse): Promise<Resp
 
 export async function deleteLogoutAuthApiAction(): Promise<void> {
 	try {
-		const url = buildUrl(BACKEND_URL, '/logout');
+		const url: string = buildUrl(BACKEND_URL, '/logout');
 		const config = {
 			method: 'DELETE',
 			headers: { Cookie: await getCookieStore() },

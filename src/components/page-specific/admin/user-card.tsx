@@ -7,7 +7,7 @@ import GhostButton from '@/components/common/ghost-button';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
-import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
+import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactElement, startTransition, useState } from 'react';
