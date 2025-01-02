@@ -8,9 +8,7 @@ import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { useRouter } from 'next/navigation';
-import { ReactElement, startTransition, useState } from 'react';
+import {ReactElement, startTransition, useState} from 'react';
 import toast from 'react-hot-toast';
 
 const formFields: FieldReactFormInterface[] = [
@@ -28,8 +26,6 @@ interface UserCardProps {
 }
 
 function UserCard({ user }: UserCardProps): ReactElement {
-	const router: AppRouterInstance = useRouter();
-
 	const [isEditing, setIsEditing] = useState<boolean>(false);
 	const [showDeletePopup, setShowDeletePopup] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -41,7 +37,6 @@ function UserCard({ user }: UserCardProps): ReactElement {
 			await patchIdUsersApiAction(user.id, formData);
 			toast.success('User updated successfully.');
 			startTransition((): void => {
-				router.refresh();
 				setIsEditing(false);
 				setIsLoading(false);
 			});
@@ -58,7 +53,6 @@ function UserCard({ user }: UserCardProps): ReactElement {
 			await deleteIdUsersApiAction(user.id);
 			toast.success('User deleted successfully.');
 			startTransition((): void => {
-				router.refresh();
 				setShowDeletePopup(false);
 				setIsLoading(false);
 			});
