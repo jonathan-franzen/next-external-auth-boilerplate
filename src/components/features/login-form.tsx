@@ -1,35 +1,37 @@
 'use client';
 
+import { submitLoginFormFeatureAction } from '@/actions/feature/feature.actions';
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
-import LoginRequestAuthApiInterface from '@/interfaces/api/auth/request/login.request.auth.api.interface';
-import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
-import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form-validation-schema.form.react.interface';
-import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
-import internalApiService from '@/services/internal-api';
+import { RequestPostLoginAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
-function LoginForm(): ReactNode {
+interface LoginFormProps {
+	className?: string;
+}
+
+function LoginForm({ className }: LoginFormProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
-	const formFields: FormFieldReactInterface[] = [
+	const formFields: FieldReactFormInterface[] = [
 		{ name: 'email', type: 'text', placeholder: 'Email', autoComplete: 'email', required: true },
 		{ name: 'password', type: 'password', placeholder: 'Password', autoComplete: 'current-password', required: true },
 	];
 
-	const formValidationSchema: FormValidationSchemaFormReactInterface = {
+	const formValidationSchema: ValidationSchemaReactFormInterface = {
 		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Invalid credentials.', false),
 	};
 
-	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await internalApiService.postLogin(formData as unknown as LoginRequestAuthApiInterface);
+			await submitLoginFormFeatureAction(formData as unknown as RequestPostLoginAuthApiInterface);
 			router.push('/dashboard');
 		} catch (err) {
 			setIsLoading(false);
@@ -51,6 +53,7 @@ function LoginForm(): ReactNode {
 					</Link>
 				</div>
 			}
+			className={className}
 		/>
 	);
 }

@@ -1,17 +1,21 @@
 'use client';
 
+import { postResendVerifyEmailAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import PrimaryButton from '@/components/common/primary-button';
-import internalApiService from '@/services/internal-api';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
 
-function ResendVerifyEmailButton({ email }: { email: string }): ReactNode {
+interface ResendVerifyEmailButtonProps {
+	email: string;
+}
+
+function ResendVerifyEmailButton({ email }: ResendVerifyEmailButtonProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const handleOnClick: () => Promise<void> = async (): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await internalApiService.postResendVerifyEmail({ email });
+			await postResendVerifyEmailAuthApiAction({ email });
 			toast.success('Email sent successfully.');
 		} catch {
 			toast.error('Unable to send email.');

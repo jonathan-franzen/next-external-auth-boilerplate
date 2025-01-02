@@ -1,14 +1,18 @@
 'use server';
 
+import { hasCookie } from '@/actions/cookies/cookies.actions';
 import VerifyEmail from '@/components/page-specific/verify-email-token/verify-email';
-import cookieService from '@/services/cookie';
-import { Params } from 'next/dist/server/request/params';
 import { ReactNode } from 'react';
 
-async function VerifyEmailTokenPage(props: { params: Promise<Params> }): Promise<ReactNode> {
-	const meDataExists: boolean = await cookieService.hasCookie('meData');
-	const params: Params = await props.params;
-	const verifyEmailToken: string | undefined = Array.isArray(params.verifyEmailToken) ? params.verifyEmailToken[0] : params.verifyEmailToken;
+interface VerifyEmailTokenPageProps {
+	params: Promise<{
+		verifyEmailToken?: string;
+	}>;
+}
+
+async function VerifyEmailTokenPage({ params }: VerifyEmailTokenPageProps): Promise<ReactNode> {
+	const { verifyEmailToken } = await params;
+	const meDataExists: boolean = await hasCookie('meData');
 
 	if (!verifyEmailToken) {
 		return null;

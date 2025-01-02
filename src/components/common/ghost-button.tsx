@@ -1,9 +1,17 @@
 import Button from '@/components/common/button';
-import ButtonPropsReactInterface from '@/interfaces/react/props/button.props.react.interface';
 import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
-function GhostButton(props: ButtonPropsReactInterface): ReactNode {
+interface GhostButtonProps {
+	type?: 'button' | 'submit' | 'reset';
+	isLoading?: boolean;
+	disabled?: boolean;
+	onClick?: () => void;
+	className?: string;
+	children?: ReactNode;
+}
+
+function GhostButton(props: GhostButtonProps): ReactNode {
 	return (
 		<Button {...props} className={twMerge('inline-flex h-fit w-fit text-xs text-pink-900 hover:text-pink-700', props.className)}>
 			{props.children}

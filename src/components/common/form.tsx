@@ -1,14 +1,39 @@
 import PrimaryButton from '@/components/common/primary-button';
-import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
-import FormPropsReactInterface from '@/interfaces/react/props/form.props.react.interface';
+import SecondaryButton from '@/components/common/secondary-button';
+import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import sleep from '@/utils/sleep';
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import NextForm from 'next/form';
-import { ChangeEvent, FormEvent, ReactNode, useState } from 'react';
+import { ChangeEvent, FormEvent, ReactElement, ReactNode, useState } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSchema, additionalContent }: FormPropsReactInterface): ReactNode {
-	const [formData, setFormData] = useState<Record<string, string>>({});
+interface FormProps {
+	fields: FieldReactFormInterface[];
+	submitLabel: string;
+	onSubmit: OnSubmitReactFormInterface;
+	isLoading?: boolean;
+	validationSchema?: ValidationSchemaReactFormInterface;
+	additionalContent?: ReactElement;
+	onCancel?: () => Promise<void> | void;
+	initialFormData?: Record<string, string> | (() => Record<string, string>);
+	showLabels?: boolean;
+	className?: string;
+}
+
+function Form({
+	fields,
+	submitLabel,
+	onSubmit,
+	isLoading = false,
+	validationSchema,
+	additionalContent,
+	onCancel,
+	initialFormData,
+	showLabels = false,
+	className,
+}: FormProps): ReactNode {
+	const [formData, setFormData] = useState<Record<string, string>>(initialFormData || {});
 	const [formErrors, setFormErrors] = useState<Record<string, string | null>>({});
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -55,7 +80,9 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 			await onSubmit(formData);
 		} catch (err) {
 			if (err instanceof AxiosError) {
-				setErrorMessage(err.response?.data.error || 'Something went wrong.');
+				setErrorMessage(err.response?.data.error || err.message || 'Something went wrong.');
+			} else if (err instanceof Error) {
+				setErrorMessage(err.message);
 			} else {
 				setErrorMessage('Something went wrong.');
 			}
@@ -65,10 +92,15 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 	};
 
 	return (
-		<NextForm action='/login' onSubmit={handleOnSubmit} className='mt-8 flex w-full flex-col'>
+		<NextForm action='/login' onSubmit={handleOnSubmit} className={twMerge('flex w-full flex-col', className)}>
 			{fields.map(
-				(field: FormFieldReactInterface): ReactNode => (
+				(field: FieldReactFormInterface): ReactNode => (
 					<div key={field.name} className='mt-2'>
+						{showLabels && (
+							<label htmlFor={field.name} className='block text-xs'>
+								{field.placeholder}
+							</label>
+						)}
 						<input
 							id={field.name}
 							name={field.name}
@@ -79,8 +111,9 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 							value={formData[field.name] || ''}
 							onChange={handleOnChange}
 							className={clsx(
-								'mt-1.5 block w-full rounded-lg border-none bg-neutral-100 px-3 py-3 text-xs opacity-80',
+								'block w-full rounded-lg border-none bg-neutral-100 px-3 py-3 text-xs opacity-80',
 								'focus:outline-none data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-gray-400',
+								!showLabels ? 'mt-1.5' : 'mt-0.5',
 							)}
 						/>
 						{formErrors[field.name] && validationSchema && validationSchema[field.name]?.showError && (
@@ -90,9 +123,16 @@ function Form({ fields, submitLabel, onSubmit, isLoading = false, validationSche
 				),
 			)}
 			{additionalContent && <div className='mt-2'>{additionalContent}</div>}
-			<PrimaryButton type='submit' isLoading={isSubmitting || isLoading} className='mt-6'>
-				{submitLabel}
-			</PrimaryButton>
+			<div className='mt-6 flex gap-6'>
+				<PrimaryButton type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
+					{submitLabel}
+				</PrimaryButton>
+				{onCancel && (
+					<SecondaryButton onClick={onCancel} className='w-full'>
+						CANCEL
+					</SecondaryButton>
+				)}
+			</div>
 			{errorMessage && (
 				<div className='mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
 					<div className='text-2xs text-pink-900'>{errorMessage}</div>

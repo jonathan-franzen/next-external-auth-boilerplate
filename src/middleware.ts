@@ -2,7 +2,7 @@ import verifyAndStoreMeMiddleware from '@/middlewares/verify-and-store-me.middle
 import { NextRequest, NextResponse } from 'next/server';
 
 async function middleware(req: NextRequest): Promise<NextResponse> {
-	// Middlewares defined after this won't run on server-actions
+	// Middlewares defined in this if-statement won't run on server-actions
 	if (!req.headers.has('next-action')) {
 		return await verifyAndStoreMeMiddleware(req);
 	}

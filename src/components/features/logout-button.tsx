@@ -1,7 +1,7 @@
 'use client';
 
+import { onClickLogoutButtonFeatureAction } from '@/actions/feature/feature.actions';
 import PrimaryButton from '@/components/common/primary-button';
-import internalApiService from '@/services/internal-api';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
@@ -13,7 +13,7 @@ function LogoutButton(): ReactNode {
 	const handleOnClick: () => Promise<void> = async (): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await internalApiService.deleteLogout();
+			await onClickLogoutButtonFeatureAction();
 		} finally {
 			router.push('/login');
 		}

@@ -1,41 +1,39 @@
 'use client';
 
+import { submitRegisterFormFeatureAction } from '@/actions/feature/feature.actions';
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX, PASSWORD_VALIDATION_REGEX } from '@/constants/regex.constants';
-import RegisterRequestAuthApiInterface from '@/interfaces/api/auth/request/register.request.auth.api.interface';
-import FormFieldReactInterface from '@/interfaces/react/form-field.react.interface';
-import FormValidationSchemaFormReactInterface from '@/interfaces/react/form/form-validation-schema.form.react.interface';
-import FormOnSubmitFunctionReactInterface from '@/interfaces/react/functions/form-on-submit.function.react.interface';
-import internalApiService from '@/services/internal-api';
+import { RequestPostRegisterAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema-line';
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 
-function RegisterForm(): ReactNode {
+interface RegisterFormProps {
+	className?: string;
+}
+
+function RegisterForm({ className }: RegisterFormProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 	const router: AppRouterInstance = useRouter();
 
-	const formFields: FormFieldReactInterface[] = [
+	const formFields: FieldReactFormInterface[] = [
 		{ name: 'email', type: 'text', placeholder: 'Email', autoComplete: 'email', required: true },
 		{ name: 'firstName', type: 'firstName', placeholder: 'First name', autoComplete: 'firstName', required: true },
 		{ name: 'lastName', type: 'lastName', placeholder: 'Last name', autoComplete: 'lastName', required: true },
 		{ name: 'password', type: 'password', placeholder: 'Password', autoComplete: 'new-password', required: true },
 	];
 
-	const formValidationSchema: FormValidationSchemaFormReactInterface = {
+	const formValidationSchema: ValidationSchemaReactFormInterface = {
 		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Not a valid email address.', true),
 		...getFormValidationSchema('password', PASSWORD_VALIDATION_REGEX, 'Password too weak.', true),
 	};
 
-	const handleOnSubmit: FormOnSubmitFunctionReactInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
-
-		const { email, password } = formData;
-
 		try {
-			await internalApiService.postRegister(formData as unknown as RegisterRequestAuthApiInterface);
-			await internalApiService.postLogin({ email, password });
+			await submitRegisterFormFeatureAction(formData as unknown as RequestPostRegisterAuthApiInterface);
 			router.push('/verify-email');
 		} catch (err) {
 			setIsLoading(false);
@@ -45,7 +43,14 @@ function RegisterForm(): ReactNode {
 
 	return (
 		<>
-			<Form fields={formFields} submitLabel='SIGN UP' onSubmit={handleOnSubmit} isLoading={isLoading} validationSchema={formValidationSchema} />
+			<Form
+				fields={formFields}
+				submitLabel='SIGN UP'
+				onSubmit={handleOnSubmit}
+				isLoading={isLoading}
+				validationSchema={formValidationSchema}
+				className={className}
+			/>
 		</>
 	);
 }

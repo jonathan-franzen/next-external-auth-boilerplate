@@ -1,12 +1,19 @@
+import { UrlObject } from 'node:url';
 import GhostButton from '@/components/common/ghost-button';
-import GhostLinkPropsReactInterface from '@/interfaces/react/props/ghost-link-props.react.interface';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-function GhostLink(props: GhostLinkPropsReactInterface): ReactNode {
+interface GhostLinkPropsReactInterface {
+	href: string | UrlObject;
+	className?: string;
+	children: ReactNode;
+}
+
+function GhostLink({ children, href, className }: GhostLinkPropsReactInterface): ReactNode {
 	return (
-		<Link href={props.href} className='inline-flex'>
-			<GhostButton>{props.children}</GhostButton>
+		<Link href={href} className={twMerge('inline-flex', className)}>
+			<GhostButton>{children}</GhostButton>
 		</Link>
 	);
 }

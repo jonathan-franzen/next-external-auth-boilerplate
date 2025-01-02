@@ -1,10 +1,8 @@
 'use server';
 
+import { getTokenResetPasswordAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import GhostLink from '@/components/common/ghost-link';
 import ResetPasswordForm from '@/components/features/reset-password-form';
-import apiService from '@/services/api';
-import { AxiosError } from 'axios';
-import { Params } from 'next/dist/server/request/params';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
@@ -24,7 +22,7 @@ function RenderSuccess({ resetPasswordToken }: { resetPasswordToken: string }): 
 	return (
 		<>
 			<h1 className='text-center text-sm font-semibold text-gray-700'>SET YOUR NEW PASSWORD</h1>
-			<ResetPasswordForm resetPasswordToken={resetPasswordToken} />
+			<ResetPasswordForm resetPasswordToken={resetPasswordToken} className='mt-12' />
 			<div className='mt-4 flex justify-center'>
 				<GhostLink href='/login'>Back to login</GhostLink>
 			</div>
@@ -32,21 +30,27 @@ function RenderSuccess({ resetPasswordToken }: { resetPasswordToken: string }): 
 	);
 }
 
-async function ResetPasswordTokenPage(props: { params: Promise<Params> }): Promise<ReactNode> {
-	const params: Params = await props.params;
-	const resetPasswordToken: string | undefined = Array.isArray(params.resetPasswordToken) ? params.resetPasswordToken[0] : params.resetPasswordToken;
+interface ResetPasswordTokenPageProps {
+	params: Promise<{
+		resetPasswordToken?: string;
+	}>;
+}
+
+async function ResetPasswordTokenPage({ params }: ResetPasswordTokenPageProps): Promise<ReactNode> {
+	const { resetPasswordToken } = await params;
 
 	if (!resetPasswordToken) {
 		throw new Error('Something went wrong.');
 	}
 
 	try {
-		await apiService.getVerifyResetPasswordToken(resetPasswordToken);
+		await getTokenResetPasswordAuthApiAction(resetPasswordToken);
 	} catch (err) {
-		if (err instanceof AxiosError && err.message === 'Token expired.') {
+		if (err instanceof Error && err.message === 'Token expired.') {
 			return <RenderExpired />;
+		} else {
+			return notFound();
 		}
-		return notFound();
 	}
 
 	return <RenderSuccess resetPasswordToken={resetPasswordToken} />;

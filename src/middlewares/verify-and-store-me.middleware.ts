@@ -1,16 +1,24 @@
+import { getMeUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { deleteAuthCookies, hasCookie, setCookie } from '@/actions/cookies/cookies.actions';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';
-import MeResponseUsersApiInterface from '@/interfaces/api/users/response/me.response.users.api.interface';
-import MeObjectResponseUsersApiInterface from '@/interfaces/api/users/response/objects/me.object.response.users.api.interface';
-import apiService from '@/services/api';
-import cookieService from '@/services/cookie';
-import middlewareRedirect from '@/utils/middleware-redirect';
-import { AxiosResponse } from 'axios';
+import { ObjectMeUsersApiInterface, ResponseGetMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies';
 import { NextRequest, NextResponse } from 'next/server';
+
+function redirect(url: string, req: NextRequest, res: NextResponse): NextResponse {
+	const redirectResponse: NextResponse = NextResponse.redirect(new URL(url, req.nextUrl));
+	const cookies: ResponseCookie[] = res.cookies.getAll();
+	cookies.map(async (cookie: ResponseCookie): Promise<void> => {
+		await setCookie(cookie.name, cookie.value, cookie.maxAge, cookie.path, redirectResponse);
+	});
+
+	return redirectResponse;
+}
 
 async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextResponse> {
 	const path: string = req.nextUrl.pathname;
-	const refreshToken: boolean = await cookieService.hasCookie('refreshToken');
+	const refreshToken: boolean = await hasCookie('refreshToken');
 
 	const isRouteMatch: (routes: string[]) => boolean = (routes: string[]): boolean =>
 		routes.some((route: string): boolean => route !== '/' && path.startsWith(route));
@@ -21,47 +29,45 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 	const nextResponse: NextResponse = NextResponse.next();
 
 	if (!refreshToken) {
-		return (isPublicRoute && path !== '/') || (isVerifyRoute && !path.endsWith('/verify-email'))
-			? NextResponse.next()
-			: middlewareRedirect('/login', req, nextResponse);
+		return (isPublicRoute && path !== '/') || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req, nextResponse);
 	}
 
 	try {
-		const response: AxiosResponse<MeResponseUsersApiInterface> = await apiService.getMeUsers(true, nextResponse);
+		const response: ResponseGetMeUsersApiInterface = await getMeUsersApiAction(nextResponse);
 
-		const meData: MeObjectResponseUsersApiInterface = response.data.me;
+		const meData: ObjectMeUsersApiInterface = response.me;
 
 		if (!meData || !meData.id || !meData.email || meData.roles.length < 1 || !meData.firstName || !meData.lastName) {
-			await cookieService.deleteAuthCookies();
-			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : middlewareRedirect('/login', req, nextResponse);
+			await deleteAuthCookies();
+			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req, nextResponse);
 		}
 
 		if (isVerifyRoute && meData.emailVerifiedAt) {
-			return middlewareRedirect('/dashboard', req, nextResponse);
+			return redirect('/dashboard', req, nextResponse);
 		}
 
 		if (path === '/') {
-			return middlewareRedirect('/dashboard', req, nextResponse);
+			return redirect('/dashboard', req, nextResponse);
 		}
 
 		if (isPublicRoute && !req.nextUrl.pathname.startsWith('/dashboard')) {
-			return middlewareRedirect('/dashboard', req, nextResponse);
+			return redirect('/dashboard', req, nextResponse);
 		}
 
 		if (isAdminRoute && !meData.roles.includes(RolesEnum.ADMIN)) {
-			return middlewareRedirect('/unauthorized', req, nextResponse);
+			return redirect('/unauthorized', req, nextResponse);
 		}
 
 		if (!meData.emailVerifiedAt && !req.nextUrl.pathname.startsWith('/verify-email')) {
-			return middlewareRedirect('/verify-email', req, nextResponse);
+			return redirect('/verify-email', req, nextResponse);
 		}
 
-		await cookieService.setCookie('meData', JSON.stringify(meData), 'session', '/', nextResponse);
+		await setCookie('meData', JSON.stringify(meData), 'session', '/', nextResponse);
 
 		return nextResponse;
-	} catch (error) {
-		await cookieService.deleteAuthCookies();
-		return middlewareRedirect('/login', req, nextResponse);
+	} catch {
+		await deleteAuthCookies();
+		return redirect('/login', req, nextResponse);
 	}
 }
 

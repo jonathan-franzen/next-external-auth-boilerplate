@@ -1,8 +1,11 @@
-import LoadingSpinnerPropsReactInterface from '@/interfaces/react/loading-spinner-props.react.interface';
 import clsx from 'clsx';
 import { ReactNode } from 'react';
 
-function LoadingSpinner({ size = 'lg' }: LoadingSpinnerPropsReactInterface): ReactNode {
+interface LoadingSpinnerProps {
+	size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+}
+
+function LoadingSpinner({ size = 'lg' }: LoadingSpinnerProps): ReactNode {
 	return (
 		<div
 			className={clsx(
