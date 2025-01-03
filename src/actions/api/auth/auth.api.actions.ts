@@ -142,7 +142,7 @@ export async function postTokenResetPasswordAuthApiAction(
 ): Promise<ResponsePostTokenResetPasswordAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, `/reset-password/${resetPasswordToken}`);
 	const config: RequestInit = {
-		method: 'GET',
+		method: 'POST',
 		body: JSON.stringify(data),
 	};
 

@@ -41,7 +41,6 @@ export async function fetchRequest(
 	};
 
 	const response: Response = await fetch(url, config);
-	console.log('request to send', url);
 
 	if (setCookiesFromResponse) {
 		const cookies: string[] | null = response.headers.getSetCookie();

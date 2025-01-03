@@ -31,11 +31,16 @@ function ResetPasswordForm({ resetPasswordToken, className }: ResetPasswordFormP
 	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 
-		await postTokenResetPasswordAuthApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordAuthApiInterface);
+		try {
+			await postTokenResetPasswordAuthApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordAuthApiInterface);
 
-		toast.success('Password reset successfully.');
+			toast.success('Password reset successfully.');
 
-		router.push('/login');
+			router.push('/login');
+		} catch (err) {
+			setIsLoading(false);
+			throw err;
+		}
 	};
 
 	return (
