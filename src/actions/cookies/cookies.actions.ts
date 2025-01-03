@@ -1,6 +1,6 @@
 'use server';
 
-import { DEFAULT_COOKIE_CONFIG } from '@/constants/cookies.constants';
+import { ACCESS_TOKEN_COOKIE, DEFAULT_COOKIE_CONFIG, ME_COOKIE, REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { parse } from 'cookie';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
@@ -44,19 +44,13 @@ export async function deleteCookie(name: string): Promise<void> {
 	cookieStore.delete(name);
 }
 
-export async function getCookieStore(): Promise<string> {
-	const cookieStore: ReadonlyRequestCookies = await cookies();
-
-	return cookieStore.toString();
-}
-
 export async function deleteAuthCookies(): Promise<void> {
-	const authCookies: string[] = ['accessToken', 'refreshToken', 'meData'];
+	const authCookies: string[] = [ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, ME_COOKIE];
 	await Promise.all(authCookies.map((authCookie: string): Promise<void> => deleteCookie(authCookie)));
 }
 
 export async function getMeFromCookie(): Promise<ObjectMeUsersApiInterface> {
-	const meCookie: string | null = await getCookie('meData');
+	const meCookie: string | null = await getCookie(ME_COOKIE);
 
 	if (!meCookie) {
 		return redirect('/login');

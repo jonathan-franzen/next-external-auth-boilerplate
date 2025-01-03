@@ -1,6 +1,7 @@
 'use server';
 
-import { getCookieStore } from '@/actions/cookies/cookies.actions';
+import { getCookie } from '@/actions/cookies/cookies.actions';
+import { REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestPostLoginAuthApiInterface,
@@ -160,9 +161,11 @@ export async function postTokenResetPasswordAuthApiAction(
 export async function postRefreshAuthApiAction(res?: NextResponse): Promise<ResponsePostRefreshAuthApiInterface> {
 	try {
 		const url: string = buildUrl(BACKEND_URL, '/refresh');
+		const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+
 		const config: RequestInit = {
 			method: 'POST',
-			headers: { Cookie: await getCookieStore() },
+			...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
 			credentials: 'include' as RequestCredentials,
 		};
 
@@ -180,9 +183,11 @@ export async function postRefreshAuthApiAction(res?: NextResponse): Promise<Resp
 export async function deleteLogoutAuthApiAction(): Promise<void> {
 	try {
 		const url: string = buildUrl(BACKEND_URL, '/logout');
+		const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+
 		const config: RequestInit = {
 			method: 'DELETE',
-			headers: { Cookie: await getCookieStore() },
+			...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
 			credentials: 'include' as RequestCredentials,
 		};
 

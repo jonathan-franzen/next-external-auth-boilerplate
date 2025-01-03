@@ -8,7 +8,7 @@ import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
-import {ReactElement, startTransition, useState} from 'react';
+import { ReactElement, startTransition, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const formFields: FieldReactFormInterface[] = [

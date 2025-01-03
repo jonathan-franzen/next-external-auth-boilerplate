@@ -1,5 +1,6 @@
 import { getMeUsersApiAction } from '@/actions/api/users/users.api.actions';
 import { deleteAuthCookies, hasCookie, setCookie } from '@/actions/cookies/cookies.actions';
+import { ME_COOKIE, REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface, ResponseGetMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
@@ -18,7 +19,7 @@ function redirect(url: string, req: NextRequest, res: NextResponse): NextRespons
 
 async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextResponse> {
 	const path: string = req.nextUrl.pathname;
-	const refreshToken: boolean = await hasCookie('refreshToken');
+	const refreshToken: boolean = await hasCookie(REFRESH_TOKEN_COOKIE);
 
 	const isRouteMatch: (routes: string[]) => boolean = (routes: string[]): boolean =>
 		routes.some((route: string): boolean => route !== '/' && path.startsWith(route));
@@ -62,7 +63,7 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 			return redirect('/verify-email', req, nextResponse);
 		}
 
-		await setCookie('meData', JSON.stringify(meData), 'session', '/', nextResponse);
+		await setCookie(ME_COOKIE, JSON.stringify(meData), 'session', '/', nextResponse);
 
 		return nextResponse;
 	} catch {

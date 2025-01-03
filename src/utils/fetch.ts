@@ -1,5 +1,6 @@
 import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import { getCookie, setCookie, setCookies } from '@/actions/cookies/cookies.actions';
+import { ACCESS_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import { ResponsePostRefreshAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import createError, { isHttpError } from 'http-errors';
 import { NextResponse } from 'next/server';
@@ -20,7 +21,7 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 		},
 	};
 
-	await setCookie('accessToken', accessToken, 60 * 60 * 1000, '/', res);
+	await setCookie(ACCESS_TOKEN_COOKIE, accessToken, 60 * 60 * 1000, '/', res);
 
 	return await fetchRequest(url, config);
 }
@@ -66,7 +67,7 @@ export async function fetchRequest(
 }
 
 export async function authenticatedFetchRequest(url: RequestInfo | URL, config: RequestInit, res?: NextResponse): Promise<Response> {
-	const accessToken: string | null = await getCookie('accessToken');
+	const accessToken: string | null = await getCookie(ACCESS_TOKEN_COOKIE);
 
 	const authenticatedRequestHeaders = { ['Authorization']: `Bearer ${accessToken}` };
 

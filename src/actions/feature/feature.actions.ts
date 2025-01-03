@@ -2,10 +2,11 @@
 
 import { deleteLogoutAuthApiAction, postLoginAuthApiAction, postRegisterAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import { deleteAuthCookies, setCookie } from '@/actions/cookies/cookies.actions';
+import { ACCESS_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import {
 	RequestPostLoginAuthApiInterface,
 	RequestPostRegisterAuthApiInterface,
-	ResponsePostLoginAuthApiInterface
+	ResponsePostLoginAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
 
 export async function submitRegisterFormFeatureAction(data: RequestPostRegisterAuthApiInterface): Promise<void> {
@@ -18,7 +19,7 @@ export async function submitRegisterFormFeatureAction(data: RequestPostRegisterA
 
 export async function submitLoginFormFeatureAction(data: RequestPostLoginAuthApiInterface): Promise<void> {
 	const response: ResponsePostLoginAuthApiInterface = await postLoginAuthApiAction(data);
-	await setCookie('accessToken', response.accessToken);
+	await setCookie(ACCESS_TOKEN_COOKIE, response.accessToken);
 }
 
 export async function onClickLogoutButtonFeatureAction(): Promise<void> {
