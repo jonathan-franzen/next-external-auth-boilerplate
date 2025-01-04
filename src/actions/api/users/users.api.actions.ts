@@ -10,27 +10,16 @@ import {
 	ResponsePatchIdUsersApiInterface,
 } from '@/interfaces/api/users/users.api.interfaces';
 import buildUrl from '@/utils/build-url';
-import { authenticatedFetchRequest } from '@/utils/fetch';
-import { isHttpError } from 'http-errors';
+import { authenticatedFetchRequest, makeRequest } from '@/utils/fetch';
 import { NextResponse } from 'next/server';
 
 export async function getMeUsersApiAction(res: NextResponse): Promise<ResponseGetMeUsersApiInterface> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, '/users/me');
-		const config = {
-			method: 'GET',
-		};
+	const url: string = buildUrl(BACKEND_URL, '/users/me');
+	const config = {
+		method: 'GET',
+	};
 
-		const response: Response = await authenticatedFetchRequest(url, config, res);
-
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, res));
 }
 
 export async function getUsersApiAction({
@@ -38,59 +27,32 @@ export async function getUsersApiAction({
 	limit = USERS_DEFAULT_PAGE_LIMIT,
 	sortBy,
 }: RequestGetUsersApiInterface): Promise<ResponseGetUsersApiInterface> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, '/users', {
-			...(page && { page: page.toString() }),
-			...(limit && { limit: limit.toString() }),
-			...(sortBy && { sortBy }),
-		});
-		const config = { method: 'GET' };
+	const url: string = buildUrl(BACKEND_URL, '/users', {
+		...(page && { page: page.toString() }),
+		...(limit && { limit: limit.toString() }),
+		...(sortBy && { sortBy }),
+	});
+	const config = { method: 'GET' };
 
-		const response: Response = await authenticatedFetchRequest(url, config);
-
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponseGetUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config));
 }
 
 export async function patchIdUsersApiAction(userId: string, data: RequestPatchIdUsersApiInterface): Promise<ResponsePatchIdUsersApiInterface> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
-		const config: RequestInit = {
-			method: 'PATCH',
-			body: JSON.stringify(data),
-		};
-		const response: Response = await authenticatedFetchRequest(url, config);
+	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
+	const config: RequestInit = {
+		method: 'PATCH',
+		body: JSON.stringify(data),
+	};
 
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePatchIdUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config));
 }
 
 export async function deleteIdUsersApiAction(userId: string): Promise<void> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
+	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
 
-		const config = {
-			method: 'DELETE',
-		};
+	const config = {
+		method: 'DELETE',
+	};
 
-		await authenticatedFetchRequest(url, config);
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	await makeRequest<void>((): Promise<Response> => authenticatedFetchRequest(url, config));
 }

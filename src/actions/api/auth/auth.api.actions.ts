@@ -19,8 +19,7 @@ import {
 	ResponseTokenVerifyEmailAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
 import buildUrl from '@/utils/build-url';
-import { fetchRequest } from '@/utils/fetch';
-import { isHttpError } from 'http-errors';
+import { fetchRequest, makeRequest } from '@/utils/fetch';
 import { NextResponse } from 'next/server';
 
 export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApiInterface): Promise<ResponsePostRegisterAuthApiInterface> {
@@ -30,16 +29,7 @@ export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApi
 		body: JSON.stringify(data),
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePostRegisterAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postResendVerifyEmailAuthApiAction(data: RequestResendVerifyEmailAuthApiInterface): Promise<ResponseResendVerifyEmailAuthApiInterface> {
@@ -49,16 +39,7 @@ export async function postResendVerifyEmailAuthApiAction(data: RequestResendVeri
 		body: JSON.stringify(data),
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponseResendVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string): Promise<ResponseTokenVerifyEmailAuthApiInterface> {
@@ -67,16 +48,7 @@ export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string
 		method: 'POST',
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponseTokenVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postLoginAuthApiAction(data: RequestPostLoginAuthApiInterface): Promise<ResponsePostLoginAuthApiInterface> {
@@ -87,16 +59,7 @@ export async function postLoginAuthApiAction(data: RequestPostLoginAuthApiInterf
 		credentials: 'include' as RequestCredentials,
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config, true);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePostLoginAuthApiInterface>((): Promise<Response> => fetchRequest(url, config, true));
 }
 
 export async function postResetPasswordAuthApiAction(data: RequestPostResetPasswordAuthApiInterface): Promise<ResponsePostResetPasswordAuthApiInterface> {
@@ -106,16 +69,7 @@ export async function postResetPasswordAuthApiAction(data: RequestPostResetPassw
 		body: JSON.stringify(data),
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePostResetPasswordAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function getTokenResetPasswordAuthApiAction(resetPasswordToken: string): Promise<ResponseGetTokenResetPasswordAuthApiInterface> {
@@ -124,16 +78,7 @@ export async function getTokenResetPasswordAuthApiAction(resetPasswordToken: str
 		method: 'GET',
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponseGetTokenResetPasswordAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postTokenResetPasswordAuthApiAction(
@@ -146,57 +91,31 @@ export async function postTokenResetPasswordAuthApiAction(
 		body: JSON.stringify(data),
 	};
 
-	try {
-		const response: Response = await fetchRequest(url, config);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePostTokenResetPasswordAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postRefreshAuthApiAction(res?: NextResponse): Promise<ResponsePostRefreshAuthApiInterface> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, '/refresh');
-		const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+	const url: string = buildUrl(BACKEND_URL, '/refresh');
+	const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
 
-		const config: RequestInit = {
-			method: 'POST',
-			...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
-			credentials: 'include' as RequestCredentials,
-		};
+	const config: RequestInit = {
+		method: 'POST',
+		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
+		credentials: 'include' as RequestCredentials,
+	};
 
-		const response: Response = await fetchRequest(url, config, true, res);
-		return response.json();
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	return await makeRequest<ResponsePostRefreshAuthApiInterface>((): Promise<Response> => fetchRequest(url, config, true, res));
 }
 
 export async function deleteLogoutAuthApiAction(): Promise<void> {
-	try {
-		const url: string = buildUrl(BACKEND_URL, '/logout');
-		const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+	const url: string = buildUrl(BACKEND_URL, '/logout');
+	const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
 
-		const config: RequestInit = {
-			method: 'DELETE',
-			...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
-			credentials: 'include' as RequestCredentials,
-		};
+	const config: RequestInit = {
+		method: 'DELETE',
+		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
+		credentials: 'include' as RequestCredentials,
+	};
 
-		await fetchRequest(url, config, true);
-	} catch (err) {
-		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
-		}
-
-		throw new Error('Something went wrong.');
-	}
+	await makeRequest<void>((): Promise<Response> => fetchRequest(url, config, true));
 }

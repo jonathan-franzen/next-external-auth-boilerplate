@@ -42,16 +42,14 @@ function RegisterForm({ className }: RegisterFormProps): ReactNode {
 	};
 
 	return (
-		<>
-			<Form
-				fields={formFields}
-				submitLabel='SIGN UP'
-				onSubmit={handleOnSubmit}
-				isLoading={isLoading}
-				validationSchema={formValidationSchema}
-				className={className}
-			/>
-		</>
+		<Form
+			fields={formFields}
+			submitLabel='SIGN UP'
+			onSubmit={handleOnSubmit}
+			isLoading={isLoading}
+			validationSchema={formValidationSchema}
+			className={className}
+		/>
 	);
 }
 
