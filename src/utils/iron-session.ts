@@ -39,7 +39,7 @@ export async function getAuthSessionValue<K extends keyof AuthSessionData>(key: 
 	return session[key];
 }
 
-export async function updateAuthSession<K extends keyof AuthSessionData>(key: K, value: AuthSessionData[K]): Promise<void> {
+export async function saveAuthSession<K extends keyof AuthSessionData>(key: K, value: AuthSessionData[K]): Promise<void> {
 	const session: IronSession<AuthSessionData> & Partial<AuthSessionData> = await getAuthSession();
 	(session as AuthSessionData)[key] = value;
 	await session.save();

@@ -1,7 +1,7 @@
 import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import { setCookies } from '@/actions/cookies/cookies.actions';
 import { ResponsePostRefreshAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import { getAuthSessionValue, updateAuthSession } from '@/utils/iron-session';
+import { getAuthSessionValue, saveAuthSession } from '@/utils/iron-session';
 import createError, { isHttpError } from 'http-errors';
 import { AuthSessionData, IronSession } from 'iron-session';
 
@@ -23,7 +23,7 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 	};
 
 	if (!session) {
-		await updateAuthSession('accessToken', accessToken);
+		await saveAuthSession('accessToken', accessToken);
 	} else {
 		session.accessToken = accessToken;
 	}
@@ -68,7 +68,7 @@ export async function fetchRequest(
 
 			if (refreshToken) {
 				if (!session) {
-					await updateAuthSession('refreshToken', refreshToken);
+					await saveAuthSession('refreshToken', refreshToken);
 				} else {
 					session.refreshToken = refreshToken;
 				}
