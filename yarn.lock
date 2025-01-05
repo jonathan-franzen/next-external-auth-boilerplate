@@ -1731,8 +1731,10 @@ internal-slot@^1.0.7:
     hasown "^2.0.0"
     side-channel "^1.0.4"
 
-iron-session@/Users/jonathanfranzen/code-projects/playground/iron-session:
+iron-session@^8.0.4:
   version "8.0.4"
+  resolved "https://registry.yarnpkg.com/iron-session/-/iron-session-8.0.4.tgz#03ae73f9bb25b45c8a8506eccb7097837c3d9fed"
+  integrity sha512-9ivNnaKOd08osD0lJ3i6If23GFS2LsxyMU8Gf/uBUEgm8/8CC1hrrCHFDpMo3IFbpBgwoo/eairRsaD3c5itxA==
   dependencies:
     cookie "^0.7.2"
     iron-webcrypto "^1.2.1"
