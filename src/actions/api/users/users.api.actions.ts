@@ -11,15 +11,15 @@ import {
 } from '@/interfaces/api/users/users.api.interfaces';
 import buildUrl from '@/utils/build-url';
 import { authenticatedFetchRequest, makeRequest } from '@/utils/fetch';
-import { NextResponse } from 'next/server';
+import { AuthSessionData, IronSession } from 'iron-session';
 
-export async function getMeUsersApiAction(res: NextResponse): Promise<ResponseGetMeUsersApiInterface> {
+export async function getMeUsersApiAction(session: IronSession<AuthSessionData>): Promise<ResponseGetMeUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/users/me');
 	const config = {
 		method: 'GET',
 	};
 
-	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, res));
+	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, session));
 }
 
 export async function getUsersApiAction({

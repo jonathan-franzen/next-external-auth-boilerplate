@@ -1,14 +1,14 @@
 'use server';
 
-import { getMeFromCookie } from '@/actions/cookies/cookies.actions';
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { getMeFromAuthSession } from '@/utils/iron-session';
 import { ReactNode } from 'react';
 
 async function DashboardPage(): Promise<ReactNode> {
-	const me: ObjectMeUsersApiInterface = await getMeFromCookie();
+	const me: ObjectMeUsersApiInterface = await getMeFromAuthSession();
 
 	return (
 		<div className='flex h-full flex-col justify-between'>

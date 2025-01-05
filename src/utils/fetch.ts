@@ -1,15 +1,15 @@
 import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
-import { getCookie, setCookie, setCookies } from '@/actions/cookies/cookies.actions';
-import { ACCESS_TOKEN_COOKIE } from '@/constants/cookies.constants';
+import { setCookies } from '@/actions/cookies/cookies.actions';
 import { ResponsePostRefreshAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { getAuthSessionValue, updateAuthSession } from '@/utils/iron-session';
 import createError, { isHttpError } from 'http-errors';
-import { NextResponse } from 'next/server';
+import { AuthSessionData, IronSession } from 'iron-session';
 
 const defaultHeaders = { 'Content-Type': 'application/json' };
 
 // Refresh access-token against Backend API and then re-attempt the request.
-async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: RequestInit, res?: NextResponse): Promise<Response> {
-	const response: ResponsePostRefreshAuthApiInterface = await postRefreshAuthApiAction(res);
+async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: RequestInit, session?: IronSession<AuthSessionData>): Promise<Response> {
+	const response: ResponsePostRefreshAuthApiInterface = await postRefreshAuthApiAction(session);
 	const { accessToken } = response;
 
 	const authHeaders = { ['Authorization']: `Bearer ${accessToken}` };
@@ -22,7 +22,11 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 		},
 	};
 
-	await setCookie(ACCESS_TOKEN_COOKIE, accessToken, 60 * 60 * 1000, '/', res);
+	if (!session) {
+		await updateAuthSession('accessToken', accessToken);
+	} else {
+		session.accessToken = accessToken;
+	}
 
 	return await fetchRequest(url, config);
 }
@@ -32,7 +36,7 @@ export async function fetchRequest(
 	url: RequestInfo | URL,
 	config: RequestInit,
 	setCookiesFromResponse: boolean = false,
-	res?: NextResponse,
+	session?: IronSession<AuthSessionData>,
 ): Promise<Response> {
 	config = {
 		...config,
@@ -45,9 +49,33 @@ export async function fetchRequest(
 	const response: Response = await fetch(url, config);
 
 	if (setCookiesFromResponse) {
-		const cookies: string[] | null = response.headers.getSetCookie();
-		if (cookies) {
-			await setCookies(cookies, res);
+		const setCookieHeader: string[] | null = response.headers.getSetCookie();
+
+		if (setCookieHeader) {
+			const filteredCookies: string[] = [];
+			let refreshToken: string | null = null;
+
+			for (const cookie of setCookieHeader) {
+				if (cookie.includes('refreshToken')) {
+					const match: RegExpMatchArray | null = cookie.match(/refreshToken=([^;]*)/);
+					if (match) {
+						refreshToken = match[1];
+					}
+				} else {
+					filteredCookies.push(cookie);
+				}
+			}
+
+			if (refreshToken) {
+				if (!session) {
+					await updateAuthSession('refreshToken', refreshToken);
+				} else {
+					session.refreshToken = refreshToken;
+				}
+			}
+
+			// Call setCookies with filtered cookies (without refreshToken)
+			await setCookies(filteredCookies);
 		}
 	}
 
@@ -69,8 +97,8 @@ export async function fetchRequest(
 }
 
 // Fetch protected API routes and reattempt when access-token expired.
-export async function authenticatedFetchRequest(url: RequestInfo | URL, config: RequestInit, res?: NextResponse): Promise<Response> {
-	const accessToken: string | null = await getCookie(ACCESS_TOKEN_COOKIE);
+export async function authenticatedFetchRequest(url: RequestInfo | URL, config: RequestInit, session?: IronSession<AuthSessionData>): Promise<Response> {
+	const accessToken: string | undefined = session?.accessToken || (await getAuthSessionValue('accessToken'));
 
 	const authenticatedRequestHeaders = { ['Authorization']: `Bearer ${accessToken}` };
 
@@ -87,7 +115,7 @@ export async function authenticatedFetchRequest(url: RequestInfo | URL, config: 
 	} catch (err) {
 		// If backend API responds that token is invalid, try to refresh and reattempt request.
 		if (isHttpError(err) && err.status === 401) {
-			return await refreshTokenAndMakeRequest(url, config, res);
+			return await refreshTokenAndMakeRequest(url, config, session);
 		}
 		throw err;
 	}

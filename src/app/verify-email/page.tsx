@@ -1,13 +1,13 @@
 'use server';
 
-import { getMeFromCookie } from '@/actions/cookies/cookies.actions';
 import LogoutButton from '@/components/features/logout-button';
 import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { getMeFromAuthSession } from '@/utils/iron-session';
 import { ReactNode } from 'react';
 
 async function VerifyEmailPage(): Promise<ReactNode> {
-	const me: ObjectMeUsersApiInterface = await getMeFromCookie();
+	const me: ObjectMeUsersApiInterface = await getMeFromAuthSession();
 
 	return (
 		<>

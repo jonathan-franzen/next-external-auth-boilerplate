@@ -1,6 +1,5 @@
 'use server';
 
-import { getCookie } from '@/actions/cookies/cookies.actions';
 import { REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
 import { BACKEND_URL } from '@/constants/environment.constants';
 import {
@@ -20,7 +19,8 @@ import {
 } from '@/interfaces/api/auth/auth.api.interfaces';
 import buildUrl from '@/utils/build-url';
 import { fetchRequest, makeRequest } from '@/utils/fetch';
-import { NextResponse } from 'next/server';
+import { getAuthSessionValue } from '@/utils/iron-session';
+import { AuthSessionData, IronSession } from 'iron-session';
 
 export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApiInterface): Promise<ResponsePostRegisterAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/register');
@@ -94,9 +94,9 @@ export async function postTokenResetPasswordAuthApiAction(
 	return await makeRequest<ResponsePostTokenResetPasswordAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
-export async function postRefreshAuthApiAction(res?: NextResponse): Promise<ResponsePostRefreshAuthApiInterface> {
+export async function postRefreshAuthApiAction(session?: IronSession<AuthSessionData>): Promise<ResponsePostRefreshAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/refresh');
-	const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+	const refreshToken: string | undefined = await getAuthSessionValue('refreshToken');
 
 	const config: RequestInit = {
 		method: 'POST',
@@ -104,12 +104,12 @@ export async function postRefreshAuthApiAction(res?: NextResponse): Promise<Resp
 		credentials: 'include' as RequestCredentials,
 	};
 
-	return await makeRequest<ResponsePostRefreshAuthApiInterface>((): Promise<Response> => fetchRequest(url, config, true, res));
+	return await makeRequest<ResponsePostRefreshAuthApiInterface>((): Promise<Response> => fetchRequest(url, config, true, session));
 }
 
 export async function deleteLogoutAuthApiAction(): Promise<void> {
 	const url: string = buildUrl(BACKEND_URL, '/logout');
-	const refreshToken: string | null = await getCookie(REFRESH_TOKEN_COOKIE);
+	const refreshToken: string | undefined = await getAuthSessionValue('refreshToken');
 
 	const config: RequestInit = {
 		method: 'DELETE',

@@ -1,11 +1,9 @@
 'use server';
 
-import { ACCESS_TOKEN_COOKIE, DEFAULT_COOKIE_CONFIG, ME_COOKIE, REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { DEFAULT_COOKIE_CONFIG } from '@/constants/cookies.constants';
 import { parse } from 'cookie';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { NextResponse } from 'next/server';
 
 export async function getCookie(name: string): Promise<string | null> {
@@ -38,27 +36,6 @@ export async function setCookie(name: string, value: string, maxAge?: 'session' 
 	}
 }
 
-export async function deleteCookie(name: string): Promise<void> {
-	const cookieStore: ReadonlyRequestCookies = await cookies();
-
-	cookieStore.delete(name);
-}
-
-export async function deleteAuthCookies(): Promise<void> {
-	const authCookies: string[] = [ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, ME_COOKIE];
-	await Promise.all(authCookies.map((authCookie: string): Promise<void> => deleteCookie(authCookie)));
-}
-
-export async function getMeFromCookie(): Promise<ObjectMeUsersApiInterface> {
-	const meCookie: string | null = await getCookie(ME_COOKIE);
-
-	if (!meCookie) {
-		return redirect('/login');
-	}
-
-	return JSON.parse(meCookie);
-}
-
 export async function setCookies(cookies: string[], res?: NextResponse): Promise<void> {
 	cookies.map(async (cookie: string): Promise<void> => {
 		const parsedCookie: Record<string, string | undefined> = parse(cookie);
@@ -68,4 +45,10 @@ export async function setCookies(cookies: string[], res?: NextResponse): Promise
 
 		await setCookie(cookieName, cookieValue || '', parsedCookie['Max-Age'] ? parseInt(parsedCookie['Max-Age']) : 'session', parsedCookie['Path'], res);
 	});
+}
+
+export async function deleteCookie(name: string): Promise<void> {
+	const cookieStore: ReadonlyRequestCookies = await cookies();
+
+	cookieStore.delete(name);
 }
