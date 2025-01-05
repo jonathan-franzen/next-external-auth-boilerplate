@@ -106,6 +106,9 @@ export async function makeRequest<T>(func: () => Promise<Response>): Promise<T> 
 	} catch (err) {
 		if (isHttpError(err)) {
 			throw new Error(err.message || 'Something went wrong.');
+		} else if (err instanceof Error) {
+			// Log error here
+			throw new Error('Something went wrong.');
 		}
 		throw new Error('Something went wrong.');
 	}
