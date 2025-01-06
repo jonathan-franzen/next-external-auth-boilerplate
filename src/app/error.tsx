@@ -1,10 +1,13 @@
 'use client';
 
 import GhostButton from '@/components/common/ghost-button';
-import GoBack from '@/components/common/go-back';
 import { ReactNode } from 'react';
 
 function RootError(): ReactNode {
+	const handleReload: () => void = (): void => {
+		window.location.reload();
+	};
+
 	return (
 		<div className='flex h-full flex-col justify-between'>
 			<div>
@@ -14,9 +17,7 @@ function RootError(): ReactNode {
 				</div>
 			</div>
 			<div className='mt-2 flex justify-center'>
-				<GoBack>
-					<GhostButton>Go back</GhostButton>
-				</GoBack>
+				<GhostButton onClick={handleReload}>Go back</GhostButton>
 			</div>
 		</div>
 	);

@@ -20,7 +20,7 @@ async function AdminPage({ searchParams }: AdminPageProps): Promise<ReactNode> {
 	const { page = '1', sortBy = 'createdAt' } = await searchParams;
 	const pageNumber: number = Number(page);
 
-	const response: ResponseGetUsersApiInterface = await getUsersApiAction({ page: pageNumber, sortBy });
+	const response: ResponseGetUsersApiInterface = await getUsersApiAction({ page: pageNumber, sortBy }, true);
 
 	if (!response && pageNumber > 1) {
 		const params = new URLSearchParams({ page, sortBy });

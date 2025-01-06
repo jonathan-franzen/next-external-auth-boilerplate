@@ -13,20 +13,19 @@ import buildUrl from '@/utils/build-url';
 import { authenticatedFetchRequest, makeRequest } from '@/utils/fetch';
 import { AuthSessionData, IronSession } from 'iron-session';
 
-export async function getMeUsersApiAction(session: IronSession<AuthSessionData>): Promise<ResponseGetMeUsersApiInterface> {
+export async function getMeUsersApiAction(session: IronSession<AuthSessionData>, isServerComponent = false): Promise<ResponseGetMeUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/users/me');
 	const config = {
 		method: 'GET',
 	};
 
-	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, session));
+	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, session));
 }
 
-export async function getUsersApiAction({
-	page = 1,
-	limit = USERS_DEFAULT_PAGE_LIMIT,
-	sortBy,
-}: RequestGetUsersApiInterface): Promise<ResponseGetUsersApiInterface> {
+export async function getUsersApiAction(
+	{ page = 1, limit = USERS_DEFAULT_PAGE_LIMIT, sortBy }: RequestGetUsersApiInterface,
+	isServerComponent = false,
+): Promise<ResponseGetUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/users', {
 		...(page && { page: page.toString() }),
 		...(limit && { limit: limit.toString() }),
@@ -34,25 +33,29 @@ export async function getUsersApiAction({
 	});
 	const config = { method: 'GET' };
 
-	return await makeRequest<ResponseGetUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config));
+	return await makeRequest<ResponseGetUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
 }
 
-export async function patchIdUsersApiAction(userId: string, data: RequestPatchIdUsersApiInterface): Promise<ResponsePatchIdUsersApiInterface> {
+export async function patchIdUsersApiAction(
+	userId: string,
+	data: RequestPatchIdUsersApiInterface,
+	isServerComponent = false,
+): Promise<ResponsePatchIdUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
 	const config: RequestInit = {
 		method: 'PATCH',
 		body: JSON.stringify(data),
 	};
 
-	return await makeRequest<ResponsePatchIdUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config));
+	return await makeRequest<ResponsePatchIdUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
 }
 
-export async function deleteIdUsersApiAction(userId: string): Promise<void> {
+export async function deleteIdUsersApiAction(userId: string, isServerComponent = false): Promise<void> {
 	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
 
 	const config = {
 		method: 'DELETE',
 	};
 
-	await makeRequest<void>((): Promise<Response> => authenticatedFetchRequest(url, config));
+	await makeRequest<void>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
 }

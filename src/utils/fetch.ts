@@ -26,6 +26,7 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 		await saveAuthSession('accessToken', accessToken);
 	} else {
 		session.accessToken = accessToken;
+		await session.save('x-middleware-set-cookie');
 	}
 
 	return await fetchRequest(url, config);
@@ -46,6 +47,9 @@ export async function fetchRequest(
 		},
 	};
 
+	if (url.toString().includes('refresh')) {
+		console.log(config.headers)
+	}
 	const response: Response = await fetch(url, config);
 
 	if (setCookiesFromResponse) {
@@ -56,6 +60,7 @@ export async function fetchRequest(
 			let refreshToken: string | null = null;
 
 			for (const cookie of setCookieHeader) {
+				console.log(cookie);
 				if (cookie.includes('refreshToken')) {
 					const match: RegExpMatchArray | null = cookie.match(/refreshToken=([^;]*)/);
 					if (match) {
@@ -68,10 +73,16 @@ export async function fetchRequest(
 
 			if (refreshToken) {
 				if (!session) {
+					console.log('NOT stroing', refreshToken)
 					await saveAuthSession('refreshToken', refreshToken);
 				} else {
+					console.log('yes stroing', refreshToken)
 					session.refreshToken = refreshToken;
+					await session.save('x-middleware-set-cookie');
 				}
+			} else {
+				console.log('yNOTNOTNOTes stroing', refreshToken)
+
 			}
 
 			// Call setCookies with filtered cookies (without refreshToken)
@@ -97,7 +108,12 @@ export async function fetchRequest(
 }
 
 // Fetch protected API routes and reattempt when access-token expired.
-export async function authenticatedFetchRequest(url: RequestInfo | URL, config: RequestInit, session?: IronSession<AuthSessionData>): Promise<Response> {
+export async function authenticatedFetchRequest(
+	url: RequestInfo | URL,
+	config: RequestInit,
+	isServerComponent: boolean,
+	session?: IronSession<AuthSessionData>,
+): Promise<Response> {
 	const accessToken: string | undefined = session?.accessToken || (await getAuthSessionValue('accessToken'));
 
 	const authenticatedRequestHeaders = { ['Authorization']: `Bearer ${accessToken}` };
@@ -114,7 +130,7 @@ export async function authenticatedFetchRequest(url: RequestInfo | URL, config: 
 		return await fetchRequest(url, config);
 	} catch (err) {
 		// If backend API responds that token is invalid, try to refresh and reattempt request.
-		if (isHttpError(err) && err.status === 401) {
+		if (!isServerComponent && isHttpError(err) && err.status === 401) {
 			return await refreshTokenAndMakeRequest(url, config, session);
 		}
 		throw err;

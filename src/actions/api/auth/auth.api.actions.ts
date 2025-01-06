@@ -96,7 +96,7 @@ export async function postTokenResetPasswordAuthApiAction(
 
 export async function postRefreshAuthApiAction(session?: IronSession<AuthSessionData>): Promise<ResponsePostRefreshAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/refresh');
-	const refreshToken: string | undefined = await getAuthSessionValue('refreshToken');
+	const refreshToken: string | undefined = session?.refreshToken || await getAuthSessionValue('refreshToken');
 
 	const config: RequestInit = {
 		method: 'POST',

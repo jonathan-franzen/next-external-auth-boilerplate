@@ -2,7 +2,7 @@ import { getMeUsersApiAction } from '@/actions/api/users/users.api.actions';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface, ResponseGetMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { getAuthSession } from '@/utils/iron-session';
+import { destroyAuthSession, getAuthSession } from '@/utils/iron-session';
 import { AuthSessionData, IronSession } from 'iron-session';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -47,11 +47,15 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 		// If there is an issue getting me-data,
 		// delete all authentication-related cookies and redirect to login-page.
 		if (!meData || !meData.id || !meData.email || meData.roles.length < 1 || !meData.firstName || !meData.lastName) {
-			session.destroy('x-middleware-set-cookie');
-			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req, session);
+			await destroyAuthSession();
+			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req);
 		}
 
 		// From here on, the user is authenticated properly
+
+		// Set meData into iron-session to be used by server-components.
+		session.me = meData;
+		await session.save('x-middleware-set-cookie');
 
 		// If trying to view email-verification-page when email is already verified, redirect to dashboard
 		if (isVerifyRoute && meData.emailVerifiedAt) {
@@ -77,14 +81,11 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 		if (!meData.emailVerifiedAt && !req.nextUrl.pathname.startsWith('/verify-email')) {
 			return redirect('/verify-email', req, session);
 		}
-		// Set meData into iron-session to be used by server-components.
-		session.me = meData;
-		await session.save('x-middleware-set-cookie');
 
 		return nextResponse;
 	} catch {
 		// Unexpected errors delete all authentication-cookies and redirect to login-page.
-		session.destroy('x-middleware-set-cookie');
+		await destroyAuthSession();
 		return redirect('/login', req);
 	}
 }
