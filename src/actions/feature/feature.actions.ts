@@ -6,7 +6,7 @@ import {
 	RequestPostRegisterAuthApiInterface,
 	ResponsePostLoginAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
-import { destroyAuthSession, saveAuthSession } from '@/utils/iron-session';
+import { destroyAuthSession, updateAuthSessionAndSave } from '@/services/iron-session/iron-session.service';
 
 export async function submitRegisterFormFeatureAction(data: RequestPostRegisterAuthApiInterface): Promise<void> {
 	await postRegisterAuthApiAction(data);
@@ -18,7 +18,7 @@ export async function submitRegisterFormFeatureAction(data: RequestPostRegisterA
 
 export async function submitLoginFormFeatureAction(data: RequestPostLoginAuthApiInterface): Promise<void> {
 	const response: ResponsePostLoginAuthApiInterface = await postLoginAuthApiAction(data);
-	await saveAuthSession('accessToken', response.accessToken);
+	await updateAuthSessionAndSave('accessToken', response.accessToken);
 }
 
 export async function onClickLogoutButtonFeatureAction(): Promise<void> {

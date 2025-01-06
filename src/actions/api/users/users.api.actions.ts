@@ -9,15 +9,18 @@ import {
 	ResponseGetUsersApiInterface,
 	ResponsePatchIdUsersApiInterface,
 } from '@/interfaces/api/users/users.api.interfaces';
+import { authenticatedFetchRequest, makeRequest } from '@/services/fetch/fetch.service';
+import { getAuthSession } from '@/services/iron-session/iron-session.service';
 import buildUrl from '@/utils/build-url';
-import { authenticatedFetchRequest, makeRequest } from '@/utils/fetch';
 import { AuthSessionData, IronSession } from 'iron-session';
 
-export async function getMeUsersApiAction(session: IronSession<AuthSessionData>, isServerComponent = false): Promise<ResponseGetMeUsersApiInterface> {
+export async function getMeUsersApiAction(session?: IronSession<AuthSessionData>, isServerComponent = false): Promise<ResponseGetMeUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/users/me');
 	const config = {
 		method: 'GET',
 	};
+
+	session = session || (await getAuthSession());
 
 	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, session));
 }

@@ -1,5 +1,3 @@
-'use server';
-
 import { DEFAULT_COOKIE_CONFIG } from '@/constants/cookies.constants';
 import { parse } from 'cookie';
 import { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';

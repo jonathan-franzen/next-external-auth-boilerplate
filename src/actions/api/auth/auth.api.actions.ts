@@ -1,6 +1,6 @@
 'use server';
 
-import { REFRESH_TOKEN_COOKIE } from '@/constants/cookies.constants';
+import { REFRESH_TOKEN_COOKIE_NAME } from '@/constants/cookies.constants';
 import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestPostLoginAuthApiInterface,
@@ -17,9 +17,9 @@ import {
 	ResponseResendVerifyEmailAuthApiInterface,
 	ResponseTokenVerifyEmailAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
+import { fetchRequest, makeRequest } from '@/services/fetch/fetch.service';
+import { getAuthSessionValue } from '@/services/iron-session/iron-session.service';
 import buildUrl from '@/utils/build-url';
-import { fetchRequest, makeRequest } from '@/utils/fetch';
-import { getAuthSessionValue } from '@/utils/iron-session';
 import { AuthSessionData, IronSession } from 'iron-session';
 
 export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApiInterface): Promise<ResponsePostRegisterAuthApiInterface> {
@@ -96,11 +96,11 @@ export async function postTokenResetPasswordAuthApiAction(
 
 export async function postRefreshAuthApiAction(session?: IronSession<AuthSessionData>): Promise<ResponsePostRefreshAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/refresh');
-	const refreshToken: string | undefined = session?.refreshToken || await getAuthSessionValue('refreshToken');
+	const refreshToken: string | undefined = session?.refreshToken || (await getAuthSessionValue('refreshToken'));
 
 	const config: RequestInit = {
 		method: 'POST',
-		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
+		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE_NAME}=${refreshToken}` } }),
 		credentials: 'include' as RequestCredentials,
 	};
 
@@ -113,7 +113,7 @@ export async function deleteLogoutAuthApiAction(): Promise<void> {
 
 	const config: RequestInit = {
 		method: 'DELETE',
-		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE}=${refreshToken}` } }),
+		...(refreshToken && { headers: { Cookie: `${REFRESH_TOKEN_COOKIE_NAME}=${refreshToken}` } }),
 		credentials: 'include' as RequestCredentials,
 	};
 

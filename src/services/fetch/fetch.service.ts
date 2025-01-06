@@ -1,7 +1,7 @@
 import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
-import { setCookies } from '@/actions/cookies/cookies.actions';
 import { ResponsePostRefreshAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import { getAuthSessionValue, saveAuthSession } from '@/utils/iron-session';
+import { setCookies } from '@/services/cookies/cookies.service';
+import { getAuthSessionValue, updateAuthSessionAndSave } from '@/services/iron-session/iron-session.service';
 import createError, { isHttpError } from 'http-errors';
 import { AuthSessionData, IronSession } from 'iron-session';
 
@@ -23,10 +23,9 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 	};
 
 	if (!session) {
-		await saveAuthSession('accessToken', accessToken);
+		await updateAuthSessionAndSave('accessToken', accessToken);
 	} else {
 		session.accessToken = accessToken;
-		await session.save('x-middleware-set-cookie');
 	}
 
 	return await fetchRequest(url, config);
@@ -47,9 +46,6 @@ export async function fetchRequest(
 		},
 	};
 
-	if (url.toString().includes('refresh')) {
-		console.log(config.headers)
-	}
 	const response: Response = await fetch(url, config);
 
 	if (setCookiesFromResponse) {
@@ -60,7 +56,6 @@ export async function fetchRequest(
 			let refreshToken: string | null = null;
 
 			for (const cookie of setCookieHeader) {
-				console.log(cookie);
 				if (cookie.includes('refreshToken')) {
 					const match: RegExpMatchArray | null = cookie.match(/refreshToken=([^;]*)/);
 					if (match) {
@@ -73,16 +68,10 @@ export async function fetchRequest(
 
 			if (refreshToken) {
 				if (!session) {
-					console.log('NOT stroing', refreshToken)
-					await saveAuthSession('refreshToken', refreshToken);
+					await updateAuthSessionAndSave('refreshToken', refreshToken);
 				} else {
-					console.log('yes stroing', refreshToken)
 					session.refreshToken = refreshToken;
-					await session.save('x-middleware-set-cookie');
 				}
-			} else {
-				console.log('yNOTNOTNOTes stroing', refreshToken)
-
 			}
 
 			// Call setCookies with filtered cookies (without refreshToken)
@@ -149,7 +138,7 @@ export async function makeRequest<T>(func: () => Promise<Response>): Promise<T> 
 		}
 	} catch (err) {
 		if (isHttpError(err)) {
-			throw new Error(err.message || 'Something went wrong.');
+			throw createError(err.status, err.message || 'Something went wrong.');
 		} else if (err instanceof Error) {
 			// Log error here
 			throw new Error('Something went wrong.');

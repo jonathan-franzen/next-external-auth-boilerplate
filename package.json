@@ -12,6 +12,7 @@
 		"prettier:check": "prettier --check --ignore-unknown ."
 	},
 	"dependencies": {
+		"@open-draft/until": "^2.1.0",
 		"clsx": "^2.1.1",
 		"cookie": "^1.0.2",
 		"http-errors": "^2.0.0",

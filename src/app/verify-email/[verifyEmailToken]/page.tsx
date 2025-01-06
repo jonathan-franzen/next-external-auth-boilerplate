@@ -2,7 +2,7 @@
 
 import VerifyEmail from '@/components/page-specific/verify-email-token/verify-email';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { getAuthSessionValue } from '@/utils/iron-session';
+import { getAuthSessionValue } from '@/services/iron-session/iron-session.service';
 import { ReactNode } from 'react';
 
 interface VerifyEmailTokenPageProps {

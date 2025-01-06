@@ -4,7 +4,7 @@ import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { getMeFromAuthSession } from '@/utils/iron-session';
+import { getMeFromAuthSession } from '@/services/iron-session/iron-session.service';
 import { ReactNode } from 'react';
 
 async function DashboardPage(): Promise<ReactNode> {
