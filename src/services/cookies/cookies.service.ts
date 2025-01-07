@@ -34,12 +34,16 @@ export async function setCookie(name: string, value: string, maxAge?: 'session' 
 	}
 }
 
-export async function setCookies(cookies: string[], res?: NextResponse): Promise<void> {
+export async function setCookies(cookies: string[], filter: string[] = ['all'], res?: NextResponse): Promise<void> {
 	cookies.map(async (cookie: string): Promise<void> => {
 		const parsedCookie: Record<string, string | undefined> = parse(cookie);
 
 		const cookieName: string = Object.keys(parsedCookie)[0];
 		const cookieValue: string | undefined = parsedCookie[cookieName];
+
+		if (!filter.includes('all') && !filter.includes(cookieName)) {
+			return;
+		}
 
 		await setCookie(cookieName, cookieValue || '', parsedCookie['Max-Age'] ? parseInt(parsedCookie['Max-Age']) : 'session', parsedCookie['Path'], res);
 	});

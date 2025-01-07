@@ -1,3 +1,4 @@
+import { AUTH_SESSION_COOKIE_NAME } from '@/constants/cookies.constants';
 import { IRON_SESSION_SECRET } from '@/constants/environment.constants';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { AuthSessionData, getIronSession, IronSession, SessionOptions } from 'iron-session';
@@ -8,7 +9,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const sessionOptions: SessionOptions = {
 	password: IRON_SESSION_SECRET,
-	cookieName: 'session',
+	cookieName: AUTH_SESSION_COOKIE_NAME,
 	cookieOptions: {
 		secure: process.env.NODE_ENV === 'production',
 		httpOnly: true,

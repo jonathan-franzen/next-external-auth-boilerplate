@@ -1,7 +1,9 @@
 import { getMeUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { AUTH_SESSION_COOKIE_NAME } from '@/constants/cookies.constants';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface, ResponseGetMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { setCookies } from '@/services/cookies/cookies.service';
 import { destroyAuthSession, getAuthSession } from '@/services/iron-session/iron-session.service';
 import { AuthSessionData, IronSession } from 'iron-session';
 import { NextRequest, NextResponse } from 'next/server';
@@ -48,7 +50,12 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 
 		// Set meData into authSession to be used by server-components.
 		session.me = meData;
-		await session.save('x-middleware-set-cookie');
+		await session.save();
+
+		// We need to retrieve the iron-session set-cookie, and then set the cookie on the middlewareResponse as well,
+		// to make sure it's available on immediate server-component render
+		const setCookieHeader: string[] = nextResponse.headers.getSetCookie();
+		await setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], nextResponse);
 
 		// If trying to view email-verification-page when email is already verified, redirect to dashboard
 		if (isVerifyRoute && meData.emailVerifiedAt) {

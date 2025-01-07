@@ -1,4 +1,5 @@
 export const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
+export const AUTH_SESSION_COOKIE_NAME = 'session';
 
 interface DefaultCookieConfigInterface {
 	path?: string;
