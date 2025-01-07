@@ -1,6 +1,5 @@
-export const REFRESH_TOKEN_COOKIE = 'refreshToken';
-export const ACCESS_TOKEN_COOKIE = 'accessToken';
-export const ME_COOKIE = 'me';
+export const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
+export const AUTH_SESSION_COOKIE_NAME = 'session';
 
 interface DefaultCookieConfigInterface {
 	path?: string;
