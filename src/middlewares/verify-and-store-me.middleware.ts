@@ -9,8 +9,14 @@ import { AuthSessionData, IronSession } from 'iron-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Redirect when certain criteria is met.
-async function redirect(url: string, req: NextRequest): Promise<NextResponse> {
-	return NextResponse.redirect(new URL(url, req.nextUrl));
+async function redirect(url: string, req: NextRequest, setCookieHeader?: string[]): Promise<NextResponse> {
+	const redirectResponse: NextResponse = NextResponse.redirect(new URL(url, req.nextUrl));
+
+	// Set the authSession cookie on the redirect Response as well, if provided.
+	if (setCookieHeader) {
+		await setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], redirectResponse);
+	}
+	return redirectResponse;
 }
 
 // Verify access-token & refresh if token has expired.
@@ -59,27 +65,27 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 
 		// If trying to view email-verification-page when email is already verified, redirect to dashboard
 		if (isVerifyRoute && meData.emailVerifiedAt) {
-			return redirect('/dashboard', req);
+			return redirect('/dashboard', req, setCookieHeader);
 		}
 
 		// Always redirect root path to dashboard-page
 		if (path === '/') {
-			return redirect('/dashboard', req);
+			return redirect('/dashboard', req, setCookieHeader);
 		}
 
 		// Authenticated users are not allowed to view public routes. Redirect them to dashboard-page.
 		if (isPublicRoute && !req.nextUrl.pathname.startsWith('/dashboard')) {
-			return redirect('/dashboard', req);
+			return redirect('/dashboard', req, setCookieHeader);
 		}
 
 		// if a non-admin user tries to see an admin-route, redirect them to unauthorized page.
 		if (isAdminRoute && !meData.roles.includes(RolesEnum.ADMIN)) {
-			return redirect('/unauthorized', req);
+			return redirect('/unauthorized', req, setCookieHeader);
 		}
 
 		// If an unverified user tries to see anything other than the verify-email-page, redirect them there.
 		if (!meData.emailVerifiedAt && !req.nextUrl.pathname.startsWith('/verify-email')) {
-			return redirect('/verify-email', req);
+			return redirect('/verify-email', req, setCookieHeader);
 		}
 
 		return nextResponse;
