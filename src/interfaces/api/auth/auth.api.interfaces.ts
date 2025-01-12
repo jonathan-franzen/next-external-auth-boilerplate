@@ -9,15 +9,15 @@ export interface ResponsePostRegisterAuthApiInterface {
 	message: string;
 }
 
-export interface RequestResendVerifyEmailAuthApiInterface {
+export interface RequestPostResendVerifyEmailAuthApiInterface {
 	email: string;
 }
 
-export interface ResponseResendVerifyEmailAuthApiInterface {
+export interface ResponsePostResendVerifyEmailAuthApiInterface {
 	message: string;
 }
 
-export interface ResponseTokenVerifyEmailAuthApiInterface {
+export interface ResponsePostTokenVerifyEmailAuthApiInterface {
 	message: string;
 }
 

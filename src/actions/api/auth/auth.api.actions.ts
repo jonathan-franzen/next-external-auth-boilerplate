@@ -4,18 +4,17 @@ import { REFRESH_TOKEN_COOKIE_NAME } from '@/constants/cookies.constants';
 import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestPostLoginAuthApiInterface,
-	RequestPostRegisterAuthApiInterface,
+	RequestPostRegisterAuthApiInterface, RequestPostResendVerifyEmailAuthApiInterface,
 	RequestPostResetPasswordAuthApiInterface,
 	RequestPostTokenResetPasswordAuthApiInterface,
-	RequestResendVerifyEmailAuthApiInterface,
 	ResponseGetTokenResetPasswordAuthApiInterface,
 	ResponsePostLoginAuthApiInterface,
 	ResponsePostRefreshAuthApiInterface,
 	ResponsePostRegisterAuthApiInterface,
 	ResponsePostResetPasswordAuthApiInterface,
 	ResponsePostTokenResetPasswordAuthApiInterface,
-	ResponseResendVerifyEmailAuthApiInterface,
-	ResponseTokenVerifyEmailAuthApiInterface,
+	ResponsePostResendVerifyEmailAuthApiInterface,
+	ResponsePostTokenVerifyEmailAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
 import { fetchRequest, makeRequest } from '@/services/fetch/fetch.service';
 import { getAuthSessionValue } from '@/services/iron-session/iron-session.service';
@@ -32,23 +31,23 @@ export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApi
 	return await makeRequest<ResponsePostRegisterAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
-export async function postResendVerifyEmailAuthApiAction(data: RequestResendVerifyEmailAuthApiInterface): Promise<ResponseResendVerifyEmailAuthApiInterface> {
+export async function postResendVerifyEmailAuthApiAction(data: RequestPostResendVerifyEmailAuthApiInterface): Promise<ResponsePostResendVerifyEmailAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/resend-verify-email');
 	const config: RequestInit = {
 		method: 'POST',
 		body: JSON.stringify(data),
 	};
 
-	return await makeRequest<ResponseResendVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
+	return await makeRequest<ResponsePostResendVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
-export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string): Promise<ResponseTokenVerifyEmailAuthApiInterface> {
+export async function postTokenVerifyEmailAuthApiAction(verifyEmailToken: string): Promise<ResponsePostTokenVerifyEmailAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, `/verify-email/${verifyEmailToken}`);
 	const config: RequestInit = {
 		method: 'POST',
 	};
 
-	return await makeRequest<ResponseTokenVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
+	return await makeRequest<ResponsePostTokenVerifyEmailAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
 export async function postLoginAuthApiAction(data: RequestPostLoginAuthApiInterface): Promise<ResponsePostLoginAuthApiInterface> {

@@ -37,7 +37,7 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 	// If there is no refresh-token stored in authSession,
 	// and the request is not against a public route, redirect to login-page.
 	if (!session.refreshToken) {
-		return (isPublicRoute && path !== '/') || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req);
+		return (isPublicRoute && path !== '/') || (isVerifyRoute && !path.endsWith('/verify-email')) ? nextResponse : redirect('/login', req);
 	}
 
 	try {
@@ -49,7 +49,7 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 		// destroy the authSession and redirect to login-page.
 		if (!meData || !meData.id || !meData.email || meData.roles.length < 1 || !meData.firstName || !meData.lastName) {
 			await destroyAuthSession();
-			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? NextResponse.next() : redirect('/login', req);
+			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? nextResponse : redirect('/login', req);
 		}
 
 		// From here on, the user is authenticated properly
