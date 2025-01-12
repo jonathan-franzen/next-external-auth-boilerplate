@@ -23,7 +23,9 @@ function SortingSelector({ initialSortingOption, className }: SortingSelectorPro
 	const handleOnChange: (newSortBy: string) => void = (newSortBy: string): void => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('sortBy', newSortBy);
-		params.set('page', '1');
+		if (params.has('page')) {
+			params.set('page', '1');
+		}
 		router.push(`/admin?${params.toString()}`);
 	};
 
