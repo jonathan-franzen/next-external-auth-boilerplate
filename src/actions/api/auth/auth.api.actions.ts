@@ -4,16 +4,17 @@ import { REFRESH_TOKEN_COOKIE_NAME } from '@/constants/cookies.constants';
 import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestPostLoginAuthApiInterface,
-	RequestPostRegisterAuthApiInterface, RequestPostResendVerifyEmailAuthApiInterface,
+	RequestPostRegisterAuthApiInterface,
+	RequestPostResendVerifyEmailAuthApiInterface,
 	RequestPostResetPasswordAuthApiInterface,
 	RequestPostTokenResetPasswordAuthApiInterface,
 	ResponseGetTokenResetPasswordAuthApiInterface,
 	ResponsePostLoginAuthApiInterface,
 	ResponsePostRefreshAuthApiInterface,
 	ResponsePostRegisterAuthApiInterface,
+	ResponsePostResendVerifyEmailAuthApiInterface,
 	ResponsePostResetPasswordAuthApiInterface,
 	ResponsePostTokenResetPasswordAuthApiInterface,
-	ResponsePostResendVerifyEmailAuthApiInterface,
 	ResponsePostTokenVerifyEmailAuthApiInterface,
 } from '@/interfaces/api/auth/auth.api.interfaces';
 import { fetchRequest, makeRequest } from '@/services/fetch/fetch.service';
@@ -31,7 +32,9 @@ export async function postRegisterAuthApiAction(data: RequestPostRegisterAuthApi
 	return await makeRequest<ResponsePostRegisterAuthApiInterface>((): Promise<Response> => fetchRequest(url, config));
 }
 
-export async function postResendVerifyEmailAuthApiAction(data: RequestPostResendVerifyEmailAuthApiInterface): Promise<ResponsePostResendVerifyEmailAuthApiInterface> {
+export async function postResendVerifyEmailAuthApiAction(
+	data: RequestPostResendVerifyEmailAuthApiInterface,
+): Promise<ResponsePostResendVerifyEmailAuthApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/resend-verify-email');
 	const config: RequestInit = {
 		method: 'POST',
