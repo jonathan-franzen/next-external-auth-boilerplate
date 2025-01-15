@@ -8,7 +8,12 @@ import { AuthSessionData, IronSession } from 'iron-session';
 const defaultHeaders = { 'Content-Type': 'application/json' };
 
 // Refresh access-token against Backend API and then re-attempt the request.
-async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: RequestInit, session?: IronSession<AuthSessionData>): Promise<Response> {
+async function refreshTokenAndMakeRequest(
+	url: RequestInfo | URL,
+	config: RequestInit,
+	setCookiesFromResponse?: boolean,
+	session?: IronSession<AuthSessionData>,
+): Promise<Response> {
 	const response: ResponsePostRefreshAuthApiInterface = await postRefreshAuthApiAction(session);
 	const { accessToken } = response;
 
@@ -28,7 +33,7 @@ async function refreshTokenAndMakeRequest(url: RequestInfo | URL, config: Reques
 		session.accessToken = accessToken;
 	}
 
-	return await fetchRequest(url, config);
+	return await fetchRequest(url, config, setCookiesFromResponse);
 }
 
 // Custom fetch function that allows to set cookies and handles errors.
@@ -101,6 +106,7 @@ export async function authenticatedFetchRequest(
 	url: RequestInfo | URL,
 	config: RequestInit,
 	isServerComponent: boolean,
+	setCookiesFromResponse: boolean = false,
 	session?: IronSession<AuthSessionData>,
 ): Promise<Response> {
 	const accessToken: string | undefined = session?.accessToken || (await getAuthSessionValue('accessToken'));
@@ -116,11 +122,11 @@ export async function authenticatedFetchRequest(
 	};
 
 	try {
-		return await fetchRequest(url, config);
+		return await fetchRequest(url, config, setCookiesFromResponse);
 	} catch (err) {
 		// If backend API responds that token is invalid, try to refresh and reattempt request.
 		if (!isServerComponent && isHttpError(err) && err.status === 401) {
-			return await refreshTokenAndMakeRequest(url, config, session);
+			return await refreshTokenAndMakeRequest(url, config, setCookiesFromResponse, session);
 		}
 		throw err;
 	}

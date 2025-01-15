@@ -5,12 +5,14 @@ import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestGetUsersApiInterface,
 	RequestPatchIdUsersApiInterface,
+	RequestPostMeResetPasswordUsersApiInterface,
 	ResponseGetMeUsersApiInterface,
 	ResponseGetUsersApiInterface,
 	ResponsePatchIdUsersApiInterface,
+	ResponsePostMeResetPasswordUsersApiInterface,
 } from '@/interfaces/api/users/users.api.interfaces';
 import { authenticatedFetchRequest, makeRequest } from '@/services/fetch/fetch.service';
-import { getAuthSession } from '@/services/iron-session/iron-session.service';
+import { getAuthSession, updateAuthSessionAndSave } from '@/services/iron-session/iron-session.service';
 import buildUrl from '@/utils/build-url';
 import { AuthSessionData, IronSession } from 'iron-session';
 
@@ -22,7 +24,25 @@ export async function getMeUsersApiAction(session?: IronSession<AuthSessionData>
 
 	session = session || (await getAuthSession());
 
-	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, session));
+	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, false, session));
+}
+
+export async function postMeResetPasswordUsersApiAction(
+	data: RequestPostMeResetPasswordUsersApiInterface,
+	isServerComponent = false,
+): Promise<ResponsePostMeResetPasswordUsersApiInterface> {
+	const url: string = buildUrl(BACKEND_URL, '/users/me/reset-password');
+	const config = {
+		method: 'POST',
+		body: JSON.stringify(data),
+	};
+	const response = await makeRequest<ResponsePostMeResetPasswordUsersApiInterface>(
+		(): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, true),
+	);
+
+	await updateAuthSessionAndSave('accessToken', response.accessToken);
+
+	return response;
 }
 
 export async function getUsersApiAction(

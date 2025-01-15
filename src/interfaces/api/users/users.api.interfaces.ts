@@ -23,6 +23,16 @@ export interface ResponseGetMeUsersApiInterface {
 	me: ObjectMeUsersApiInterface;
 }
 
+export interface RequestPostMeResetPasswordUsersApiInterface {
+	password: string;
+	newPassword: string;
+}
+
+export interface ResponsePostMeResetPasswordUsersApiInterface {
+	message: string;
+	accessToken: string;
+}
+
 export interface RequestGetUsersApiInterface {
 	page?: number;
 	limit?: number;

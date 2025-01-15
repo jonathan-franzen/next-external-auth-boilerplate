@@ -2,6 +2,7 @@
 
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
+import ResetPasswordForm from '@/components/features/reset-password-form';
 import RolesEnum from '@/enums/roles.enum';
 import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { getMeFromAuthSession } from '@/services/iron-session/iron-session.service';
@@ -22,6 +23,7 @@ async function DashboardPage(): Promise<ReactNode> {
 					<li>Roles: {me.roles.map((role: string, index: number): string => (index < me.roles.length - 1 ? `${role}, ` : role))}</li>
 				</ul>
 			</div>
+			<ResetPasswordForm />
 			<div>
 				<LogoutButton />
 				<div className='mt-2 flex justify-center'>
