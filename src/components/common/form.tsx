@@ -77,6 +77,7 @@ function Form({
 
 		try {
 			await onSubmit(formData);
+			setFormData(initialFormData || {});
 		} catch (err) {
 			if (err instanceof Error) {
 				setErrorMessage(err.message);
