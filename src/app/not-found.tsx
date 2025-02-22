@@ -3,7 +3,7 @@
 import GhostLink from '@/components/common/ghost-link';
 import { ReactNode } from 'react';
 
-async function RootNotFound(): Promise<ReactNode> {
+function RootNotFound(): ReactNode {
 	return (
 		<div className='flex h-full flex-col justify-between'>
 			<div>

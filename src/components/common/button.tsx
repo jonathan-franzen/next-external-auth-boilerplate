@@ -5,17 +5,17 @@ import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface ButtonProps {
-	type?: 'button' | 'submit' | 'reset';
-	isLoading?: boolean;
-	disabled?: boolean;
-	onClick?: () => void;
-	className?: string;
 	children?: ReactNode;
+	className?: string;
+	disabled?: boolean;
+	isLoading?: boolean;
+	onClick?: () => void;
+	type?: 'button' | 'reset' | 'submit';
 }
 
-function Button({ type = 'button', isLoading = false, disabled = false, onClick, className, children }: ButtonProps): ReactNode {
+function Button({ children, className, disabled = false, isLoading = false, onClick, type = 'button' }: ButtonProps): ReactNode {
 	return (
-		<button type={type} disabled={isLoading || disabled} onClick={onClick} className={twMerge('focus:outline-none disabled:cursor-not-allowed', className)}>
+		<button className={twMerge('focus:outline-none disabled:cursor-not-allowed', className)} disabled={isLoading || disabled} onClick={onClick} type={type}>
 			{isLoading ? <LoadingSpinner size='md' /> : children}
 		</button>
 	);

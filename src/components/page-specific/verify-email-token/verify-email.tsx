@@ -3,22 +3,21 @@
 import { postTokenVerifyEmailAuthApiAction } from '@/actions/api/auth/auth.api.actions';
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface VerifyEmailProps {
-	verifyEmailToken: string;
 	isAuthenticated: boolean;
+	verifyEmailToken: string;
 }
 
-function VerifyEmail({ verifyEmailToken, isAuthenticated }: VerifyEmailProps): ReactNode {
-	const router: AppRouterInstance = useRouter();
+function VerifyEmail({ isAuthenticated, verifyEmailToken }: VerifyEmailProps): ReactNode {
+	const router = useRouter();
 	const [isError, setIsError] = useState(false);
 
 	useEffect((): void => {
-		const verify: () => Promise<void> = async (): Promise<void> => {
+		const verify = async (): Promise<void> => {
 			try {
 				await postTokenVerifyEmailAuthApiAction(verifyEmailToken);
 				toast.success('Email verified.');
@@ -40,7 +39,7 @@ function VerifyEmail({ verifyEmailToken, isAuthenticated }: VerifyEmailProps): R
 		);
 	}
 
-	return null;
+	return;
 }
 
 export default VerifyEmail;

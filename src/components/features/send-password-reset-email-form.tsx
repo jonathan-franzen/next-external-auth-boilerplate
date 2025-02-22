@@ -4,7 +4,6 @@ import { postResetPasswordAuthApiAction } from '@/actions/api/auth/auth.api.acti
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { RequestPostResetPasswordAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { ReactNode, startTransition, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -16,36 +15,36 @@ interface SendPasswordResetEmailFormProps {
 function SendPasswordResetEmailForm({ className }: SendPasswordResetEmailFormProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const formFields: FieldReactFormInterface[] = [{ name: 'email', type: 'text', placeholder: 'Email', autoComplete: 'email', required: true }];
+	const formFields = [{ autoComplete: 'email', name: 'email', placeholder: 'Email', required: true, type: 'text' }];
 
 	// Validate the entered email-address to avoid unnecessary backend- requests.
-	const formValidationSchema: ValidationSchemaReactFormInterface = {
+	const formValidationSchema = {
 		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Not a valid email address.', false),
 	};
 
-	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
 			await postResetPasswordAuthApiAction(formData as unknown as RequestPostResetPasswordAuthApiInterface);
 			toast.success('Email sent successfully.');
 			// Transition to make sure loading state is handled properly.
-			startTransition((): void => {
+			startTransition(() => {
 				setIsLoading(false);
 			});
-		} catch (err) {
+		} catch (error) {
 			setIsLoading(false);
-			throw err;
+			throw error;
 		}
 	};
 
 	return (
 		<Form
-			fields={formFields}
-			submitLabel='SEND PASSWORD RESET EMAIL'
-			onSubmit={handleOnSubmit}
-			isLoading={isLoading}
-			validationSchema={formValidationSchema}
 			className={className}
+			fields={formFields}
+			isLoading={isLoading}
+			onSubmit={handleOnSubmit}
+			submitLabel='SEND PASSWORD RESET EMAIL'
+			validationSchema={formValidationSchema}
 		/>
 	);
 }

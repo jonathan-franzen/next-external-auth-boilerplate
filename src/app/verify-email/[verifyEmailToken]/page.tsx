@@ -16,10 +16,10 @@ async function VerifyEmailTokenPage({ params }: VerifyEmailTokenPageProps): Prom
 	const me: ObjectMeUsersApiInterface | undefined = await getAuthSessionValue('me');
 
 	if (!verifyEmailToken) {
-		return null;
+		return;
 	}
 
-	return <VerifyEmail verifyEmailToken={verifyEmailToken} isAuthenticated={!!me} />;
+	return <VerifyEmail isAuthenticated={!!me} verifyEmailToken={verifyEmailToken} />;
 }
 
 export default VerifyEmailTokenPage;

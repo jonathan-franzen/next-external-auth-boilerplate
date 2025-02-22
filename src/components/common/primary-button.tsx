@@ -3,12 +3,12 @@ import { ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface PrimaryButtonProps {
-	type?: 'button' | 'submit' | 'reset';
-	isLoading?: boolean;
-	disabled?: boolean;
-	onClick?: () => void;
-	className?: string;
 	children?: ReactNode;
+	className?: string;
+	disabled?: boolean;
+	isLoading?: boolean;
+	onClick?: () => void;
+	type?: 'button' | 'reset' | 'submit';
 }
 
 function PrimaryButton(props: PrimaryButtonProps): ReactNode {

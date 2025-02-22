@@ -16,37 +16,29 @@ import { getAuthSession, updateAuthSessionAndSave } from '@/services/iron-sessio
 import buildUrl from '@/utils/build-url';
 import { AuthSessionData, IronSession } from 'iron-session';
 
+export async function deleteIdUsersApiAction(userId: string, isServerComponent = false): Promise<void> {
+	const url = buildUrl(BACKEND_URL, `/users/${userId}`);
+
+	const config = {
+		method: 'DELETE',
+	};
+
+	await makeRequest<void>(() => authenticatedFetchRequest(url, config, isServerComponent));
+}
+
 export async function getMeUsersApiAction(session?: IronSession<AuthSessionData>, isServerComponent = false): Promise<ResponseGetMeUsersApiInterface> {
-	const url: string = buildUrl(BACKEND_URL, '/users/me');
+	const url = buildUrl(BACKEND_URL, '/users/me');
 	const config = {
 		method: 'GET',
 	};
 
 	session = session || (await getAuthSession());
 
-	return await makeRequest<ResponseGetMeUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, false, session));
-}
-
-export async function postMeResetPasswordUsersApiAction(
-	data: RequestPostMeResetPasswordUsersApiInterface,
-	isServerComponent = false,
-): Promise<ResponsePostMeResetPasswordUsersApiInterface> {
-	const url: string = buildUrl(BACKEND_URL, '/users/me/reset-password');
-	const config = {
-		method: 'POST',
-		body: JSON.stringify(data),
-	};
-	const response = await makeRequest<ResponsePostMeResetPasswordUsersApiInterface>(
-		(): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent, true),
-	);
-
-	await updateAuthSessionAndSave('accessToken', response.accessToken);
-
-	return response;
+	return await makeRequest<ResponseGetMeUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent, false, session));
 }
 
 export async function getUsersApiAction(
-	{ page = 1, limit = USERS_DEFAULT_PAGE_LIMIT, sortBy }: RequestGetUsersApiInterface,
+	{ limit = USERS_DEFAULT_PAGE_LIMIT, page = 1, sortBy }: RequestGetUsersApiInterface,
 	isServerComponent = false,
 ): Promise<ResponseGetUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, '/users', {
@@ -56,7 +48,7 @@ export async function getUsersApiAction(
 	});
 	const config = { method: 'GET' };
 
-	return await makeRequest<ResponseGetUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
+	return await makeRequest<ResponseGetUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent));
 }
 
 export async function patchIdUsersApiAction(
@@ -66,19 +58,25 @@ export async function patchIdUsersApiAction(
 ): Promise<ResponsePatchIdUsersApiInterface> {
 	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
 	const config: RequestInit = {
-		method: 'PATCH',
 		body: JSON.stringify(data),
+		method: 'PATCH',
 	};
 
-	return await makeRequest<ResponsePatchIdUsersApiInterface>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
+	return await makeRequest<ResponsePatchIdUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent));
 }
 
-export async function deleteIdUsersApiAction(userId: string, isServerComponent = false): Promise<void> {
-	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
-
+export async function postMeResetPasswordUsersApiAction(
+	data: RequestPostMeResetPasswordUsersApiInterface,
+	isServerComponent = false,
+): Promise<ResponsePostMeResetPasswordUsersApiInterface> {
+	const url = buildUrl(BACKEND_URL, '/users/me/update-password');
 	const config = {
-		method: 'DELETE',
+		body: JSON.stringify(data),
+		method: 'POST',
 	};
+	const response = await makeRequest<ResponsePostMeResetPasswordUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent, true));
 
-	await makeRequest<void>((): Promise<Response> => authenticatedFetchRequest(url, config, isServerComponent));
+	await updateAuthSessionAndSave('accessToken', response.accessToken);
+
+	return response;
 }

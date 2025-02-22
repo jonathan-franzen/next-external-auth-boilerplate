@@ -1,6 +1,5 @@
 'use client';
 
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 
@@ -9,9 +8,9 @@ interface GoBackProps {
 }
 
 function GoBack({ children }: GoBackProps): ReactNode {
-	const router: AppRouterInstance = useRouter();
+	const router = useRouter();
 	return (
-		<div className='inline-flex' onClick={(): void => router.back()}>
+		<div className='inline-flex' onClick={() => router.back()}>
 			{children}
 		</div>
 	);

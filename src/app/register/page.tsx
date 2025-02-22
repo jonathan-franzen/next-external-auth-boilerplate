@@ -4,7 +4,7 @@ import GhostLink from '@/components/common/ghost-link';
 import RegisterForm from '@/components/features/register-form';
 import { ReactNode } from 'react';
 
-async function RegisterPage(): Promise<ReactNode> {
+function RegisterPage(): ReactNode {
 	return (
 		<>
 			<h1 className='text-center text-sm font-semibold text-gray-700'>SIGN UP</h1>

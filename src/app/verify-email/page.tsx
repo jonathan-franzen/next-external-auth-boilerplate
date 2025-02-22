@@ -2,12 +2,11 @@
 
 import LogoutButton from '@/components/features/logout-button';
 import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button';
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { getMeFromAuthSession } from '@/services/iron-session/iron-session.service';
 import { ReactNode } from 'react';
 
 async function VerifyEmailPage(): Promise<ReactNode> {
-	const me: ObjectMeUsersApiInterface = await getMeFromAuthSession();
+	const me = await getMeFromAuthSession();
 
 	return (
 		<>

@@ -1,54 +1,29 @@
-export interface ObjectUserUsersApiInterface {
+export interface ObjectMeUsersApiInterface {
 	email: string;
-	id: string;
+	emailVerifiedAt: null | string;
 	firstName: string;
+	id: string;
 	lastName: string;
 	roles: string[];
-	emailVerifiedAt: string | null;
+}
+
+export interface ObjectUserUsersApiInterface {
 	createdAt: string;
+	email: string;
+	emailVerifiedAt: null | string;
+	firstName: string;
+	id: string;
+	lastName: string;
+	roles: string[];
 	updatedAt: string;
 }
 
-export interface ObjectMeUsersApiInterface {
-	email: string;
-	id: string;
-	firstName: string;
-	lastName: string;
-	roles: string[];
-	emailVerifiedAt: string | null;
-}
-
-export interface ResponseGetMeUsersApiInterface {
-	message: string;
-	me: ObjectMeUsersApiInterface;
-}
-
-export interface RequestPostMeResetPasswordUsersApiInterface {
-	password: string;
-	newPassword: string;
-}
-
-export interface ResponsePostMeResetPasswordUsersApiInterface {
-	message: string;
-	accessToken: string;
-}
-
 export interface RequestGetUsersApiInterface {
-	page?: number;
+	filters?: Record<string, string>;
 	limit?: number;
+	page?: number;
 	sortBy?: string;
 	sortOrder?: 'asc' | 'desc';
-	filters?: Record<string, string>;
-}
-
-export interface ResponseGetUsersApiInterface {
-	message: string;
-	users: ObjectUserUsersApiInterface[];
-	pagination: {
-		page: number;
-		limit: number;
-		totalPages: number;
-	};
 }
 
 export interface RequestPatchIdUsersApiInterface {
@@ -57,7 +32,32 @@ export interface RequestPatchIdUsersApiInterface {
 	lastName?: string;
 }
 
+export interface RequestPostMeResetPasswordUsersApiInterface {
+	newPassword: string;
+	password: string;
+}
+
+export interface ResponseGetMeUsersApiInterface {
+	me: ObjectMeUsersApiInterface;
+	message: string;
+}
+
+export interface ResponseGetUsersApiInterface {
+	message: string;
+	pagination: {
+		limit: number;
+		page: number;
+		totalPages: number;
+	};
+	users: ObjectUserUsersApiInterface[];
+}
+
 export interface ResponsePatchIdUsersApiInterface {
 	message: string;
 	user: ObjectUserUsersApiInterface;
+}
+
+export interface ResponsePostMeResetPasswordUsersApiInterface {
+	accessToken: string;
+	message: string;
 }

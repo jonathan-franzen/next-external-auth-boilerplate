@@ -4,12 +4,10 @@ import { submitLoginFormFeatureAction } from '@/actions/feature/feature.actions'
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { RequestPostLoginAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useState } from 'react';
+import {ReactNode, useState} from 'react';
 
 interface LoginFormProps {
 	className?: string;
@@ -17,43 +15,43 @@ interface LoginFormProps {
 
 function LoginForm({ className }: LoginFormProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
-	const router: AppRouterInstance = useRouter();
+	const router = useRouter();
 
-	const formFields: FieldReactFormInterface[] = [
-		{ name: 'email', type: 'text', placeholder: 'Email', autoComplete: 'email', required: true },
-		{ name: 'password', type: 'password', placeholder: 'Password', autoComplete: 'current-password', required: true },
+	const formFields = [
+		{ autoComplete: 'email', name: 'email', placeholder: 'Email', required: true, type: 'text' },
+		{ autoComplete: 'current-password', name: 'password', placeholder: 'Password', required: true, type: 'password' },
 	];
 
-	const formValidationSchema: ValidationSchemaReactFormInterface = {
-		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Invalid credentials.', false),
+	const formValidationSchema = {
+		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Invalid password.', false),
 	};
 
-	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
 			await submitLoginFormFeatureAction(formData as unknown as RequestPostLoginAuthApiInterface);
-			router.push('/dashboard');
-		} catch (err) {
+			await new Promise(() => router.push('/dashboard'));
+		} catch (error) {
 			setIsLoading(false);
-			throw err;
+			throw error;
 		}
 	};
 
 	return (
 		<Form
-			fields={formFields}
-			submitLabel='SIGN IN'
-			onSubmit={handleOnSubmit}
-			isLoading={isLoading}
-			validationSchema={formValidationSchema}
 			additionalContent={
 				<div className='mt-1 flex justify-end'>
-					<Link href='/reset-password' className='w-fit text-xs text-pink-900 hover:text-pink-700'>
+					<Link className='w-fit text-xs text-pink-900 hover:text-pink-700' href='/reset-password'>
 						Forgot your password?
 					</Link>
 				</div>
 			}
 			className={className}
+			fields={formFields}
+			isLoading={isLoading}
+			onSubmit={handleOnSubmit}
+			submitLabel='SIGN IN'
+			validationSchema={formValidationSchema}
 		/>
 	);
 }

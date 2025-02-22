@@ -3,11 +3,11 @@
 import GhostButton from '@/components/common/ghost-button';
 import { ReactNode } from 'react';
 
-function RootError(): ReactNode {
-	const handleReload: () => void = (): void => {
-		window.location.reload();
-	};
+const handleReload = (): void => {
+	globalThis.location.reload();
+};
 
+function RootError(): ReactNode {
 	return (
 		<div className='flex h-full flex-col justify-between'>
 			<div>

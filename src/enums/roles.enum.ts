@@ -1,6 +1,6 @@
 enum RolesEnum {
-	USER = 'USER',
 	ADMIN = 'ADMIN',
+	USER = 'USER',
 }
 
 export default RolesEnum;

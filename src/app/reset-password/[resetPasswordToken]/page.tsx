@@ -6,6 +6,12 @@ import ResetPasswordForm from '@/components/features/reset-password-form';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
+interface ResetPasswordTokenPageProps {
+	params: Promise<{
+		resetPasswordToken?: string;
+	}>;
+}
+
 function RenderExpired(): ReactNode {
 	return (
 		<>
@@ -22,18 +28,12 @@ function RenderSuccess({ resetPasswordToken }: { resetPasswordToken: string }): 
 	return (
 		<>
 			<h1 className='text-center text-sm font-semibold text-gray-700'>SET YOUR NEW PASSWORD</h1>
-			<ResetPasswordForm resetPasswordToken={resetPasswordToken} className='mt-12' />
+			<ResetPasswordForm className='mt-12' resetPasswordToken={resetPasswordToken} />
 			<div className='mt-4 flex justify-center'>
 				<GhostLink href='/login'>Back to login</GhostLink>
 			</div>
 		</>
 	);
-}
-
-interface ResetPasswordTokenPageProps {
-	params: Promise<{
-		resetPasswordToken?: string;
-	}>;
 }
 
 async function ResetPasswordTokenPage({ params }: ResetPasswordTokenPageProps): Promise<ReactNode> {
@@ -45,12 +45,8 @@ async function ResetPasswordTokenPage({ params }: ResetPasswordTokenPageProps): 
 
 	try {
 		await getTokenResetPasswordAuthApiAction(resetPasswordToken);
-	} catch (err) {
-		if (err instanceof Error && err.message === 'Token expired.') {
-			return <RenderExpired />;
-		} else {
-			return notFound();
-		}
+	} catch (error) {
+		return error instanceof Error && error.message === 'Token expired.' ? <RenderExpired /> : notFound();
 	}
 
 	return <RenderSuccess resetPasswordToken={resetPasswordToken} />;

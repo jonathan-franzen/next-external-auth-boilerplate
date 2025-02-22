@@ -12,7 +12,7 @@ interface ResendVerifyEmailButtonProps {
 function ResendVerifyEmailButton({ email }: ResendVerifyEmailButtonProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
 
-	const handleOnClick: () => Promise<void> = async (): Promise<void> => {
+	const handleOnClick = async (): Promise<void> => {
 		setIsLoading(true);
 		try {
 			await postResendVerifyEmailAuthApiAction({ email });
@@ -25,7 +25,7 @@ function ResendVerifyEmailButton({ email }: ResendVerifyEmailButtonProps): React
 	};
 
 	return (
-		<PrimaryButton isLoading={isLoading} className='mt-6' onClick={handleOnClick}>
+		<PrimaryButton className='mt-6' isLoading={isLoading} onClick={void handleOnClick}>
 			RESEND VERIFY EMAIL
 		</PrimaryButton>
 	);

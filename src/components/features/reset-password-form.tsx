@@ -6,58 +6,59 @@ import Form from '@/components/common/form';
 import { PASSWORD_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { RequestPostTokenResetPasswordAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import { RequestPostMeResetPasswordUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface ResetPasswordFormProps {
-	resetPasswordToken?: string;
 	className?: string;
+	resetPasswordToken?: string;
 }
 
-function ResetPasswordForm({ resetPasswordToken, className }: ResetPasswordFormProps): ReactNode {
+function ResetPasswordForm({ className, resetPasswordToken }: ResetPasswordFormProps): ReactNode {
 	const [isLoading, setIsLoading] = useState(false);
-	const router: AppRouterInstance = useRouter();
+	const router = useRouter();
 
-	const formFields: FieldReactFormInterface[] = [
-		...(!resetPasswordToken ? [{ name: 'password', type: 'password', placeholder: 'Current password', autoComplete: 'current-password', required: true }] : []),
-		{ name: 'newPassword', type: 'password', placeholder: 'New password', autoComplete: 'new-password', required: true },
+	const formFields = [
+		...(resetPasswordToken ? [] : [{ autoComplete: 'current-password', name: 'password', placeholder: 'Current password', required: true, type: 'password' }]),
+		{ autoComplete: 'new-password', name: 'newPassword', placeholder: 'New password', required: true, type: 'password' },
 	];
 
-	const formValidationSchema: ValidationSchemaReactFormInterface = {
+	const formValidationSchema = {
 		...getFormValidationSchema('newPassword', PASSWORD_VALIDATION_REGEX, 'Password too weak.', true),
 	};
 
-	const handleOnSubmit: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 
 		try {
-			if (resetPasswordToken) {
-				await postTokenResetPasswordAuthApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordAuthApiInterface);
-			} else {
-				await postMeResetPasswordUsersApiAction(formData as unknown as RequestPostMeResetPasswordUsersApiInterface);
-			}
+			await (resetPasswordToken
+				? postTokenResetPasswordAuthApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordAuthApiInterface)
+				: postMeResetPasswordUsersApiAction(formData as unknown as RequestPostMeResetPasswordUsersApiInterface));
 
 			toast.success('Password reset successfully.');
 
-			resetPasswordToken ? router.push('/login') : setIsLoading(false);
-		} catch (err) {
+			if (resetPasswordToken) {
+				await new Promise(() => router.push('/login'));
+				return;
+			}
+
 			setIsLoading(false);
-			throw err;
+		} catch (error) {
+			setIsLoading(false);
+			throw error;
 		}
 	};
 
 	return (
 		<Form
-			fields={formFields}
-			submitLabel='UPDATE PASSWORD'
-			onSubmit={handleOnSubmit}
-			isLoading={isLoading}
-			validationSchema={formValidationSchema}
 			className={className}
+			fields={formFields}
+			isLoading={isLoading}
+			onSubmit={handleOnSubmit}
+			submitLabel='UPDATE PASSWORD'
+			validationSchema={formValidationSchema}
 		/>
 	);
 }

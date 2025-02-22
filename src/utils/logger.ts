@@ -1,22 +1,21 @@
-import * as os from 'os';
 import { APP_ENV } from '@/constants/environment.constants';
-import { Format, TransformableInfo } from 'logform';
+import * as os from 'node:os';
 import winston, { createLogger, format, Logger, transports } from 'winston';
 
-const { timestamp, printf } = format;
+const { printf, timestamp } = format;
 
 const monologLevels = {
-	emergency: 600,
 	alert: 550,
 	critical: 500,
-	error: 400,
-	warning: 300,
-	notice: 250,
-	info: 200,
 	debug: 100,
+	emergency: 600,
+	error: 400,
+	info: 200,
+	notice: 250,
+	warning: 300,
 };
 
-const logFormat: Format = printf(({ level, message, context, extra }: TransformableInfo): string => {
+const logFormat = printf(({ context, extra, level, message }): string => {
 	if (!context) {
 		context = {};
 	}
@@ -31,22 +30,22 @@ const logFormat: Format = printf(({ level, message, context, extra }: Transforma
 	return JSON.stringify({
 		'@timestamp': new Date().toISOString(),
 		'@version': 1,
-		host: os.hostname(),
-		message: message,
-		type: 'express-auth-boilerplate',
 		channel: 'app',
-		level: level.toUpperCase(),
-		monolog_level: monologLevels[level as keyof typeof monologLevels],
-		extra: extra,
 		context: context,
+		extra: extra,
+		host: os.hostname(),
+		level: level.toUpperCase(),
+		message: message,
+		monolog_level: monologLevels[level as keyof typeof monologLevels],
+		type: 'express-auth-boilerplate',
 	});
 });
 
 const logger: Logger = createLogger({
-	level: APP_ENV === 'prod' ? 'warning' : 'debug',
 	format: format.combine(timestamp(), logFormat),
-	transports: [new transports.Console()],
+	level: APP_ENV === 'prod' ? 'warning' : 'debug',
 	levels: winston.config.syslog.levels,
+	transports: [new transports.Console()],
 });
 
 export default logger;

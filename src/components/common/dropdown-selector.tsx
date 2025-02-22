@@ -4,15 +4,15 @@ import { ChangeEvent, ReactNode } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 interface DropdownSelectorProps<T> {
-	options: Array<{ value: T; label: string }>;
-	initialValue: T;
-	onChange: (value: T) => void;
 	className?: string;
-	label?: string;
 	id?: string;
+	initialValue: T;
+	label?: string;
+	onChange: (value: T) => void;
+	options: Array<{ label: string; value: T }>;
 }
 
-function DropdownSelector<T>({ options, initialValue, onChange, className, label, id = 'dropdown' }: DropdownSelectorProps<T>): ReactNode {
+function DropdownSelector<T>({ className, id = 'dropdown', initialValue, label, onChange, options }: DropdownSelectorProps<T>): ReactNode {
 	const handleChange: (e: ChangeEvent<HTMLSelectElement>) => void = (e: ChangeEvent<HTMLSelectElement>): void => {
 		const selectedValue = e.target.value as T;
 		onChange(selectedValue);
@@ -21,13 +21,13 @@ function DropdownSelector<T>({ options, initialValue, onChange, className, label
 	return (
 		<div className={twMerge('flex items-center gap-1', className)}>
 			{label && (
-				<label htmlFor={id} className='mr-1 text-xs text-pink-900'>
+				<label className='mr-1 text-xs text-pink-900' htmlFor={id}>
 					{label}
 				</label>
 			)}
-			<select id={id} defaultValue={initialValue as string} onChange={handleChange} className='rounded border p-1 text-xs'>
+			<select className='rounded border p-1 text-xs' defaultValue={initialValue as string} id={id} onChange={handleChange}>
 				{options.map(
-					({ value, label }: { value: T; label: string }): ReactNode => (
+					({ label, value }: { label: string; value: T }): ReactNode => (
 						<option key={String(value)} value={String(value)}>
 							{label}
 						</option>

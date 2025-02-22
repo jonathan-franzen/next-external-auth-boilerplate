@@ -1,5 +1,6 @@
 import PrimaryButton from '@/components/common/primary-button';
 import SecondaryButton from '@/components/common/secondary-button';
+import Icon from '@/components/icon/icon';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import sleep from '@/utils/sleep';
 import clsx from 'clsx';
@@ -8,65 +9,82 @@ import { ChangeEvent, FormEvent, ReactElement, ReactNode, useState } from 'react
 import { twMerge } from 'tailwind-merge';
 
 interface FormProps {
-	fields: FieldReactFormInterface[];
-	submitLabel: string;
-	onSubmit: OnSubmitReactFormInterface;
-	isLoading?: boolean;
-	validationSchema?: ValidationSchemaReactFormInterface;
 	additionalContent?: ReactElement;
-	onCancel?: () => Promise<void> | void;
-	initialFormData?: Record<string, string> | (() => Record<string, string>);
-	showLabels?: boolean;
 	className?: string;
+	fields: FieldReactFormInterface[];
+	initialFormData?: (() => Record<string, string>) | Record<string, string>;
+	isLoading?: boolean;
+	onCancel?: () => Promise<void> | void;
+	onSubmit: OnSubmitReactFormInterface;
+	showLabels?: boolean;
+	submitLabel: string;
+	validationSchema?: ValidationSchemaReactFormInterface;
 }
 
 function Form({
-	fields,
-	submitLabel,
-	onSubmit,
-	isLoading = false,
-	validationSchema,
 	additionalContent,
-	onCancel,
-	initialFormData,
-	showLabels = false,
 	className,
+	fields,
+	initialFormData,
+	isLoading = false,
+	onCancel,
+	onSubmit,
+	showLabels = false,
+	submitLabel,
+	validationSchema,
 }: FormProps): ReactNode {
 	const [formData, setFormData] = useState<Record<string, string>>(initialFormData || {});
-	const [formErrors, setFormErrors] = useState<Record<string, string | null>>({});
-	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [formErrors, setFormErrors] = useState<Record<string, string | undefined>>({});
+	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-	const validateField: (fieldName: string, value: string) => string | null = (fieldName: string, value: string): string | null => {
-		return (validationSchema && validationSchema[fieldName]?.validate(value)) || null;
+	const validateField: (fieldName: string, value: string) => string | undefined = (fieldName: string, value: string): string | undefined => {
+		if (!validationSchema) {
+			return;
+		}
+
+		const schemaMap = new Map(Object.entries(validationSchema));
+
+		if (schemaMap.has(fieldName)) {
+			const fieldSchema = schemaMap.get(fieldName);
+			return fieldSchema?.validate?.(value);
+		}
+
+		return;
 	};
 
 	const handleOnChange: (e: ChangeEvent<HTMLInputElement>) => void = (e: ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
 		setFormData((prev: Record<string, string>): { [x: string]: string } => ({ ...prev, [name]: value }));
 		if (value.length === 0) {
-			setFormErrors((prev: Record<string, string | null>): { [x: string]: string | null } => ({ ...prev, [name]: null }));
-		} else if (validationSchema && validationSchema[name]?.showError) {
-			const error: string | null = validateField(name, value);
-			setFormErrors((prev: Record<string, string | null>): { [x: string]: string | null } => ({ ...prev, [name]: error }));
+			setFormErrors((prev: Record<string, string | undefined>) => ({ ...prev, [name]: undefined }));
+		} else if (validationSchema) {
+			const schemaMap = new Map(Object.entries(validationSchema));
+			if (schemaMap.has(name)) {
+				const schema = schemaMap.get(name) as { showError?: boolean };
+				if (schema?.showError) {
+					const error = validateField(name, value);
+					setFormErrors((prev) => ({ ...prev, [name]: error }));
+				}
+			}
 		}
 	};
 
 	const handleOnSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void> = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
-		setErrorMessage(null);
+		setErrorMessage(undefined);
 		setIsSubmitting(true);
 
-		const newErrors: Record<string, string | null> = {};
+		const newErrors: Record<string, string | undefined> = {};
 
 		for (const field of fields) {
-			const value: string = formData[field.name] || '';
+			const value = formData[field.name] || '';
 			newErrors[field.name] = validateField(field.name, value);
 		}
 
 		setFormErrors(newErrors);
 
-		const errorMessage: string | undefined = Object.values(newErrors).find((error: string | null): error is string => error !== null);
+		const errorMessage = Object.values(newErrors).find((error: string | undefined): error is string => error !== undefined);
 
 		if (errorMessage) {
 			await sleep(100 + Math.random() * 100);
@@ -78,9 +96,9 @@ function Form({
 		try {
 			await onSubmit(formData);
 			setFormData(initialFormData || {});
-		} catch (err) {
-			if (err instanceof Error) {
-				setErrorMessage(err.message);
+		} catch (error) {
+			if (error instanceof Error) {
+				setErrorMessage(error.message);
 			} else {
 				setErrorMessage('Something went wrong.');
 			}
@@ -90,29 +108,29 @@ function Form({
 	};
 
 	return (
-		<NextForm action='/login' onSubmit={handleOnSubmit} className={twMerge('flex w-full flex-col', className)}>
+		<NextForm action='/login' className={twMerge('flex w-full flex-col', className)} onSubmit={(e) => void handleOnSubmit(e)}>
 			{fields.map(
 				(field: FieldReactFormInterface): ReactNode => (
-					<div key={field.name} className='mt-2'>
+					<div className='mt-2' key={field.name}>
 						{showLabels && (
-							<label htmlFor={field.name} className='block text-xs'>
+							<label className='block text-xs' htmlFor={field.name}>
 								{field.placeholder}
 							</label>
 						)}
 						<input
+							autoComplete={field.autoComplete}
+							className={clsx(
+								'block w-full rounded-lg border-none bg-neutral-100 p-3 text-xs opacity-80',
+								'focus:outline-none data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-gray-400',
+								showLabels ? 'mt-0.5' : 'mt-1.5',
+							)}
 							id={field.name}
 							name={field.name}
-							type={field.type}
-							placeholder={field.placeholder}
-							autoComplete={field.autoComplete}
-							required={field.required}
-							value={formData[field.name] || ''}
 							onChange={handleOnChange}
-							className={clsx(
-								'block w-full rounded-lg border-none bg-neutral-100 px-3 py-3 text-xs opacity-80',
-								'focus:outline-none data-[focus]:outline-2 data-[focus]:outline-offset-2 data-[focus]:outline-gray-400',
-								!showLabels ? 'mt-1.5' : 'mt-0.5',
-							)}
+							placeholder={field.placeholder}
+							required={field.required}
+							type={field.type}
+							value={formData[field.name] || ''}
 						/>
 						{formErrors[field.name] && validationSchema && validationSchema[field.name]?.showError && (
 							<div className='mt-1 text-xs text-pink-900'>{formErrors[field.name]}</div>
@@ -122,18 +140,21 @@ function Form({
 			)}
 			{additionalContent && <div className='mt-2'>{additionalContent}</div>}
 			<div className='mt-6 flex gap-6'>
-				<PrimaryButton type='submit' isLoading={isSubmitting || isLoading} className='w-full'>
+				<PrimaryButton className='w-full' isLoading={isSubmitting || isLoading} type='submit'>
 					{submitLabel}
 				</PrimaryButton>
 				{onCancel && (
-					<SecondaryButton onClick={onCancel} className='w-full'>
+					<SecondaryButton className='w-full' onClick={() => void onCancel()}>
 						CANCEL
 					</SecondaryButton>
 				)}
 			</div>
 			{errorMessage && (
-				<div className='mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
-					<div className='text-2xs text-pink-900'>{errorMessage}</div>
+				<div className='relative mt-2 flex items-center justify-center gap-3 rounded-md bg-pink-50 p-2'>
+					<p className='text-xs text-pink-900'>{errorMessage}</p>
+					<button className='absolute right-4 text-pink-900' onClick={() => void setErrorMessage(undefined)}>
+						<Icon fill='#831843' name='close-circle' size='16' />
+					</button>
 				</div>
 			)}
 		</NextForm>

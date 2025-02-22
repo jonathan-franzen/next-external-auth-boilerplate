@@ -5,22 +5,22 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ReactNode } from 'react';
 
 interface PageSelectorProps {
+	className?: string;
 	currentPage: number;
 	totalPages: number;
-	className?: string;
 }
 
-function PageSelector({ currentPage, totalPages, className }: PageSelectorProps): ReactNode {
+function PageSelector({ className, currentPage, totalPages }: PageSelectorProps): ReactNode {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
-	const handlePageChange: (page: number) => void = (page: number): void => {
+	const handlePageChange = (page: number): void => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('page', page.toString());
 		router.push(`/admin?${params.toString()}`);
 	};
 
-	return <NumericalToggle currentValue={currentPage} totalValues={totalPages} onValueChange={handlePageChange} className={className} />;
+	return <NumericalToggle className={className} currentValue={currentPage} onValueChange={handlePageChange} totalValues={totalPages} />;
 }
 
 export default PageSelector;

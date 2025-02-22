@@ -1,18 +1,18 @@
-export interface ValidationSchemaReactFormInterface {
-	[key: string]: {
-		validate: (value: string) => string | null;
-		showError: boolean;
-	};
+export interface FieldReactFormInterface {
+	autoComplete?: string;
+	name: string;
+	placeholder?: string;
+	required?: boolean;
+	type: string;
 }
 
 export interface OnSubmitReactFormInterface {
 	(formData: Record<string, string>): Promise<void>;
 }
 
-export interface FieldReactFormInterface {
-	name: string;
-	type: string;
-	placeholder?: string;
-	autoComplete?: string;
-	required?: boolean;
+export interface ValidationSchemaReactFormInterface {
+	[key: string]: {
+		showError: boolean;
+		validate: (value: string) => string | undefined;
+	};
 }

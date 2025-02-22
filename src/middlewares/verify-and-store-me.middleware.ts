@@ -9,12 +9,12 @@ import { AuthSessionData, IronSession } from 'iron-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Redirect when certain criteria is met.
-async function redirect(url: string, req: NextRequest, setCookieHeader?: string[]): Promise<NextResponse> {
+function redirect(url: string, req: NextRequest, setCookieHeader?: string[]): NextResponse {
 	const redirectResponse: NextResponse = NextResponse.redirect(new URL(url, req.nextUrl));
 
 	// Set the authSession cookie on the redirect Response as well, if provided.
 	if (setCookieHeader) {
-		await setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], redirectResponse);
+		setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], redirectResponse);
 	}
 	return redirectResponse;
 }
@@ -47,7 +47,7 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 
 		// If there is an issue getting me-data,
 		// destroy the authSession and redirect to login-page.
-		if (!meData || !meData.id || !meData.email || meData.roles.length < 1 || !meData.firstName || !meData.lastName) {
+		if (!meData || !meData.id || !meData.email || meData.roles.length === 0 || !meData.firstName || !meData.lastName) {
 			await destroyAuthSession();
 			return isPublicRoute || (isVerifyRoute && !path.endsWith('/verify-email')) ? nextResponse : redirect('/login', req);
 		}
@@ -61,7 +61,7 @@ async function verifyAndStoreMeMiddleware(req: NextRequest): Promise<NextRespons
 		// We need to retrieve the iron-session set-cookie, and then set the cookie on the middlewareResponse as well,
 		// to make sure it's available on immediate server-component render
 		const setCookieHeader: string[] = nextResponse.headers.getSetCookie();
-		await setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], nextResponse);
+		setCookies(setCookieHeader, [AUTH_SESSION_COOKIE_NAME], nextResponse);
 
 		// If trying to view email-verification-page when email is already verified, redirect to dashboard
 		if (isVerifyRoute && meData.emailVerifiedAt) {

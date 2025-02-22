@@ -4,7 +4,7 @@ import GhostButton from '@/components/common/ghost-button';
 import GoBack from '@/components/common/go-back';
 import { ReactNode } from 'react';
 
-async function UnauthorizedPage(): Promise<ReactNode> {
+function UnauthorizedPage(): ReactNode {
 	return (
 		<div className='flex h-full flex-col justify-between'>
 			<div>

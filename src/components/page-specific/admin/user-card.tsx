@@ -6,15 +6,15 @@ import Form from '@/components/common/form';
 import GhostButton from '@/components/common/ghost-button';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
 import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
+import { FieldReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { ReactElement, startTransition, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const formFields: FieldReactFormInterface[] = [
-	{ name: 'email', type: 'text', placeholder: 'Email', autoComplete: 'email', required: true },
-	{ name: 'firstName', type: 'firstName', placeholder: 'First name', autoComplete: 'firstName', required: true },
-	{ name: 'lastName', type: 'lastName', placeholder: 'Last name', autoComplete: 'lastName', required: true },
+	{ autoComplete: 'email', name: 'email', placeholder: 'Email', required: true, type: 'text' },
+	{ autoComplete: 'firstName', name: 'firstName', placeholder: 'First name', required: true, type: 'firstName' },
+	{ autoComplete: 'lastName', name: 'lastName', placeholder: 'Last name', required: true, type: 'lastName' },
 ];
 
 const formValidationSchema: ValidationSchemaReactFormInterface = {
@@ -31,7 +31,7 @@ function UserCard({ user }: UserCardProps): ReactElement {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string>('');
 
-	const handleSave: OnSubmitReactFormInterface = async (formData: Record<string, string>): Promise<void> => {
+	const handleSave = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
 			await patchIdUsersApiAction(user.id, formData);
@@ -40,13 +40,13 @@ function UserCard({ user }: UserCardProps): ReactElement {
 				setIsEditing(false);
 				setIsLoading(false);
 			});
-		} catch (err) {
+		} catch (error) {
 			setIsLoading(false);
-			throw err;
+			throw error;
 		}
 	};
 
-	const handleDelete: () => Promise<void> = async (): Promise<void> => {
+	const handleDelete = async (): Promise<void> => {
 		setErrorMessage('');
 		setIsLoading(true);
 		try {
@@ -56,8 +56,8 @@ function UserCard({ user }: UserCardProps): ReactElement {
 				setShowDeletePopup(false);
 				setIsLoading(false);
 			});
-		} catch (err) {
-			setErrorMessage(err instanceof Error ? err.message : 'Something went wrong.');
+		} catch (error) {
+			setErrorMessage(error instanceof Error ? error.message : 'Something went wrong.');
 			setIsLoading(false);
 		}
 	};
@@ -69,17 +69,17 @@ function UserCard({ user }: UserCardProps): ReactElement {
 			</p>
 			{isEditing ? (
 				<Form
+					className='mt-1'
 					fields={formFields}
-					submitLabel='SAVE'
-					onSubmit={handleSave}
-					isLoading={isLoading}
-					validationSchema={formValidationSchema}
 					initialFormData={{ email: user.email, firstName: user.firstName, lastName: user.lastName }}
-					onCancel={(): void => {
+					isLoading={isLoading}
+					onCancel={() => {
 						setIsEditing(false);
 					}}
+					onSubmit={handleSave}
 					showLabels={true}
-					className='mt-1'
+					submitLabel='SAVE'
+					validationSchema={formValidationSchema}
 				/>
 			) : (
 				<div className='mt-2 flex flex-col gap-2'>
@@ -101,10 +101,10 @@ function UserCard({ user }: UserCardProps): ReactElement {
 						Updated at <strong>{user.updatedAt}</strong>
 					</p>
 					<div className='mt-2 flex gap-2'>
-						<GhostButton onClick={(): void => setIsEditing(true)} className='text-md inline-flex'>
+						<GhostButton className='inline-flex text-base' onClick={() => setIsEditing(true)}>
 							Edit
 						</GhostButton>
-						<GhostButton onClick={(): void => setShowDeletePopup(true)} className='text-md inline-flex'>
+						<GhostButton className='inline-flex text-base' onClick={() => setShowDeletePopup(true)}>
 							Delete
 						</GhostButton>
 					</div>
@@ -112,15 +112,15 @@ function UserCard({ user }: UserCardProps): ReactElement {
 			)}
 			{showDeletePopup && (
 				<ConfirmationPopup
-					onConfirm={handleDelete}
-					onCancel={(): void => {
+					cancelLabel='Cancel'
+					confirmLabel='Delete'
+					errorMessage={errorMessage}
+					isLoading={isLoading}
+					onCancel={() => {
 						setShowDeletePopup(false);
 						setErrorMessage('');
 					}}
-					confirmLabel='Delete'
-					cancelLabel='Cancel'
-					isLoading={isLoading}
-					errorMessage={errorMessage}
+					onConfirm={() => void handleDelete()}
 				>
 					<p className='mb-4'>
 						Are you sure you want to delete{' '}

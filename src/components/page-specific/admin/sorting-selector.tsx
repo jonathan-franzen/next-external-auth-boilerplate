@@ -1,26 +1,25 @@
 'use client';
 
 import DropdownSelector from '@/components/common/dropdown-selector';
-import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { ReadonlyURLSearchParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ReactNode } from 'react';
 
-const sortingOptions: { value: string; label: string }[] = [
-	{ value: 'firstName', label: 'First Name' },
-	{ value: 'lastName', label: 'Last Name' },
-	{ value: 'createdAt', label: 'Created At' },
+const sortingOptions: { label: string; value: string }[] = [
+	{ label: 'First Name', value: 'firstName' },
+	{ label: 'Last Name', value: 'lastName' },
+	{ label: 'Created At', value: 'createdAt' },
 ];
 
 interface SortingSelectorProps {
-	initialSortingOption: string;
 	className?: string;
+	initialSortingOption: string;
 }
 
-function SortingSelector({ initialSortingOption, className }: SortingSelectorProps): ReactNode {
-	const router: AppRouterInstance = useRouter();
-	const searchParams: ReadonlyURLSearchParams = useSearchParams();
+function SortingSelector({ className, initialSortingOption }: SortingSelectorProps): ReactNode {
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
-	const handleOnChange: (newSortBy: string) => void = (newSortBy: string): void => {
+	const handleOnChange = (newSortBy: string): void => {
 		const params = new URLSearchParams(searchParams.toString());
 		params.set('sortBy', newSortBy);
 		if (params.has('page')) {
@@ -31,12 +30,12 @@ function SortingSelector({ initialSortingOption, className }: SortingSelectorPro
 
 	return (
 		<DropdownSelector<string>
-			options={sortingOptions}
-			initialValue={initialSortingOption}
-			onChange={handleOnChange}
-			id='sort'
-			label='Sort by:'
 			className={className}
+			id='sort'
+			initialValue={initialSortingOption}
+			label='Sort by:'
+			onChange={handleOnChange}
+			options={sortingOptions}
 		/>
 	);
 }

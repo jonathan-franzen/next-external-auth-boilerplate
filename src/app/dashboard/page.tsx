@@ -3,12 +3,11 @@
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
 import RolesEnum from '@/enums/roles.enum';
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
 import { getMeFromAuthSession } from '@/services/iron-session/iron-session.service';
 import { ReactNode } from 'react';
 
 async function DashboardPage(): Promise<ReactNode> {
-	const me: ObjectMeUsersApiInterface = await getMeFromAuthSession();
+	const me = await getMeFromAuthSession();
 
 	return (
 		<div className='flex h-full flex-col justify-between'>
@@ -21,12 +20,12 @@ async function DashboardPage(): Promise<ReactNode> {
 					<li>Email verified at: {me.emailVerifiedAt}</li>
 					<li>Roles: {me.roles.map((role: string, index: number): string => (index < me.roles.length - 1 ? `${role}, ` : role))}</li>
 				</ul>
-				<div className='flex justify-center mt-6'>
+				<div className='mt-6 flex justify-center'>
 					<GhostLink href='/dashboard/reset-password'>Change password here</GhostLink>
 				</div>
 			</div>
 			<div>
-				<LogoutButton/>
+				<LogoutButton />
 				<div className='mt-2 flex justify-center'>
 					{me.roles.includes(RolesEnum.ADMIN) ? (
 						<GhostLink href='/admin'>View admin page</GhostLink>

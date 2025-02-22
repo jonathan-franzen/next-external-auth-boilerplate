@@ -2,25 +2,25 @@
 
 import UserCard from '@/components/page-specific/admin/user-card';
 import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
-import { ReactNode, RefObject, useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 
 interface UsersContainerProps {
-	users: ObjectUserUsersApiInterface[];
 	page?: string;
 	sortBy?: string;
+	users: ObjectUserUsersApiInterface[];
 }
 
-function UsersContainer({ users, page, sortBy }: UsersContainerProps): ReactNode {
-	const containerRef: RefObject<HTMLDivElement> = useRef<HTMLDivElement>(null);
+function UsersContainer({ page, sortBy, users }: UsersContainerProps): ReactNode {
+	const containerRef = useRef<HTMLDivElement>(null);
 
-	useEffect((): void => {
+	useEffect(() => {
 		if (containerRef.current) {
-			containerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+			containerRef.current.scrollTo({ behavior: 'instant', top: 0 });
 		}
 	}, [page, sortBy]);
 
 	return (
-		<div ref={containerRef} className='flex h-full flex-col gap-4 overflow-y-scroll'>
+		<div className='flex h-full flex-col gap-4 overflow-y-scroll' ref={containerRef}>
 			{users.map(
 				(user: ObjectUserUsersApiInterface): ReactNode => (
 					<UserCard key={user.id} user={user} />
