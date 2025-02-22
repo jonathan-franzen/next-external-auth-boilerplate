@@ -13,7 +13,7 @@ interface DropdownSelectorProps<T> {
 }
 
 function DropdownSelector<T>({ className, id = 'dropdown', initialValue, label, onChange, options }: DropdownSelectorProps<T>): ReactNode {
-	const handleChange: (e: ChangeEvent<HTMLSelectElement>) => void = (e: ChangeEvent<HTMLSelectElement>): void => {
+	const handleChange = (e: ChangeEvent<HTMLSelectElement>): void => {
 		const selectedValue = e.target.value as T;
 		onChange(selectedValue);
 	};

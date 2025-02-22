@@ -21,11 +21,9 @@ function UsersContainer({ page, sortBy, users }: UsersContainerProps): ReactNode
 
 	return (
 		<div className='flex h-full flex-col gap-4 overflow-y-scroll' ref={containerRef}>
-			{users.map(
-				(user: ObjectUserUsersApiInterface): ReactNode => (
-					<UserCard key={user.id} user={user} />
-				),
-			)}
+			{users.map((user) => (
+				<UserCard key={user.id} user={user} />
+			))}
 		</div>
 	);
 }

@@ -38,7 +38,7 @@ function Form({
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-	const validateField: (fieldName: string, value: string) => string | undefined = (fieldName: string, value: string): string | undefined => {
+	const validateField = (fieldName: string, value: string): string | undefined => {
 		if (!validationSchema) {
 			return;
 		}
@@ -53,11 +53,11 @@ function Form({
 		return;
 	};
 
-	const handleOnChange: (e: ChangeEvent<HTMLInputElement>) => void = (e: ChangeEvent<HTMLInputElement>): void => {
+	const handleOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
 		const { name, value } = e.target;
-		setFormData((prev: Record<string, string>): { [x: string]: string } => ({ ...prev, [name]: value }));
+		setFormData((prev) => ({ ...prev, [name]: value }));
 		if (value.length === 0) {
-			setFormErrors((prev: Record<string, string | undefined>) => ({ ...prev, [name]: undefined }));
+			setFormErrors((prev) => ({ ...prev, [name]: undefined }));
 		} else if (validationSchema) {
 			const schemaMap = new Map(Object.entries(validationSchema));
 			if (schemaMap.has(name)) {
@@ -70,7 +70,7 @@ function Form({
 		}
 	};
 
-	const handleOnSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void> = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+	const handleOnSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
 		e.preventDefault();
 		setErrorMessage(undefined);
 		setIsSubmitting(true);
@@ -84,7 +84,7 @@ function Form({
 
 		setFormErrors(newErrors);
 
-		const errorMessage = Object.values(newErrors).find((error: string | undefined): error is string => error !== undefined);
+		const errorMessage = Object.values(newErrors).find((error) => error !== undefined);
 
 		if (errorMessage) {
 			await sleep(100 + Math.random() * 100);

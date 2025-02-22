@@ -7,7 +7,7 @@ import { RequestPostLoginAuthApiInterface } from '@/interfaces/api/auth/auth.api
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import {ReactNode, useState} from 'react';
+import { ReactNode, useState } from 'react';
 
 interface LoginFormProps {
 	className?: string;

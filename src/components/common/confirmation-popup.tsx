@@ -20,7 +20,7 @@ function ConfirmationPopup({
 	isLoading = false,
 	onCancel,
 	onConfirm,
-}: ConfirmationPopupProps): null | ReactNode {
+}: ConfirmationPopupProps): ReactNode {
 	return (
 		<div className='fixed inset-0 flex items-center justify-center bg-gray-900/50'>
 			<div className='rounded bg-white p-6 shadow-lg'>

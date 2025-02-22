@@ -1,7 +1,7 @@
 import { SvgSettingsProps } from '@/interfaces/react/icon/icon.react.interfaces';
 import { ReactElement } from 'react';
 
-const defaultProps: SvgSettingsProps = {
+const defaultProps = {
 	height: '100',
 	viewBox: '0 0 50 50',
 	width: '100',

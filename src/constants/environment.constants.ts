@@ -1,4 +1,4 @@
-const env: NodeJS.ProcessEnv = process.env;
+const env = process.env;
 
 // App
 export const APP_ENV = (env.APP_ENV as string) || 'dev';

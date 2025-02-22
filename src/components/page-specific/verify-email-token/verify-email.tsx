@@ -16,7 +16,7 @@ function VerifyEmail({ isAuthenticated, verifyEmailToken }: VerifyEmailProps): R
 	const router = useRouter();
 	const [isError, setIsError] = useState(false);
 
-	useEffect((): void => {
+	useEffect(() => {
 		const verify = async (): Promise<void> => {
 			try {
 				await postTokenVerifyEmailAuthApiAction(verifyEmailToken);

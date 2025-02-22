@@ -14,7 +14,7 @@ export async function authenticatedFetchRequest(
 	setCookiesFromResponse = false,
 	session?: IronSession<AuthSessionData>,
 ): Promise<Response> {
-	const accessToken: string | undefined = session?.accessToken || (await getAuthSessionValue('accessToken'));
+	const accessToken = session?.accessToken || (await getAuthSessionValue('accessToken'));
 
 	const authenticatedRequestHeaders = { ['Authorization']: `Bearer ${accessToken}` };
 

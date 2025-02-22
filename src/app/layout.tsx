@@ -1,10 +1,8 @@
-import type { Metadata } from 'next';
-
 import '@/app/globals.css';
 import { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-export const metadata: Metadata = {
+export const metadata = {
 	description: 'Boilerplate for Next.js Authentication with external API',
 	title: 'Next External Auth Boilerplate',
 };

@@ -20,7 +20,7 @@ function NumericalToggle({ className, currentValue, onValueChange, renderValue, 
 	};
 
 	const getDisplayedValues = (): (number | string)[] => {
-		const values: (number | string)[] = [];
+		const values = [];
 		values.push(1);
 
 		if (currentValue > 3) values.push('...');
@@ -39,22 +39,21 @@ function NumericalToggle({ className, currentValue, onValueChange, renderValue, 
 
 	return (
 		<div className={twMerge('flex items-center justify-center gap-1.5', className)}>
-			{displayedValues.map(
-				(value: number | string, index: number): ReactNode =>
-					typeof value === 'number' ? (
-						<GhostButton
-							className={value === currentValue ? 'cursor-default font-bold hover:text-pink-900' : ''}
-							key={index}
-							onClick={() => handleValueChange(value)}
-							type='button'
-						>
-							{renderValue ? renderValue(value) : value}
-						</GhostButton>
-					) : (
-						<span className='cursor-default text-xs text-gray-700' key={index}>
-							{value}
-						</span>
-					),
+			{displayedValues.map((value, index) =>
+				typeof value === 'number' ? (
+					<GhostButton
+						className={value === currentValue ? 'cursor-default font-bold hover:text-pink-900' : ''}
+						key={index}
+						onClick={() => handleValueChange(value)}
+						type='button'
+					>
+						{renderValue ? renderValue(value) : value}
+					</GhostButton>
+				) : (
+					<span className='cursor-default text-xs text-gray-700' key={index}>
+						{value}
+					</span>
+				),
 			)}
 		</div>
 	);

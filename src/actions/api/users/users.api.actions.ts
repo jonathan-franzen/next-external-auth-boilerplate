@@ -41,7 +41,7 @@ export async function getUsersApiAction(
 	{ limit = USERS_DEFAULT_PAGE_LIMIT, page = 1, sortBy }: RequestGetUsersApiInterface,
 	isServerComponent = false,
 ): Promise<ResponseGetUsersApiInterface> {
-	const url: string = buildUrl(BACKEND_URL, '/users', {
+	const url = buildUrl(BACKEND_URL, '/users', {
 		...(page && { page: page.toString() }),
 		...(limit && { limit: limit.toString() }),
 		...(sortBy && { sortBy }),
@@ -56,8 +56,8 @@ export async function patchIdUsersApiAction(
 	data: RequestPatchIdUsersApiInterface,
 	isServerComponent = false,
 ): Promise<ResponsePatchIdUsersApiInterface> {
-	const url: string = buildUrl(BACKEND_URL, `/users/${userId}`);
-	const config: RequestInit = {
+	const url = buildUrl(BACKEND_URL, `/users/${userId}`);
+	const config = {
 		body: JSON.stringify(data),
 		method: 'PATCH',
 	};
