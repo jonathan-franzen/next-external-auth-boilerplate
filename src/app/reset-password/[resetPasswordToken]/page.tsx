@@ -1,6 +1,6 @@
 'use server';
 
-import { getTokenResetPasswordAuthApiAction } from '@/actions/api/auth/auth.api.actions';
+import { getTokenResetPasswordApiAction } from '@/actions/api/auth/auth.api.actions';
 import GhostLink from '@/components/common/ghost-link';
 import ResetPasswordForm from '@/components/features/reset-password-form';
 import { notFound } from 'next/navigation';
@@ -44,7 +44,7 @@ async function ResetPasswordTokenPage({ params }: ResetPasswordTokenPageProps): 
 	}
 
 	try {
-		await getTokenResetPasswordAuthApiAction(resetPasswordToken);
+		await getTokenResetPasswordApiAction(resetPasswordToken);
 	} catch (error) {
 		return error instanceof Error && error.message === 'Token expired.' ? <RenderExpired /> : notFound();
 	}

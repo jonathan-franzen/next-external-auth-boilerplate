@@ -1,6 +1,6 @@
 'use client';
 
-import { postTokenVerifyEmailAuthApiAction } from '@/actions/api/auth/auth.api.actions';
+import { postTokenVerifyEmailApiAction } from '@/actions/api/auth/auth.api.actions';
 import GhostLink from '@/components/common/ghost-link';
 import LogoutButton from '@/components/features/logout-button';
 import { useRouter } from 'next/navigation';
@@ -19,7 +19,7 @@ function VerifyEmail({ isAuthenticated, verifyEmailToken }: VerifyEmailProps): R
 	useEffect(() => {
 		const verify = async (): Promise<void> => {
 			try {
-				await postTokenVerifyEmailAuthApiAction(verifyEmailToken);
+				await postTokenVerifyEmailApiAction(verifyEmailToken);
 				toast.success('Email verified.');
 				router.push('/dashboard');
 			} catch {

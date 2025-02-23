@@ -1,6 +1,6 @@
 import { AUTH_SESSION_COOKIE_NAME } from '@/constants/cookies.constants';
 import { IRON_SESSION_SECRET } from '@/constants/environment.constants';
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { ObjectMeUsersApiInterface } from '@/interfaces/api/user/user.api.interfaces';
 import { AuthSessionData, getIronSession, IronSession } from 'iron-session';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';

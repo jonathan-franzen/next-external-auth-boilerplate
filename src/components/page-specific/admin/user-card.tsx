@@ -1,11 +1,11 @@
 'use client';
 
-import { deleteIdUsersApiAction, patchIdUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { deleteIdUsersApiAction, patchIdUsersApiAction } from '@/actions/api/user/user.api.actions';
 import ConfirmationPopup from '@/components/common/confirmation-popup';
 import Form from '@/components/common/form';
 import GhostButton from '@/components/common/ghost-button';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
-import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { ObjectUserUsersApiInterface } from '@/interfaces/api/user/user.api.interfaces';
 import { FieldReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { ReactElement, startTransition, useState } from 'react';

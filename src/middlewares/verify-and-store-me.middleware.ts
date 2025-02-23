@@ -1,4 +1,4 @@
-import { getMeUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { getMeUsersApiAction } from '@/actions/api/user/user.api.actions';
 import { AUTH_SESSION_COOKIE_NAME } from '@/constants/cookies.constants';
 import { ADMIN_ROUTES, PUBLIC_ROUTES, VERIFY_ROUTES } from '@/constants/routes.constants';
 import RolesEnum from '@/enums/roles.enum';

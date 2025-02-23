@@ -3,7 +3,7 @@
 import { submitLoginFormFeatureAction } from '@/actions/feature/feature.actions';
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
-import { RequestPostLoginAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { RequestPostLoginApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -29,7 +29,7 @@ function LoginForm({ className }: LoginFormProps): ReactNode {
 	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await submitLoginFormFeatureAction(formData as unknown as RequestPostLoginAuthApiInterface);
+			await submitLoginFormFeatureAction(formData as unknown as RequestPostLoginApiInterface);
 			await new Promise(() => router.push('/dashboard'));
 		} catch (error) {
 			setIsLoading(false);

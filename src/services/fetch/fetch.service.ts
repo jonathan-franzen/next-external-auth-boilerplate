@@ -1,4 +1,4 @@
-import { postRefreshAuthApiAction } from '@/actions/api/auth/auth.api.actions';
+import { postRefreshApiAction } from '@/actions/api/auth/auth.api.actions';
 import { setCookies } from '@/services/cookies/cookies.service';
 import { getAuthSessionValue, updateAuthSessionAndSave } from '@/services/iron-session/iron-session.service';
 import createError, { isHttpError } from 'http-errors';
@@ -128,7 +128,7 @@ async function refreshTokenAndMakeRequest(
 	setCookiesFromResponse?: boolean,
 	session?: IronSession<AuthSessionData>,
 ): Promise<Response> {
-	const response = await postRefreshAuthApiAction(session);
+	const response = await postRefreshApiAction(session);
 	const { accessToken } = response;
 
 	const authHeaders = { ['Authorization']: `Bearer ${accessToken}` };

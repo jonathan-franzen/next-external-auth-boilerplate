@@ -1,11 +1,11 @@
 'use client';
 
-import { postTokenResetPasswordAuthApiAction } from '@/actions/api/auth/auth.api.actions';
-import { postMeResetPasswordUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { postTokenResetPasswordApiAction } from '@/actions/api/auth/auth.api.actions';
+import { postUpdatePasswordMeUsersApiAction } from '@/actions/api/user/user.api.actions';
 import Form from '@/components/common/form';
 import { PASSWORD_VALIDATION_REGEX } from '@/constants/regex.constants';
-import { RequestPostTokenResetPasswordAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import { RequestPostMeResetPasswordUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { RequestPostTokenResetPasswordApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { RequestPostUpdatePasswordMeUsersApiInterface } from '@/interfaces/api/user/user.api.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
@@ -34,8 +34,8 @@ function ResetPasswordForm({ className, resetPasswordToken }: ResetPasswordFormP
 
 		try {
 			await (resetPasswordToken
-				? postTokenResetPasswordAuthApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordAuthApiInterface)
-				: postMeResetPasswordUsersApiAction(formData as unknown as RequestPostMeResetPasswordUsersApiInterface));
+				? postTokenResetPasswordApiAction(resetPasswordToken, formData as unknown as RequestPostTokenResetPasswordApiInterface)
+				: postUpdatePasswordMeUsersApiAction(formData as unknown as RequestPostUpdatePasswordMeUsersApiInterface));
 
 			toast.success('Password reset successfully.');
 

@@ -5,12 +5,12 @@ import { BACKEND_URL } from '@/constants/environment.constants';
 import {
 	RequestGetUsersApiInterface,
 	RequestPatchIdUsersApiInterface,
-	RequestPostMeResetPasswordUsersApiInterface,
+	RequestPostUpdatePasswordMeUsersApiInterface,
 	ResponseGetMeUsersApiInterface,
 	ResponseGetUsersApiInterface,
 	ResponsePatchIdUsersApiInterface,
-	ResponsePostMeResetPasswordUsersApiInterface,
-} from '@/interfaces/api/users/users.api.interfaces';
+	ResponsePostUpdatePasswordMeUsersApiInterface,
+} from '@/interfaces/api/user/user.api.interfaces';
 import { authenticatedFetchRequest, makeRequest } from '@/services/fetch/fetch.service';
 import { getAuthSession, updateAuthSessionAndSave } from '@/services/iron-session/iron-session.service';
 import buildUrl from '@/utils/build-url';
@@ -65,16 +65,16 @@ export async function patchIdUsersApiAction(
 	return await makeRequest<ResponsePatchIdUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent));
 }
 
-export async function postMeResetPasswordUsersApiAction(
-	data: RequestPostMeResetPasswordUsersApiInterface,
+export async function postUpdatePasswordMeUsersApiAction(
+	data: RequestPostUpdatePasswordMeUsersApiInterface,
 	isServerComponent = false,
-): Promise<ResponsePostMeResetPasswordUsersApiInterface> {
+): Promise<ResponsePostUpdatePasswordMeUsersApiInterface> {
 	const url = buildUrl(BACKEND_URL, '/users/me/update-password');
 	const config = {
 		body: JSON.stringify(data),
 		method: 'POST',
 	};
-	const response = await makeRequest<ResponsePostMeResetPasswordUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent, true));
+	const response = await makeRequest<ResponsePostUpdatePasswordMeUsersApiInterface>(() => authenticatedFetchRequest(url, config, isServerComponent, true));
 
 	await updateAuthSessionAndSave('accessToken', response.accessToken);
 

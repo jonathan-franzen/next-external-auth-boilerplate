@@ -1,6 +1,6 @@
 'use server';
 
-import { getUsersApiAction } from '@/actions/api/users/users.api.actions';
+import { getUsersApiAction } from '@/actions/api/user/user.api.actions';
 import Refresh from '@/components/features/refresh';
 import PageSelector from '@/components/page-specific/admin/page-selector';
 import SortingSelector from '@/components/page-specific/admin/sorting-selector';

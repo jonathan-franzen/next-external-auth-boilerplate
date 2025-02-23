@@ -32,7 +32,7 @@ export interface RequestPatchIdUsersApiInterface {
 	lastName?: string;
 }
 
-export interface RequestPostMeResetPasswordUsersApiInterface {
+export interface RequestPostUpdatePasswordMeUsersApiInterface {
 	newPassword: string;
 	password: string;
 }
@@ -57,7 +57,7 @@ export interface ResponsePatchIdUsersApiInterface {
 	user: ObjectUserUsersApiInterface;
 }
 
-export interface ResponsePostMeResetPasswordUsersApiInterface {
+export interface ResponsePostUpdatePasswordMeUsersApiInterface {
 	accessToken: string;
 	message: string;
 }

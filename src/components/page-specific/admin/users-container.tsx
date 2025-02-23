@@ -1,7 +1,7 @@
 'use client';
 
 import UserCard from '@/components/page-specific/admin/user-card';
-import { ObjectUserUsersApiInterface } from '@/interfaces/api/users/users.api.interfaces';
+import { ObjectUserUsersApiInterface } from '@/interfaces/api/user/user.api.interfaces';
 import { ReactNode, useEffect, useRef } from 'react';
 
 interface UsersContainerProps {

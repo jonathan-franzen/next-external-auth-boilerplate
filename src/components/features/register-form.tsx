@@ -3,7 +3,7 @@
 import { submitRegisterFormFeatureAction } from '@/actions/feature/feature.actions';
 import Form from '@/components/common/form';
 import { EMAIL_VALIDATION_REGEX, PASSWORD_VALIDATION_REGEX } from '@/constants/regex.constants';
-import { RequestPostRegisterAuthApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
+import { RequestPostRegisterApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
 import getFormValidationSchema from '@/utils/get-form-validation-schema';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useState } from 'react';
@@ -31,7 +31,7 @@ function RegisterForm({ className }: RegisterFormProps): ReactNode {
 	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
 		setIsLoading(true);
 		try {
-			await submitRegisterFormFeatureAction(formData as unknown as RequestPostRegisterAuthApiInterface);
+			await submitRegisterFormFeatureAction(formData as unknown as RequestPostRegisterApiInterface);
 			await new Promise(() => router.push('/verify-email'));
 		} catch (error) {
 			setIsLoading(false);
