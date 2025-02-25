@@ -44,6 +44,18 @@ const config = [
 		rules: {
 			'@typescript-eslint/explicit-function-return-type': ['error'],
 			'@typescript-eslint/no-unnecessary-type-assertion': 'error',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					args: 'all',
+					argsIgnorePattern: '^_',
+					caughtErrors: 'all',
+					caughtErrorsIgnorePattern: '^_',
+					destructuredArrayIgnorePattern: '^_',
+					ignoreRestSiblings: true,
+					varsIgnorePattern: '^_',
+				},
+			],
 			'unicorn/no-nested-ternary': 'off',
 			'unicorn/prefer-string-raw': 'off',
 			'unicorn/prevent-abbreviations': 'off',
