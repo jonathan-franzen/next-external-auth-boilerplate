@@ -4,7 +4,6 @@ import Icon from '@/components/icon/icon';
 import { FieldReactFormInterface, OnSubmitReactFormInterface, ValidationSchemaReactFormInterface } from '@/interfaces/react/form/form.react.interfaces';
 import sleep from '@/utils/sleep';
 import clsx from 'clsx';
-import NextForm from 'next/form';
 import { ChangeEvent, FormEvent, ReactElement, ReactNode, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
@@ -108,7 +107,7 @@ function Form({
 	};
 
 	return (
-		<NextForm action='/login' className={twMerge('flex w-full flex-col', className)} onSubmit={(e) => void handleOnSubmit(e)}>
+		<form className={twMerge('flex w-full flex-col', className)} onSubmit={(e) => void handleOnSubmit(e)}>
 			{fields.map(
 				(field: FieldReactFormInterface): ReactNode => (
 					<div className='mt-2' key={field.name}>
@@ -157,7 +156,7 @@ function Form({
 					</button>
 				</div>
 			)}
-		</NextForm>
+		</form>
 	);
 }
 
