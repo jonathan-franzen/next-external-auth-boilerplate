@@ -1,96 +1,72 @@
-import { FlatCompat } from '@eslint/eslintrc';
-import pluginJs from '@eslint/js';
-import perfectionist from 'eslint-plugin-perfectionist';
-import pluginReact from 'eslint-plugin-react';
-import pluginSecurity from 'eslint-plugin-security';
-import tailwind from 'eslint-plugin-tailwindcss';
-import eslintPluginUnicorn from 'eslint-plugin-unicorn';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import js from '@eslint/js'
+import tseslint from '@typescript-eslint/eslint-plugin'
+import tsParser from '@typescript-eslint/parser'
+import importPlugin from 'eslint-plugin-import'
+import prettierPlugin from 'eslint-plugin-prettier'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
+import globals from 'globals'
 
-const compat = new FlatCompat({
-	baseDirectory: import.meta.dirname,
-});
+export default [
+  {
+    ignores: ['node_modules/**', '.next/**'],
+  },
+  js.configs.recommended,
+  {
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './tsconfig.json',
+        ecmaVersion: 2025,
+      },
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+      import: importPlugin,
+      prettier: prettierPlugin,
+      'simple-import-sort': simpleImportSort,
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-empty-object-type': 'off',
 
-const config = [
-	{ files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
-	{
-		languageOptions: {
-			globals: globals.browser,
-			parser: tseslint,
-			parserOptions: {
-				project: './tsconfig.json',
-				tsconfigRootDir: process.cwd(),
-				sourceType: 'module',
-			},
-		},
-	},
-	pluginJs.configs.recommended,
-	...tseslint.configs.recommendedTypeChecked,
-	perfectionist.configs['recommended-natural'],
-	pluginReact.configs.flat.recommended,
-	eslintPluginUnicorn.configs['flat/recommended'],
-	pluginSecurity.configs.recommended,
-	...tailwind.configs['flat/recommended'],
-	...compat.config({
-		extends: ['next'],
-		settings: {
-			next: {
-				rootDir: '.',
-			},
-		},
-	}),
-	{
-		rules: {
-			'@typescript-eslint/explicit-function-return-type': ['error'],
-			'@typescript-eslint/no-unnecessary-type-assertion': 'error',
-			'@typescript-eslint/no-unused-vars': [
-				'error',
-				{
-					args: 'all',
-					argsIgnorePattern: '^_',
-					caughtErrors: 'all',
-					caughtErrorsIgnorePattern: '^_',
-					destructuredArrayIgnorePattern: '^_',
-					ignoreRestSiblings: true,
-					varsIgnorePattern: '^_',
-				},
-			],
-			'unicorn/no-nested-ternary': 'off',
-			'unicorn/prefer-string-raw': 'off',
-			'unicorn/prevent-abbreviations': 'off',
-		},
-	},
-	{
-		ignores: [
-			'**/temp.js',
-			'config/*',
-			'node_modules/',
-			'.serverless/',
-			'dist/',
-			'build/',
-			'.eslintcache',
-			'npm-debug.log*',
-			'yarn-debug.log*',
-			'yarn-error.log*',
-			'.env',
-			'.env.local',
-			'.env.development',
-			'.env.test',
-			'.env.production',
-			'.vscode/',
-			'.idea/',
-			'*.iml',
-			'.DS_Store',
-			'coverage/',
-			'tmp/',
-			'temp/',
-			'.next/**',
-			'public/**',
-			'next.config.js',
-			'postcss.config.js',
-		],
-	},
-];
+      'prettier/prettier': 'warn',
 
-export default config;
+      'simple-import-sort/imports': 'error',
+      'simple-import-sort/exports': 'error',
+
+      'import/first': 'error',
+      'import/newline-after-import': 'error',
+      'import/no-duplicates': 'error',
+      'import/no-named-as-default-member': 'off',
+      'import/no-unresolved': 'error',
+
+      'no-restricted-imports': [
+        'error',
+        { patterns: ['../*', './*', '{.,..}/**'] },
+      ],
+    },
+    settings: {
+      'import/resolver': {
+        typescript: {
+          alwaysTryTypes: true,
+          project: './tsconfig.json',
+        },
+        node: {
+          extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        },
+      },
+    },
+  },
+]

@@ -1,14 +1,11 @@
 const config = {
-	arrowParens: 'always',
-	bracketSameLine: false,
-	bracketSpacing: true,
-	jsxSingleQuote: true,
-	plugins: ['prettier-plugin-tailwindcss'],
-	printWidth: 160,
-	semi: true,
 	singleQuote: true,
+	trailingComma: 'es5',
+	printWidth: 80,
 	tabWidth: 2,
-	useTabs: true,
-};
+	useTabs: false,
+	semi: false,
+	plugins: ['prettier-plugin-tailwindcss'],
+}
 
-export default config;
+export default config

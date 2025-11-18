@@ -1,26 +1,38 @@
-'use client';
+'use client'
 
-import NumericalToggle from '@/components/common/numerical-toggle';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ReactNode } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation'
+import { ReactNode } from 'react'
+
+import NumericalToggle from '@/components/common/numerical-toggle'
 
 interface PageSelectorProps {
-	className?: string;
-	currentPage: number;
-	totalPages: number;
+  className?: string
+  currentPage: number
+  totalPages: number
 }
 
-function PageSelector({ className, currentPage, totalPages }: PageSelectorProps): ReactNode {
-	const router = useRouter();
-	const searchParams = useSearchParams();
+function PageSelector({
+  className,
+  currentPage,
+  totalPages,
+}: PageSelectorProps): ReactNode {
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-	const handlePageChange = (page: number): void => {
-		const params = new URLSearchParams(searchParams.toString());
-		params.set('page', page.toString());
-		router.push(`/admin?${params.toString()}`);
-	};
+  const handlePageChange = (page: number): void => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', page.toString())
+    router.push(`/admin?${params.toString()}`)
+  }
 
-	return <NumericalToggle className={className} currentValue={currentPage} onValueChange={handlePageChange} totalValues={totalPages} />;
+  return (
+    <NumericalToggle
+      className={className}
+      currentValue={currentPage}
+      onValueChange={handlePageChange}
+      totalValues={totalPages}
+    />
+  )
 }
 
-export default PageSelector;
+export default PageSelector

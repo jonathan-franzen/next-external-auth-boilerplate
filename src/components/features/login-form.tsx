@@ -1,59 +1,84 @@
-'use client';
+'use client'
 
-import { submitLoginFormFeatureAction } from '@/actions/feature/feature.actions';
-import Form from '@/components/common/form';
-import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants';
-import { RequestPostLoginApiInterface } from '@/interfaces/api/auth/auth.api.interfaces';
-import getFormValidationSchema from '@/utils/get-form-validation-schema';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { ReactNode, useState } from 'react';
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { ReactNode, useState } from 'react'
+
+import { submitLoginFormFeatureAction } from '@/actions/feature/feature.actions'
+import Form from '@/components/common/form'
+import { EMAIL_VALIDATION_REGEX } from '@/constants/regex.constants'
+import { RequestPostLoginApiInterface } from '@/interfaces/api/auth/auth.api.interfaces'
+import getFormValidationSchema from '@/utils/get-form-validation-schema'
 
 interface LoginFormProps {
-	className?: string;
+  className?: string
 }
 
 function LoginForm({ className }: LoginFormProps): ReactNode {
-	const [isLoading, setIsLoading] = useState(false);
-	const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
-	const formFields = [
-		{ autoComplete: 'email', name: 'email', placeholder: 'Email', required: true, type: 'text' },
-		{ autoComplete: 'current-password', name: 'password', placeholder: 'Password', required: true, type: 'password' },
-	];
+  const formFields = [
+    {
+      autoComplete: 'email',
+      name: 'email',
+      placeholder: 'Email',
+      required: true,
+      type: 'text',
+    },
+    {
+      autoComplete: 'current-password',
+      name: 'password',
+      placeholder: 'Password',
+      required: true,
+      type: 'password',
+    },
+  ]
 
-	const formValidationSchema = {
-		...getFormValidationSchema('email', EMAIL_VALIDATION_REGEX, 'Invalid password.', false),
-	};
+  const formValidationSchema = {
+    ...getFormValidationSchema(
+      'email',
+      EMAIL_VALIDATION_REGEX,
+      'Invalid password.',
+      false
+    ),
+  }
 
-	const handleOnSubmit = async (formData: Record<string, string>): Promise<void> => {
-		setIsLoading(true);
-		try {
-			await submitLoginFormFeatureAction(formData as unknown as RequestPostLoginApiInterface);
-			await new Promise(() => router.push('/dashboard'));
-		} catch (error) {
-			setIsLoading(false);
-			throw error;
-		}
-	};
+  const handleOnSubmit = async (
+    formData: Record<string, string>
+  ): Promise<void> => {
+    setIsLoading(true)
+    try {
+      await submitLoginFormFeatureAction(
+        formData as unknown as RequestPostLoginApiInterface
+      )
+      await new Promise(() => router.push('/dashboard'))
+    } catch (error) {
+      setIsLoading(false)
+      throw error
+    }
+  }
 
-	return (
-		<Form
-			additionalContent={
-				<div className='mt-1 flex justify-end'>
-					<Link className='w-fit text-xs text-pink-900 hover:text-pink-700' href='/reset-password'>
-						Forgot your password?
-					</Link>
-				</div>
-			}
-			className={className}
-			fields={formFields}
-			isLoading={isLoading}
-			onSubmit={handleOnSubmit}
-			submitLabel='SIGN IN'
-			validationSchema={formValidationSchema}
-		/>
-	);
+  return (
+    <Form
+      additionalContent={
+        <div className="mt-1 flex justify-end">
+          <Link
+            className="w-fit text-xs text-pink-900 hover:text-pink-700"
+            href="/reset-password"
+          >
+            Forgot your password?
+          </Link>
+        </div>
+      }
+      className={className}
+      fields={formFields}
+      isLoading={isLoading}
+      onSubmit={handleOnSubmit}
+      submitLabel="SIGN IN"
+      validationSchema={formValidationSchema}
+    />
+  )
 }
 
-export default LoginForm;
+export default LoginForm

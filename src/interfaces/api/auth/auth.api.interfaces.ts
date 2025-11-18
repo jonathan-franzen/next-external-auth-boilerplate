@@ -1,57 +1,57 @@
 export interface RequestPostLoginApiInterface {
-	email: string;
-	password: string;
+  email: string
+  password: string
 }
 
 export interface RequestPostRegisterApiInterface {
-	email: string;
-	firstName: string;
-	lastName: string;
-	password: string;
+  email: string
+  firstName: string
+  lastName: string
+  password: string
 }
 
 export interface RequestPostResendVerifyEmailApiInterface {
-	email: string;
+  email: string
 }
 
 export interface RequestPostResetPasswordApiInterface {
-	email: string;
+  email: string
 }
 
 export interface RequestPostTokenResetPasswordApiInterface {
-	password: string;
+  password: string
 }
 
 export interface ResponseGetTokenResetPasswordApiInterface {
-	message: string;
+  message: string
 }
 
 export interface ResponsePostLoginApiInterface {
-	accessToken: string;
-	message: string;
+  accessToken: string
+  message: string
 }
 
 export interface ResponsePostRefreshApiInterface {
-	accessToken: string;
-	message: string;
+  accessToken: string
+  message: string
 }
 
 export interface ResponsePostRegisterApiInterface {
-	message: string;
+  message: string
 }
 
 export interface ResponsePostResendVerifyEmailApiInterface {
-	message: string;
+  message: string
 }
 
 export interface ResponsePostResetPasswordApiInterface {
-	message: string;
+  message: string
 }
 
 export interface ResponsePostTokenResetPasswordApiInterface {
-	message: string;
+  message: string
 }
 
 export interface ResponsePostTokenVerifyEmailApiInterface {
-	message: string;
+  message: string
 }
