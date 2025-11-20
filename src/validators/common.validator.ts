@@ -1,6 +1,8 @@
 import { z } from 'zod'
 
-export const order = z.enum(['asc', 'desc']).optional()
+import { OrderDirection } from '@/types/general.types'
+
+export const order = z.enum(OrderDirection).optional()
 
 export const pagination = z.object({
   /** Zero-based page index */

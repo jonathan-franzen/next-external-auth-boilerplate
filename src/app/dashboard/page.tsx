@@ -1,6 +1,8 @@
 'use server'
 
-import GhostLink from '@/components/common/ghost-link'
+import Link from 'next/link'
+
+import { Text } from '@/components-new/text'
 import { LogoutForm } from '@/features/auth/logout-form'
 import { getSelfFromAuthSession } from '@/lib/auth-session'
 import { UserRoles } from '@/types/user/user.types'
@@ -11,38 +13,54 @@ const DashboardPage = async () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <h1 className="text-center text-sm font-semibold text-gray-700">
+        <Text as="h3" variant="heading">
           WELCOME, {me.firstName.toUpperCase()}
-        </h1>
+        </Text>
         <ul className="mt-12 flex flex-col gap-2">
-          <li>Email: {me.email}</li>
-          <li>First Name: {me.firstName}</li>
-          <li>Last Name: {me.lastName}</li>
-          <li>Email verified at: {me.emailVerifiedAt?.toString()}</li>
           <li>
-            Roles:{' '}
-            {me.roles.map((role: string, index: number): string =>
-              index < me.roles.length - 1 ? `${role}, ` : role
-            )}
+            <Text as="p" variant="body">
+              Email: {me.email}
+            </Text>
+          </li>
+          <li>
+            <Text as="p" variant="body">
+              First Name: {me.firstName}
+            </Text>
+          </li>
+          <li>
+            <Text as="p" variant="body">
+              Last Name: {me.lastName}
+            </Text>
+          </li>
+          <li>
+            <Text as="p" variant="body">
+              Email verified at: {me.emailVerifiedAt?.toString()}
+            </Text>
+          </li>
+          <li>
+            <Text as="p" variant="body">
+              <span>Roles: </span>
+              {me.roles.map((role: string, index: number): string =>
+                index < me.roles.length - 1 ? `${role}, ` : role
+              )}
+            </Text>
           </li>
         </ul>
         <div className="mt-6 flex justify-center">
-          <GhostLink href="/dashboard/reset-password">
-            Change password here
-          </GhostLink>
+          <Link href="/dashboard/reset-password">Change password here</Link>
         </div>
       </div>
       <div>
         <LogoutForm />
         <div className="mt-2 flex justify-center">
           {me.roles.includes(UserRoles.ADMIN) ? (
-            <GhostLink href="/admin">View admin page</GhostLink>
+            <Link href="/admin">View admin page</Link>
           ) : (
             <div className="mt-2 flex flex-col items-center justify-center gap-2">
-              <p className="w-fit text-xs">
+              <Text as="p" variant="body">
                 This user is no admin. See what happens when you
-              </p>
-              <GhostLink href="/admin">View admin page</GhostLink>
+              </Text>
+              <Link href="/admin">View admin page</Link>
             </div>
           )}
         </div>

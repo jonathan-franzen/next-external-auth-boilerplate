@@ -9,7 +9,7 @@ export interface DataResponse<T> {
 
 export interface PaginationResponse<T> {
   message: string
-  data: T
+  data: T[]
   count: number
   pageSize: number
   page: number

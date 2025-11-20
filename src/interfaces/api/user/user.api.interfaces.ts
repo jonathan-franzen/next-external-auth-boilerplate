@@ -1,3 +1,5 @@
+import { OrderDirection } from '@/types/general.types'
+
 export interface ObjectMeUsersApiInterface {
   email: string
   emailVerifiedAt: null | string
@@ -23,7 +25,7 @@ export interface RequestGetUsersApiInterface {
   limit?: number
   page?: number
   sortBy?: string
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: OrderDirection
 }
 
 export interface RequestPatchIdUsersApiInterface {

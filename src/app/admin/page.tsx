@@ -3,58 +3,88 @@
 import { until } from '@open-draft/until'
 import { isHttpError } from 'http-errors'
 import { redirect } from 'next/navigation'
-import { ReactNode } from 'react'
 
-import { getUsersApiAction } from '@/actions/api/user/user.api.actions'
+import { getUsersApi } from '@/api/user/get-users.api'
 import Refresh from '@/components/features/refresh'
-import PageSelector from '@/components/page-specific/admin/page-selector'
-import SortingSelector from '@/components/page-specific/admin/sorting-selector'
-import UsersContainer from '@/components/page-specific/admin/users-container'
+import { Text } from '@/components-new/text'
+import { ListUsersTable } from '@/features/admin/tables/list-users-table'
+import { OrderDirection } from '@/types/general.types'
+import { getUsersOrderBy } from '@/validators/user/get-users.validator'
 
 interface AdminPageProps {
   searchParams: Promise<{
     page?: string
-    sortBy?: string
+    orderBy?: string
+    order?: string
   }>
 }
 
-async function AdminPage({ searchParams }: AdminPageProps): Promise<ReactNode> {
-  const { page = '1', sortBy = 'createdAt' } = await searchParams
-  const pageNumber = Number(page)
+const getOrderBy = (orderByParam?: string, orderParam?: string) => {
+  const validOptions = Object.keys(getUsersOrderBy.shape)
 
-  const [error, data] = await until(() =>
-    getUsersApiAction({ page: pageNumber, sortBy }, true)
+  if (orderByParam && validOptions.includes(orderByParam)) {
+    return { orderBy: orderByParam, order: orderParam ?? OrderDirection.DESC }
+  }
+
+  return { orderBy: undefined, order: undefined }
+}
+
+const AdminPage = async ({ searchParams }: AdminPageProps) => {
+  const {
+    page: pageParam = '0',
+    orderBy: orderByParam,
+    order: orderParam,
+  } = await searchParams
+
+  const { order, orderBy } = getOrderBy(orderByParam, orderParam)
+
+  const page = Number(pageParam)
+
+  const [err, res] = await until(() =>
+    getUsersApi({
+      pagination: { page, pageSize: 1 },
+      filter: {},
+      ...(orderBy
+        ? {
+            orderBy: {
+              [orderBy]: order,
+            },
+          }
+        : {}),
+    })
   )
 
-  if (error) {
+  if (err) {
     // Fallback in-case refresh not performed in middleware.
-    if (isHttpError(error) && error.status === 401) {
+    if (isHttpError(err) && err.status === 401) {
       return <Refresh loadingIndicator={true} />
     } else {
-      throw error
+      throw err
     }
   }
 
-  if (!data && pageNumber > 1) {
-    const params = new URLSearchParams({ page, sortBy })
-    params.set('page', '1')
+  if ((!res.data || res.data.length === 0) && page > 0) {
+    const params = new URLSearchParams({
+      page: '0',
+      ...(orderBy ? { orderBy } : {}),
+      ...(order ? { order } : {}),
+    })
+
     redirect(`/admin?${params.toString()}`)
   }
 
   return (
     <>
       <div className="mt-12 mb-4 flex justify-between">
-        <p>Listing all users</p>
-        <SortingSelector initialSortingOption={sortBy} />
+        <Text as="h4" variant="body">
+          Listing all users
+        </Text>
       </div>
-      <UsersContainer page={page} sortBy={sortBy} users={data?.users || []} />
-      {data && data.pagination.totalPages > 1 && (
-        <PageSelector
-          className="mt-4"
-          currentPage={data.pagination.page}
-          totalPages={data.pagination.totalPages}
-        />
-      )}
+      <ListUsersTable
+        users={res.data}
+        totalCount={res.count}
+        pageSize={res.pageSize}
+      />
     </>
   )
 }

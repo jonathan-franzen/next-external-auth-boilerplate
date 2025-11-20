@@ -1,11 +1,12 @@
 import { z } from 'zod'
 
-import { order, pagination } from '@/validators/common.validator.js'
+import { order, pagination } from '@/validators/common.validator'
 
-const getUsersOrderBy = z.object({
+export const getUsersOrderBy = z.object({
   firstName: order,
   lastName: order,
   email: order,
+  createdAt: order,
 })
 
 const getUsersRequestFilter = z.object({
@@ -15,7 +16,7 @@ const getUsersRequestFilter = z.object({
 export const getUsersValidator = z.object({
   body: z.object({
     filter: getUsersRequestFilter,
-    orderBy: getUsersOrderBy,
+    orderBy: z.union([z.array(getUsersOrderBy), getUsersOrderBy]).optional(),
     pagination: pagination,
   }),
 })

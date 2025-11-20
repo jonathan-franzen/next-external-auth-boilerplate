@@ -1,6 +1,7 @@
 'use server'
 
-import GhostLink from '@/components/common/ghost-link'
+import Link from 'next/link'
+
 import { Text } from '@/components-new/text'
 import { LoginForm } from '@/features/auth/login-form'
 
@@ -14,10 +15,10 @@ const LoginPage = () => {
       </div>
       <LoginForm />
       <div className="flex flex-col items-center">
-        <Text as="h3" variant="body" className="mt-4">
+        <Text as="span" variant="body">
           Don&apos;t have an account?
         </Text>
-        <GhostLink href="/register">Sign up</GhostLink>
+        <Link href="/register">Sign up</Link>
       </div>
     </>
   )
