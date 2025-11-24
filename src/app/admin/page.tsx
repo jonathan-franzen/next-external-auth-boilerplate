@@ -5,11 +5,11 @@ import { isHttpError } from 'http-errors'
 import { redirect } from 'next/navigation'
 
 import { getUsersApi } from '@/api/user/get-users.api'
+import { getUsersApiInternal } from '@/api/user/get-users.api-internal'
 import Refresh from '@/components/features/refresh'
 import { Text } from '@/components-new/text'
 import { ListUsersTable } from '@/features/admin/tables/list-users-table'
-import { OrderDirection } from '@/types/general.types'
-import { getUsersOrderBy } from '@/validators/user/get-users.validator'
+import { parseOrderBy, parsePage } from '@/lib/search-params'
 
 interface AdminPageProps {
   searchParams: Promise<{
@@ -19,30 +19,19 @@ interface AdminPageProps {
   }>
 }
 
-const getOrderBy = (orderByParam?: string, orderParam?: string) => {
-  const validOptions = Object.keys(getUsersOrderBy.shape)
-
-  if (orderByParam && validOptions.includes(orderByParam)) {
-    return { orderBy: orderByParam, order: orderParam ?? OrderDirection.DESC }
-  }
-
-  return { orderBy: undefined, order: undefined }
-}
-
 const AdminPage = async ({ searchParams }: AdminPageProps) => {
   const {
-    page: pageParam = '0',
+    page: pageParam,
     orderBy: orderByParam,
     order: orderParam,
   } = await searchParams
 
-  const { order, orderBy } = getOrderBy(orderByParam, orderParam)
-
-  const page = Number(pageParam)
+  const { order, orderBy } = parseOrderBy(orderByParam, orderParam)
+  const page = parsePage(pageParam)
 
   const [err, res] = await until(() =>
-    getUsersApi({
-      pagination: { page, pageSize: 1 },
+    getUsersApiInternal({
+      pagination: { page: page, pageSize: 1 },
       filter: {},
       ...(orderBy
         ? {
@@ -63,12 +52,9 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
     }
   }
 
-  if ((!res.data || res.data.length === 0) && page > 0) {
-    const params = new URLSearchParams({
-      page: '0',
-      ...(orderBy ? { orderBy } : {}),
-      ...(order ? { order } : {}),
-    })
+  if (!res.data.length && page > 0) {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', '1')
 
     redirect(`/admin?${params.toString()}`)
   }
@@ -82,7 +68,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
       </div>
       <ListUsersTable
         users={res.data}
-        totalCount={res.count}
+        itemCount={res.count}
         pageSize={res.pageSize}
       />
     </>

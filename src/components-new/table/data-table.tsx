@@ -14,21 +14,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components-new/table/table'
-import { OrderDirection } from '@/types/general.types'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   table: TableType<TData>
-  currentPage: number
-  pageCount: number
 }
 
 export function DataTable<TData, TValue>({
   columns,
   table,
-  currentPage,
-  pageCount,
 }: DataTableProps<TData, TValue>) {
+  const { pageIndex } = table.getState().pagination
+  const pageCount = table.getPageCount()
+
   return (
     <div className="space-y-4">
       <div className="rounded-md border">
@@ -44,17 +42,25 @@ export function DataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {canSort ? (
                         <button
+                          type="button"
                           className="inline-flex items-center gap-1"
                           onClick={header.column.getToggleSortingHandler()}
+                          aria-sort={
+                            sortDir === 'asc'
+                              ? 'ascending'
+                              : sortDir === 'desc'
+                                ? 'descending'
+                                : 'none'
+                          }
                         >
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                          {sortDir === OrderDirection.DESC
-                            ? '↑'
-                            : sortDir === OrderDirection.ASC
-                              ? '↓'
+                          {sortDir === 'desc'
+                            ? '↓'
+                            : sortDir === 'asc'
+                              ? '↑'
                               : ''}
                         </button>
                       ) : (
@@ -71,7 +77,7 @@ export function DataTable<TData, TValue>({
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -87,7 +93,9 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={
+                    table.getVisibleLeafColumns().length || columns.length
+                  }
                   className="h-24 text-center"
                 >
                   No results
@@ -101,19 +109,21 @@ export function DataTable<TData, TValue>({
       {/* Pagination controls */}
       <div className="flex items-center justify-between">
         <div className="text-muted-foreground text-sm">
-          Page {currentPage + 1} of {pageCount}
+          Page {pageIndex + 1} of {pageCount}
         </div>
 
         <div className="flex gap-2">
           <button
+            type="button"
             onClick={() => table.previousPage()}
-            disabled={currentPage <= 0}
+            disabled={!table.getCanPreviousPage()}
           >
             Previous
           </button>
           <button
+            type="button"
             onClick={() => table.nextPage()}
-            disabled={currentPage >= pageCount - 1}
+            disabled={!table.getCanNextPage()}
           >
             Next
           </button>

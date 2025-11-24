@@ -33,28 +33,16 @@ const userColumns: ColumnDef<User>[] = [
 
 interface ListUsersTableProps {
   users: User[]
-  totalCount: number
+  itemCount: number
   pageSize: number
 }
 
 export const ListUsersTable = ({
   users,
-  totalCount,
+  itemCount,
   pageSize,
 }: ListUsersTableProps) => {
-  const { table, currentPage, pageCount } = useDataTable(
-    userColumns,
-    users,
-    totalCount,
-    pageSize
-  )
+  const { table } = useDataTable(userColumns, users, itemCount, pageSize)
 
-  return (
-    <DataTable
-      columns={userColumns}
-      table={table}
-      currentPage={currentPage}
-      pageCount={pageCount}
-    />
-  )
+  return <DataTable columns={userColumns} table={table} />
 }
