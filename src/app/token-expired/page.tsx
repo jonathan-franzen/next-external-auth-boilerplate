@@ -3,13 +3,22 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+import { destroyAuthSession } from '@/lib/auth-session'
+
 const TokenExpiredPage = () => {
   const router = useRouter()
 
   useEffect(() => {
-    setTimeout(() => {
-      router.replace('/sign-in')
-    }, 1000)
+    let timeout: ReturnType<typeof setTimeout>
+    ;(async () => {
+      await destroyAuthSession()
+
+      timeout = setTimeout(() => {
+        router.replace('/login')
+      }, 1000)
+    })()
+
+    return () => clearTimeout(timeout)
   }, [])
 
   return (

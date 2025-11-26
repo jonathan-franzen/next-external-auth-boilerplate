@@ -1,5 +1,5 @@
-import { authenticatedKyRequest } from '@/api/ky-request'
 import { USER_ENDPOINTS } from '@/api/user/constants'
+import { authenticatedKyRequest } from '@/lib/api'
 import { GetSelfResponse } from '@/types/user/get-self.types'
 
 export const getSelfApi = async () => {
@@ -9,7 +9,5 @@ export const getSelfApi = async () => {
     isServerComponent: true,
   })
 
-  const data = await res.json()
-
-  return { ...data, authSession }
+  return { res, authSession }
 }

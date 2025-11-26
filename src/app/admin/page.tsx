@@ -6,6 +6,7 @@ import { getUsersApi } from '@/api/user/get-users.api'
 import { Text } from '@/components-new/text'
 import { ListUsersTable } from '@/features/admin/tables/list-users-table'
 import { SaveAuthSession } from '@/features/auth/components/save-auth-session'
+import { parseApiResponse } from '@/lib/api'
 import { parseOrderBy, parsePage } from '@/lib/search-params'
 
 interface AdminPageProps {
@@ -26,7 +27,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
   const { order, orderBy } = parseOrderBy(orderByParam, orderParam)
   const page = parsePage(pageParam)
 
-  const res = await getUsersApi({
+  const { res, authSession } = await getUsersApi({
     pagination: { page: page, pageSize: 1 },
     filter: {},
     ...(orderBy
@@ -38,11 +39,9 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
       : {}),
   })
 
-  if (!res) {
-    return
-  }
+  const { data, pageSize, count } = await parseApiResponse(res)
 
-  if (!res.data.length && page > 0) {
+  if (!data.length && page > 0) {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', '1')
 
@@ -51,17 +50,13 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
 
   return (
     <>
-      <SaveAuthSession authSession={res.authSession} />
+      <SaveAuthSession authSession={authSession} />
       <div className="mt-12 mb-4 flex justify-between">
         <Text as="h4" variant="body">
           Listing all users
         </Text>
       </div>
-      <ListUsersTable
-        users={res.data}
-        itemCount={res.count}
-        pageSize={res.pageSize}
-      />
+      <ListUsersTable users={data} itemCount={count} pageSize={pageSize} />
     </>
   )
 }

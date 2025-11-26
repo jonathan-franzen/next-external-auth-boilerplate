@@ -4,6 +4,7 @@ import { until } from '@open-draft/until'
 import { z } from 'zod'
 
 import { changePasswordApi } from '@/api/user/change-password.api'
+import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
 import { getErrorMessage } from '@/utils/get-error-message'
@@ -46,12 +47,12 @@ export const changePassword = async (
     }
   }
 
-  const [err, res] = await until(() =>
-    changePasswordApi({
-      password: validatedFields.data.password,
-      newPassword: validatedFields.data.newPassword,
-    })
-  )
+  const res = await changePasswordApi({
+    password: validatedFields.data.password,
+    newPassword: validatedFields.data.newPassword,
+  })
+
+  const [err, awaitedRes] = await until(() => parseApiResponse(res))
 
   if (err) {
     return {
@@ -63,12 +64,15 @@ export const changePassword = async (
     }
   }
 
-  const refreshToken = getSetCookieValue(res.setCookies, 'refreshToken')
+  const refreshToken = getSetCookieValue(
+    res.headers.getSetCookie(),
+    'refreshToken'
+  )
 
   await updateAuthSession({
     refreshToken,
-    accessToken: res.data.accessToken,
+    accessToken: awaitedRes.data.accessToken,
   })
 
-  return { message: res.message, data: null }
+  return { message: awaitedRes.message, data: null }
 }

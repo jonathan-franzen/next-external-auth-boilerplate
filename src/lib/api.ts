@@ -2,7 +2,7 @@
 
 import { until } from '@open-draft/until'
 import createHttpError, { isHttpError } from 'http-errors'
-import { Input, Options } from 'ky'
+import { Input, KyResponse, Options } from 'ky'
 import { redirect } from 'next/navigation'
 
 import { refreshApi } from '@/api/auth/refresh.api'
@@ -33,20 +33,8 @@ const withAuthHeader = (accessToken?: string, options?: Options): Options => {
   }
 }
 
-export const kyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
-  const res = await api<T>(path, options)
-
-  if (!res.ok) {
-    const [err, data] = await until(() => res.json<ErrorResponse>())
-
-    if (err) {
-      throw createHttpError(res.status, 'Something went wrong.')
-    }
-
-    throw createHttpError(res.status, data.message)
-  }
-
-  return res
+export const KyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
+  return api<T>(path, options)
 }
 
 export const authenticatedKyRequest = async <T>({
@@ -60,21 +48,21 @@ export const authenticatedKyRequest = async <T>({
     ...withAuthHeader(accessToken, options),
   }
 
-  const [firstErr, firstRes] = await until(() =>
-    kyRequest<T>({ path, ...firstCallOptions })
-  )
+  const firstRes = await KyRequest<T>({ path, ...firstCallOptions })
 
-  if (!firstErr) {
+  if (firstRes.ok) {
     return { res: firstRes, authSession: null }
   }
 
-  const isUnauthorizedError = isHttpError(firstErr) && firstErr.status === 401
-
-  if (!refreshToken || !isUnauthorizedError) {
-    throw firstErr
+  if (!refreshToken || firstRes.status !== 401) {
+    return { res: firstRes, authSession: null }
   }
 
-  const [refreshErr, refreshRes] = await until(() => refreshApi(refreshToken))
+  const refreshRes = await refreshApi(refreshToken)
+
+  const [refreshErr, awaitedRefreshRes] = await until(() =>
+    parseApiResponse(refreshRes)
+  )
 
   if (refreshErr) {
     if (isHttpError(refreshErr) && refreshErr.status === 401) {
@@ -83,10 +71,10 @@ export const authenticatedKyRequest = async <T>({
     throw refreshErr
   }
 
-  const newAccessToken = refreshRes.data.accessToken
+  const newAccessToken = awaitedRefreshRes.data.accessToken
 
   const newRefreshToken = getSetCookieValue(
-    refreshRes.setCookies,
+    refreshRes.headers.getSetCookie(),
     'refreshToken'
   )
 
@@ -102,10 +90,28 @@ export const authenticatedKyRequest = async <T>({
   }
 
   return {
-    res: await kyRequest<T>({ path, ...retryOptions }),
+    res: await KyRequest<T>({ path, ...retryOptions }),
     authSession: {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
     },
   }
+}
+
+export const parseApiResponse = async <T>(res: KyResponse<T>): Promise<T> => {
+  if (!res.ok) {
+    const [err, data] = await until(() => res.json<ErrorResponse>())
+
+    if (err) {
+      throw createHttpError(res.status, 'Something went wrong.')
+    }
+
+    throw createHttpError(res.status, data.message)
+  }
+
+  if (res.status === 204) {
+    return null as T
+  }
+
+  return await res.json()
 }

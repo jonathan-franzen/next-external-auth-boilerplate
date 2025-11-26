@@ -1,5 +1,5 @@
-import { authenticatedKyRequest } from '@/api/ky-request'
 import { USER_ENDPOINTS } from '@/api/user/constants'
+import { authenticatedKyRequest } from '@/lib/api'
 import {
   ChangePasswordRequestBody,
   ChangePasswordResponse,
@@ -13,10 +13,5 @@ export const changePasswordApi = async (body: ChangePasswordRequestBody) => {
     isServerComponent: false,
   })
 
-  const awaitedRes = await res.json()
-
-  return {
-    setCookies: res.headers.getSetCookie(),
-    ...awaitedRes,
-  }
+  return res
 }
