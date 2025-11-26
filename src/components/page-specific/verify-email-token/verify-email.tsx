@@ -6,7 +6,7 @@ import toast from 'react-hot-toast'
 
 import { postTokenVerifyEmailApiAction } from '@/actions/api/auth/auth.api.actions'
 import GhostLink from '@/components/common/ghost-link'
-import LogoutButton from '@/features/auth/logout-form'
+import LogoutButton from '@/features/auth/forms/logout-form'
 
 interface VerifyEmailProps {
   isAuthenticated: boolean

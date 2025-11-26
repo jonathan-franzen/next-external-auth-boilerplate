@@ -1,18 +1,11 @@
-import { until } from '@open-draft/until'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSelfApi } from '@/api/user/get-self.api'
 import {
   ADMIN_ROUTE_PATHS,
   PUBLIC_ROUTES_PATHS,
   VERIFY_EMAIL_ROUTES_PATHS,
 } from '@/constants/routes.constants'
-import {
-  destroyAuthSession,
-  getMiddlewareAuthSession,
-} from '@/lib/auth-session'
-import { setMiddlewareCookies } from '@/lib/cookies'
-import { setCookies } from '@/services/cookies/cookies.service'
+import { destroyAuthSession, getAuthSession } from '@/lib/auth-session'
 import { UserRoles } from '@/types/user/user.types'
 
 const isPathInRoutes = (path: string, routePaths: string[]) =>
@@ -24,17 +17,8 @@ const isPathInRoutes = (path: string, routePaths: string[]) =>
     return path === route
   })
 
-const redirect = (url: string, req: NextRequest, setCookieHeader: string[]) => {
-  const redirectResponse = NextResponse.redirect(new URL(url, req.nextUrl))
-
-  setMiddlewareCookies(
-    setCookieHeader,
-    ['session'],
-    redirectResponse,
-    req.nextUrl
-  )
-
-  return redirectResponse
+const redirect = (url: string, req: NextRequest) => {
+  return NextResponse.redirect(new URL(url, req.nextUrl))
 }
 
 export const verifyAndStoreSelfMiddleware = async (req: NextRequest) => {
@@ -46,73 +30,57 @@ export const verifyAndStoreSelfMiddleware = async (req: NextRequest) => {
 
   const nextResponse = NextResponse.next()
 
-  const authSession = await getMiddlewareAuthSession(req, nextResponse)
+  const authSession = await getAuthSession()
 
-  if (!authSession.refreshToken) {
-    const setCookieHeader = nextResponse.headers.getSetCookie()
-
-    if (!isPublicRoute) {
-      return redirect('/login', req, setCookieHeader)
-    }
-
-    return nextResponse
-  }
-
-  const [err, res] = await until(() => getSelfApi(authSession))
-
-  if (err) {
+  if (path === '/token-expired') {
     await destroyAuthSession()
 
-    const setCookieHeader = nextResponse.headers.getSetCookie()
+    return nextResponse
+  }
 
+  if (!authSession.refreshToken) {
     if (!isPublicRoute) {
-      return redirect('/login', req, setCookieHeader)
+      return redirect('/login', req)
     }
 
     return nextResponse
   }
 
-  const selfData = res.data
+  if (!authSession.self?.id) {
+    await destroyAuthSession()
 
-  authSession.self = selfData
-  await authSession.save()
+    if (!isPublicRoute) {
+      return redirect('/login', req)
+    }
 
-  const setCookieHeader = nextResponse.headers.getSetCookie()
+    return nextResponse
+  }
 
   /* Redirects */
 
   /* If email is verified, redirect away from verify routes */
   if (isVerifyRoute) {
-    if (selfData.emailVerifiedAt) {
-      return redirect('/dashboard', req, setCookieHeader)
+    if (authSession.self.emailVerifiedAt) {
+      return redirect('/dashboard', req)
     }
-
-    setMiddlewareCookies(
-      setCookieHeader,
-      ['session'],
-      nextResponse,
-      req.nextUrl
-    )
 
     return nextResponse
   }
 
   /* Redirect to verify email if not verified */
-  if (!selfData.emailVerifiedAt) {
-    return redirect('/verify-email', req, setCookieHeader)
+  if (!authSession.self.emailVerifiedAt) {
+    return redirect('/verify-email', req)
   }
 
   /* Redirect public routes to dashboard */
   if (isPublicRoute || path === '/') {
-    return redirect('/dashboard', req, setCookieHeader)
+    return redirect('/dashboard', req)
   }
 
   /* Restrict admin routes */
-  if (isAdminRoute && !selfData.roles.includes(UserRoles.ADMIN)) {
-    return redirect('/unauthorized', req, setCookieHeader)
+  if (isAdminRoute && !authSession.self.roles.includes(UserRoles.ADMIN)) {
+    return redirect('/unauthorized', req)
   }
-
-  setCookies(setCookieHeader, ['session'], nextResponse)
 
   return nextResponse
 }

@@ -1,11 +1,9 @@
 import { AuthSessionData, getIronSession, IronSession } from 'iron-session'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 
 import { AUTH_SESSION_COOKIE_NAME } from '@/constants/cookies.constants'
 import { IRON_SESSION_SECRET } from '@/constants/environment.constants'
-import { ObjectMeUsersApiInterface } from '@/interfaces/api/user/user.api.interfaces'
 
 export const sessionOptions = {
   cookieName: AUTH_SESSION_COOKIE_NAME,
@@ -21,7 +19,6 @@ export const sessionOptions = {
 declare module 'iron-session' {
   interface AuthSessionData {
     accessToken?: string
-    me?: ObjectMeUsersApiInterface
     refreshToken?: string
   }
 }
@@ -52,16 +49,6 @@ export async function getAuthSessionValue<K extends keyof AuthSessionData>(
   return Object.entries(session)
     .find(([sessionKey]) => sessionKey === key)
     ?.at(1) as AuthSessionData[K]
-}
-
-export async function getMeFromAuthSession(): Promise<ObjectMeUsersApiInterface> {
-  const session = await getAuthSession()
-
-  if (!session.me) {
-    return redirect('/login')
-  }
-
-  return session.me
 }
 
 export async function updateAuthSessionAndSave<K extends keyof AuthSessionData>(

@@ -1,14 +1,11 @@
 'use server'
 
-import { until } from '@open-draft/until'
-import { isHttpError } from 'http-errors'
 import { redirect } from 'next/navigation'
 
 import { getUsersApi } from '@/api/user/get-users.api'
-import { getUsersApiInternal } from '@/api/user/get-users.api-internal'
-import Refresh from '@/components/features/refresh'
 import { Text } from '@/components-new/text'
 import { ListUsersTable } from '@/features/admin/tables/list-users-table'
+import { SaveAuthSession } from '@/features/auth/components/save-auth-session'
 import { parseOrderBy, parsePage } from '@/lib/search-params'
 
 interface AdminPageProps {
@@ -29,27 +26,20 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
   const { order, orderBy } = parseOrderBy(orderByParam, orderParam)
   const page = parsePage(pageParam)
 
-  const [err, res] = await until(() =>
-    getUsersApiInternal({
-      pagination: { page: page, pageSize: 1 },
-      filter: {},
-      ...(orderBy
-        ? {
-            orderBy: {
-              [orderBy]: order,
-            },
-          }
-        : {}),
-    })
-  )
+  const res = await getUsersApi({
+    pagination: { page: page, pageSize: 1 },
+    filter: {},
+    ...(orderBy
+      ? {
+          orderBy: {
+            [orderBy]: order,
+          },
+        }
+      : {}),
+  })
 
-  if (err) {
-    // Fallback in-case refresh not performed in middleware.
-    if (isHttpError(err) && err.status === 401) {
-      return <Refresh loadingIndicator={true} />
-    } else {
-      throw err
-    }
+  if (!res) {
+    return
   }
 
   if (!res.data.length && page > 0) {
@@ -61,6 +51,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
 
   return (
     <>
+      <SaveAuthSession authSession={res.authSession} />
       <div className="mt-12 mb-4 flex justify-between">
         <Text as="h4" variant="body">
           Listing all users

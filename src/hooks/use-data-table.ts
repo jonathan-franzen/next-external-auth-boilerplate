@@ -33,7 +33,7 @@ export const useDataTable = <TData, TValue>(
     (update: (params: URLSearchParams) => void) => {
       const params = new URLSearchParams(searchParams.toString())
       update(params)
-      router.push(`${pathname}?${params.toString()}`)
+      return router.push(`${pathname}?${params.toString()}`)
     },
     [router, pathname, searchParams]
   )
@@ -54,7 +54,7 @@ export const useDataTable = <TData, TValue>(
       const nextSorting =
         typeof updater === 'function' ? updater(sortingState) : updater
 
-      navigateWithParams((params) => {
+      return navigateWithParams((params) => {
         if (nextSorting.length === 0) {
           params.delete('orderBy')
           params.delete('order')
@@ -73,7 +73,7 @@ export const useDataTable = <TData, TValue>(
       const nextPagination =
         typeof updater === 'function' ? updater(paginationState) : updater
 
-      navigateWithParams((params) => {
+      return navigateWithParams((params) => {
         params.set('page', String(nextPagination.pageIndex + 1))
       })
     },

@@ -13,6 +13,7 @@ export const api = ky.create({
   prefixUrl: BACKEND_URL,
   timeout: 6_000,
   headers: baseHeaders,
+  throwHttpErrors: false,
   hooks: {
     beforeRequest: [
       (request) => {

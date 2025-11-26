@@ -1,15 +1,15 @@
-import { IronSession, IronSessionData } from 'iron-session'
-
 import { authenticatedKyRequest } from '@/api/ky-request'
 import { USER_ENDPOINTS } from '@/api/user/constants'
 import { GetSelfResponse } from '@/types/user/get-self.types'
 
-export const getSelfApi = async (session?: IronSession<IronSessionData>) => {
-  const res = await authenticatedKyRequest<GetSelfResponse>({
+export const getSelfApi = async () => {
+  const { res, authSession } = await authenticatedKyRequest<GetSelfResponse>({
     path: USER_ENDPOINTS.GET_SELF,
     method: 'GET',
-    session,
+    isServerComponent: true,
   })
 
-  return await res.json()
+  const data = await res.json()
+
+  return { ...data, authSession }
 }

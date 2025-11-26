@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import { Text } from '@/components-new/text'
-import { ChangePasswordForm } from '@/features/user-settings/change-password-form'
+import { ChangePasswordForm } from '@/features/user-settings/forms/change-password-form'
 
 const ResetPasswordDashboardPage = () => {
   return (

@@ -1,3 +1,5 @@
+'use server'
+
 import { authenticatedKyRequest } from '@/api/ky-request'
 import { USER_ENDPOINTS } from '@/api/user/constants'
 import {
@@ -6,11 +8,14 @@ import {
 } from '@/types/user/get-users.types'
 
 export const getUsersApi = async (body: GetUsersRequestBody) => {
-  const res = await authenticatedKyRequest<GetUsersResponse>({
+  const { res, authSession } = await authenticatedKyRequest<GetUsersResponse>({
     path: USER_ENDPOINTS.GET_USERS,
     method: 'POST',
     json: body,
+    isServerComponent: true,
   })
 
-  return await res.json()
+  const data = await res.json()
+
+  return { ...data, authSession }
 }

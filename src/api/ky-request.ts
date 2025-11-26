@@ -1,22 +1,28 @@
+'use server'
+
 import { until } from '@open-draft/until'
-import { IronSession, IronSessionData } from 'iron-session'
+import createHttpError, { isHttpError } from 'http-errors'
 import { Input, Options } from 'ky'
+import { redirect } from 'next/navigation'
 
 import { refreshApi } from '@/api/auth/refresh.api'
 import { api } from '@/config/ky.config'
 import { getAuthSession, updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
+import { ErrorResponse } from '@/types/api/response.types'
 
 interface KyRequestOptions extends Options {
   path: Input
 }
 
 interface AuthenticatedKyRequestOptions extends KyRequestOptions {
-  session?: IronSession<IronSessionData>
+  isServerComponent?: boolean
 }
 
 const withAuthHeader = (accessToken?: string, options?: Options): Options => {
-  if (!accessToken) return { ...options }
+  if (!accessToken) {
+    return { ...options }
+  }
 
   return {
     ...options,
@@ -28,31 +34,53 @@ const withAuthHeader = (accessToken?: string, options?: Options): Options => {
 }
 
 export const kyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
-  return api<T>(path, options)
+  const res = await api<T>(path, options)
+
+  if (!res.ok) {
+    const [err, data] = await until(() => res.json<ErrorResponse>())
+
+    if (err) {
+      throw createHttpError(res.status, 'Something went wrong.')
+    }
+
+    throw createHttpError(res.status, data.message)
+  }
+
+  return res
 }
 
 export const authenticatedKyRequest = async <T>({
   path,
-  session,
+  isServerComponent = false,
   ...options
 }: AuthenticatedKyRequestOptions) => {
-  const { accessToken, refreshToken } = session ?? (await getAuthSession())
+  const { accessToken, refreshToken } = await getAuthSession()
 
   const firstCallOptions = {
     ...withAuthHeader(accessToken, options),
-    throwHttpErrors: false,
   }
 
-  const firstRes = await kyRequest<T>({ path, ...firstCallOptions })
+  const [firstErr, firstRes] = await until(() =>
+    kyRequest<T>({ path, ...firstCallOptions })
+  )
 
-  if (!refreshToken || firstRes.ok || firstRes.status !== 401) {
-    return firstRes
+  if (!firstErr) {
+    return { res: firstRes, authSession: null }
+  }
+
+  const isUnauthorizedError = isHttpError(firstErr) && firstErr.status === 401
+
+  if (!refreshToken || !isUnauthorizedError) {
+    throw firstErr
   }
 
   const [refreshErr, refreshRes] = await until(() => refreshApi(refreshToken))
 
   if (refreshErr) {
-    return firstRes
+    if (isHttpError(refreshErr) && refreshErr.status === 401) {
+      return redirect('/token-expired')
+    }
+    throw refreshErr
   }
 
   const newAccessToken = refreshRes.data.accessToken
@@ -62,10 +90,7 @@ export const authenticatedKyRequest = async <T>({
     'refreshToken'
   )
 
-  if (session) {
-    session.accessToken = newAccessToken
-    session.refreshToken = newRefreshToken
-  } else {
+  if (!isServerComponent) {
     await updateAuthSession({
       refreshToken: newRefreshToken,
       accessToken: newAccessToken,
@@ -76,5 +101,11 @@ export const authenticatedKyRequest = async <T>({
     ...withAuthHeader(newAccessToken, options),
   }
 
-  return kyRequest<T>({ path, ...retryOptions })
+  return {
+    res: await kyRequest<T>({ path, ...retryOptions }),
+    authSession: {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    },
+  }
 }

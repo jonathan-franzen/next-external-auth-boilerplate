@@ -2,12 +2,12 @@
 
 import { ReactNode } from 'react'
 
+import { getSelfApi } from '@/api/user/get-self.api'
 import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button'
-import LogoutButton from '@/features/auth/logout-form'
-import { getMeFromAuthSession } from '@/services/iron-session/iron-session.service'
+import LogoutButton from '@/features/auth/forms/logout-form'
 
 async function VerifyEmailPage(): Promise<ReactNode> {
-  const me = await getMeFromAuthSession()
+  const me = await getSelfApi()
 
   return (
     <>

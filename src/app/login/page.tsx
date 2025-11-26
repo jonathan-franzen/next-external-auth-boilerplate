@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 import { Text } from '@/components-new/text'
-import { LoginForm } from '@/features/auth/login-form'
+import { LoginForm } from '@/features/auth/forms/login-form'
 
 const LoginPage = () => {
   return (

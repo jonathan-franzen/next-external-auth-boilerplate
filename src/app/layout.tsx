@@ -1,18 +1,17 @@
 import '@/app/globals.css'
 
+import { Metadata } from 'next'
 import { ReactNode } from 'react'
 import { Toaster } from 'sonner'
 
-export const metadata = {
+export const metadata: Metadata = {
   description: 'Boilerplate for Next.js Authentication with external API',
   title: 'Next External Auth Boilerplate',
 }
 
-function RootLayout({
-  children,
-}: Readonly<{
-  children: ReactNode
-}>): ReactNode {
+interface RootLayoutProps extends Readonly<{ children: ReactNode }> {}
+
+function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>

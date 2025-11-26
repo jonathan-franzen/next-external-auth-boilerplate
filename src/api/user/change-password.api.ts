@@ -6,10 +6,11 @@ import {
 } from '@/types/user/change-password.types'
 
 export const changePasswordApi = async (body: ChangePasswordRequestBody) => {
-  const res = await authenticatedKyRequest<ChangePasswordResponse>({
+  const { res } = await authenticatedKyRequest<ChangePasswordResponse>({
     path: USER_ENDPOINTS.CHANGE_PASSWORD,
     method: 'POST',
     json: body,
+    isServerComponent: false,
   })
 
   const awaitedRes = await res.json()

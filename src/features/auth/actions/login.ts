@@ -64,6 +64,7 @@ export const login = async (_prevState: LoginState, formData: FormData) => {
   await updateAuthSession({
     refreshToken,
     accessToken: res.data.accessToken,
+    self: res.data.user,
   })
 
   return redirect('/dashboard')
