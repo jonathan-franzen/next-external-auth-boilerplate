@@ -103,7 +103,7 @@ export const parseApiResponse = async <T>(res: KyResponse<T>): Promise<T> => {
     const [err, data] = await until(() => res.json<ErrorResponse>())
 
     if (err) {
-      throw createHttpError(res.status, 'Something went wrong.')
+      throw createHttpError(res.status, err.message)
     }
 
     throw createHttpError(res.status, data.message)
