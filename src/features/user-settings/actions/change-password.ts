@@ -8,28 +8,27 @@ import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
 import { getErrorMessage } from '@/utils/get-error-message'
-import { changePasswordRequestBody } from '@/validators/user/change-password.validator'
+import { changePasswordBody } from '@/validators/user.validators'
 
 type ChangePasswordState = {
   password?: string
   newPassword?: string
   errors?: {
-    email?: string | null
     password?: string | null
+    newPassword?: string | null
     submit?: string
-  } | null
+  }
   message?: string
-  data?: null
 } | null
 
 export const changePassword = async (
   _prevState: ChangePasswordState,
   formData: FormData
-) => {
+): Promise<ChangePasswordState> => {
   const password = formData.get('password') as string
   const newPassword = formData.get('newPassword') as string
 
-  const validatedFields = changePasswordRequestBody.safeParse({
+  const validatedFields = changePasswordBody.safeParse({
     password,
     newPassword,
   })
@@ -74,5 +73,7 @@ export const changePassword = async (
     accessToken: awaitedRes.data.accessToken,
   })
 
-  return { message: awaitedRes.message, data: null }
+  return {
+    message: awaitedRes.message,
+  }
 }

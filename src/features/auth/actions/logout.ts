@@ -10,7 +10,10 @@ import { getErrorMessage } from '@/utils/get-error-message'
 
 type LogoutState = { error?: string } | null
 
-export const logout = async (_prevState: LogoutState, _formData: FormData) => {
+export const logout = async (
+  _prevState: LogoutState,
+  _formData: FormData
+): Promise<LogoutState> => {
   const res = await logoutApi()
 
   const [error] = await until(() => parseApiResponse(res))

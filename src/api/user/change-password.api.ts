@@ -3,7 +3,7 @@ import { authenticatedKyRequest } from '@/lib/api'
 import {
   ChangePasswordRequestBody,
   ChangePasswordResponse,
-} from '@/types/user/change-password.types'
+} from '@/types/user.types'
 
 export const changePasswordApi = async (body: ChangePasswordRequestBody) => {
   const { res } = await authenticatedKyRequest<ChangePasswordResponse>({

@@ -1,5 +1,5 @@
-import { OrderDirection } from '@/types/general.types'
-import { getUsersOrderBy } from '@/validators/user/get-users.validator'
+import { OrderDirection } from '@/types/common.types'
+import { listUsersOrderBy } from '@/validators/user.validators'
 
 export const parsePage = (value: string | null | undefined) => {
   if (value == null) {
@@ -18,7 +18,7 @@ export const parseOrderBy = (
   orderByValue: string | null | undefined,
   orderValue: string | null | undefined
 ) => {
-  const validOrderBy = Object.keys(getUsersOrderBy.shape)
+  const validOrderBy = Object.keys(listUsersOrderBy.shape)
 
   if (!orderByValue || !validOrderBy.includes(orderByValue)) {
     return { orderBy: null, order: null }

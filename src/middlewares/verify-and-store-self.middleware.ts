@@ -6,7 +6,7 @@ import {
   VERIFY_EMAIL_ROUTES_PATHS,
 } from '@/constants/routes.constants'
 import { destroyAuthSession, getAuthSession } from '@/lib/auth-session'
-import { UserRoles } from '@/types/user/user.types'
+import { UserRoles } from '@/types/user.types'
 
 const isPathInRoutes = (path: string, routePaths: string[]) =>
   routePaths.some((route) => {
@@ -58,6 +58,7 @@ export const verifyAndStoreSelfMiddleware = async (req: NextRequest) => {
 
   /* Redirects */
 
+  console.log(authSession)
   /* If email is verified, redirect away from verify routes */
   if (isVerifyRoute) {
     if (authSession.self.emailVerifiedAt) {

@@ -9,7 +9,7 @@ import { refreshApi } from '@/api/auth/refresh.api'
 import { api } from '@/config/ky.config'
 import { getAuthSession, updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
-import { ErrorResponse } from '@/types/api/response.types'
+import { ErrorResponse } from '@/types/api.types'
 
 interface KyRequestOptions extends Options {
   path: Input
@@ -65,7 +65,11 @@ export const authenticatedKyRequest = async <T>({
   )
 
   if (refreshErr) {
-    if (isHttpError(refreshErr) && refreshErr.status === 401) {
+    if (
+      isHttpError(refreshErr) &&
+      refreshErr.status === 401 &&
+      refreshErr.message === 'Token expired.'
+    ) {
       return redirect('/token-expired')
     }
     throw refreshErr

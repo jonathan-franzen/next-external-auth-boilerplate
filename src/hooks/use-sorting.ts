@@ -3,7 +3,7 @@ import { useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 
 import { parseOrderBy } from '@/lib/search-params'
-import { OrderDirection } from '@/types/general.types'
+import { OrderDirection } from '@/types/common.types'
 
 export function useSorting() {
   const searchParams = useSearchParams()

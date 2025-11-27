@@ -6,15 +6,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 
 import { usePagination } from '@/hooks/use-pagination'
 import { useSorting } from '@/hooks/use-sorting'
-import { OrderDirection } from '@/types/general.types'
+import { OrderDirection } from '@/types/common.types'
 
 type UseDataTableResult<TData> = {
   table: Table<TData>
 }
+
+const NAVIGATION_THROTTLE_MS = 400
 
 export const useDataTable = <TData, TValue>(
   columns: ColumnDef<TData, TValue>[],
@@ -25,15 +27,25 @@ export const useDataTable = <TData, TValue>(
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const lastNavigationTimeRef = useRef(0)
 
   const { paginationState, pageCount } = usePagination(itemCount, pageSize)
   const { sortingState } = useSorting()
 
   const navigateWithParams = useCallback(
     (update: (params: URLSearchParams) => void) => {
+      const now = Date.now()
+      const diff = now - lastNavigationTimeRef.current
+
+      if (diff < NAVIGATION_THROTTLE_MS) {
+        return
+      }
+
+      lastNavigationTimeRef.current = now
+
       const params = new URLSearchParams(searchParams.toString())
       update(params)
-      return router.push(`${pathname}?${params.toString()}`)
+      router.push(`${pathname}?${params.toString()}`)
     },
     [router, pathname, searchParams]
   )
@@ -50,11 +62,12 @@ export const useDataTable = <TData, TValue>(
     manualSorting: true,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+
     onSortingChange: (updater) => {
       const nextSorting =
         typeof updater === 'function' ? updater(sortingState) : updater
 
-      return navigateWithParams((params) => {
+      navigateWithParams((params) => {
         if (nextSorting.length === 0) {
           params.delete('orderBy')
           params.delete('order')
@@ -69,11 +82,12 @@ export const useDataTable = <TData, TValue>(
         )
       })
     },
+
     onPaginationChange: (updater) => {
       const nextPagination =
         typeof updater === 'function' ? updater(paginationState) : updater
 
-      return navigateWithParams((params) => {
+      navigateWithParams((params) => {
         params.set('page', String(nextPagination.pageIndex + 1))
       })
     },

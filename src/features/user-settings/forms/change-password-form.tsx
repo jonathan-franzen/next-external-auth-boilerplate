@@ -15,10 +15,13 @@ export const ChangePasswordForm = () => {
   )
 
   useEffect(() => {
-    if (state?.message) {
-      toast(state.message)
+    if (state?.errors?.submit) {
+      toast.error(state.errors.submit)
     }
-  }, [state?.message])
+    if (state?.message) {
+      toast.success(state.message)
+    }
+  }, [state])
 
   return (
     <Form action={actionChangePassword} error={state?.errors?.submit}>

@@ -14,7 +14,7 @@ export const LogoutForm = () => {
     if (state?.error) {
       toast.error(state.error)
     }
-  }, [state?.error])
+  }, [state])
 
   return (
     <Form action={actionLogout}>

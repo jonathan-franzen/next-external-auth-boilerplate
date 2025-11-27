@@ -1,3 +1,4 @@
+// Decoded JWT tokens
 export interface JwtDecodedAccessToken {
   userInfo: {
     id: string

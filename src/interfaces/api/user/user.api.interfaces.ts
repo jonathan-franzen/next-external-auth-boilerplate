@@ -1,4 +1,4 @@
-import { OrderDirection } from '@/types/general.types'
+import { OrderDirection } from '@/types/common.types'
 
 export interface ObjectMeUsersApiInterface {
   email: string

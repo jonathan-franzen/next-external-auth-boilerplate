@@ -9,23 +9,26 @@ import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
 import { getErrorMessage } from '@/utils/get-error-message'
-import { loginRequestBody } from '@/validators/auth/login.validator'
+import { loginBody } from '@/validators/auth.validators'
 
 type LoginState = {
   email?: string
   password?: string
-  validationErrors?: {
+  errors?: {
     email?: string | null
     password?: string | null
     submit?: string
   } | null
 } | null
 
-export const login = async (_prevState: LoginState, formData: FormData) => {
+export const login = async (
+  _prevState: LoginState,
+  formData: FormData
+): Promise<LoginState> => {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  const validatedFields = loginRequestBody.safeParse({
+  const validatedFields = loginBody.safeParse({
     email,
     password,
   })
@@ -44,8 +47,7 @@ export const login = async (_prevState: LoginState, formData: FormData) => {
   }
 
   const res = await loginApi({
-    email: validatedFields.data.email,
-    password: validatedFields.data.password,
+    ...validatedFields.data,
   })
 
   const [err, awaitedRes] = await until(() => parseApiResponse(res))

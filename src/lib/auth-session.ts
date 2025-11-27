@@ -4,7 +4,7 @@ import { getIronSession, IronSessionData } from 'iron-session'
 import { cookies } from 'next/headers'
 
 import { IRON_SESSION_SECRET } from '@/constants/environment.constants'
-import { User } from '@/types/user/user.types'
+import { User } from '@/types/user.types'
 
 declare module 'iron-session' {
   interface IronSessionData {

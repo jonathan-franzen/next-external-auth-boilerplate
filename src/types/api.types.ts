@@ -1,3 +1,4 @@
+// Response
 export interface MessageResponse {
   message: string
 }

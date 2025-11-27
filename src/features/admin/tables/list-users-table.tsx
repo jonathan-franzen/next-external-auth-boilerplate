@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '@/components-new/table/data-table'
 import { useDataTable } from '@/hooks/use-data-table'
-import { User } from '@/types/user/user.types'
+import { User } from '@/types/user.types'
 
 const userColumns: ColumnDef<User>[] = [
   {

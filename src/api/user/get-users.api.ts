@@ -2,13 +2,10 @@
 
 import { USER_ENDPOINTS } from '@/api/user/constants'
 import { authenticatedKyRequest } from '@/lib/api'
-import {
-  GetUsersRequestBody,
-  GetUsersResponse,
-} from '@/types/user/get-users.types'
+import { ListUsersRequestBody, ListUsersResponse } from '@/types/user.types'
 
-export const getUsersApi = async (body: GetUsersRequestBody) => {
-  const { res, authSession } = await authenticatedKyRequest<GetUsersResponse>({
+export const getUsersApi = async (body: ListUsersRequestBody) => {
+  const { res, authSession } = await authenticatedKyRequest<ListUsersResponse>({
     path: USER_ENDPOINTS.GET_USERS,
     method: 'POST',
     json: body,

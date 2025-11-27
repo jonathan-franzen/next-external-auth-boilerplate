@@ -1,16 +1,18 @@
 'use server'
 
-import { ReactNode } from 'react'
-
 import { getSelfApi } from '@/api/user/get-self.api'
-import ResendVerifyEmailButton from '@/components/features/resend-verify-email-button'
-import LogoutButton from '@/features/auth/forms/logout-form'
+import { ResendVerifyEmailButton } from '@/features/auth/components/resend-verify-email-button'
+import { SaveAuthSession } from '@/features/auth/components/save-auth-session'
+import { LogoutForm } from '@/features/auth/forms/logout-form'
+import { parseApiResponse } from '@/lib/api'
 
-async function VerifyEmailPage(): Promise<ReactNode> {
-  const me = await getSelfApi()
+const VerifyEmailPage = async () => {
+  const { res, authSession } = await getSelfApi()
+  const { data } = await parseApiResponse(res)
 
   return (
     <>
+      <SaveAuthSession authSession={authSession} />
       <h1 className="text-center text-sm font-semibold text-gray-700">
         VERIFY YOUR EMAIL
       </h1>
@@ -19,12 +21,12 @@ async function VerifyEmailPage(): Promise<ReactNode> {
           Before you can go any further, you need to verify your email.
         </p>
       </div>
+      <ResendVerifyEmailButton email={data.email} />
       <p className="mt-12 text-center text-sm font-semibold text-gray-700">
         Have you not received the email?
       </p>
-      <ResendVerifyEmailButton email={me.email} />
       <div className="mt-6 flex justify-center">
-        <LogoutButton />
+        <LogoutForm />
       </div>
     </>
   )

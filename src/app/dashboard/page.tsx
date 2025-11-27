@@ -7,7 +7,7 @@ import { Text } from '@/components-new/text'
 import { SaveAuthSession } from '@/features/auth/components/save-auth-session'
 import { LogoutForm } from '@/features/auth/forms/logout-form'
 import { parseApiResponse } from '@/lib/api'
-import { UserRoles } from '@/types/user/user.types'
+import { UserRoles } from '@/types/user.types'
 
 const DashboardPage = async () => {
   const { res, authSession } = await getSelfApi()
