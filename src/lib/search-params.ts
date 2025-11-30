@@ -1,5 +1,5 @@
-import { OrderDirection } from '@/types/common.types'
-import { listUsersOrderBy } from '@/validators/user.validators'
+import { OrderDirection } from '@/packages/shared/types/common.types'
+import { listUsersOrderBy } from '@/packages/shared/validators/user.validators'
 
 export const parsePage = (value: string | null | undefined) => {
   if (value == null) {

@@ -3,9 +3,9 @@
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import { Form } from '@/components-new/form/form'
-import { FormButton } from '@/components-new/form/form-button'
-import { FormInput } from '@/components-new/form/form-input'
+import { Form } from '@/components/form/form'
+import { FormButton } from '@/components/form/form-button'
+import { FormInput } from '@/components/form/form-input'
 import { changePassword } from '@/features/user-settings/actions/change-password'
 
 export const ChangePasswordForm = () => {
@@ -24,7 +24,7 @@ export const ChangePasswordForm = () => {
   }, [state])
 
   return (
-    <Form action={actionChangePassword} error={state?.errors?.submit}>
+    <Form action={actionChangePassword}>
       <FormInput
         type="password"
         name="password"

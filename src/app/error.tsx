@@ -1,14 +1,10 @@
 'use client'
 
-import { ReactNode } from 'react'
-
-import GhostButton from '@/components/common/ghost-button'
-
-const handleReload = (): void => {
+const handleReload = () => {
   globalThis.location.reload()
 }
 
-function RootError(): ReactNode {
+const Error = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
@@ -20,10 +16,10 @@ function RootError(): ReactNode {
         </div>
       </div>
       <div className="mt-2 flex justify-center">
-        <GhostButton onClick={handleReload}>Go back</GhostButton>
+        <button onClick={handleReload}>Go back</button>
       </div>
     </div>
   )
 }
 
-export default RootError
+export default Error

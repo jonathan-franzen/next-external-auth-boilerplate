@@ -1,11 +1,12 @@
 'use server'
 
+import { until } from '@open-draft/until'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ReactNode } from 'react'
 
-import { getTokenResetPasswordApiAction } from '@/actions/api/auth/auth.api.actions'
-import GhostLink from '@/components/common/ghost-link'
-import ResetPasswordForm from '@/components/features/reset-password-form'
+import { verifyResetPasswordTokenApi } from '@/api/auth/verify-reset-password-token.api'
+import { ResetPasswordForm } from '@/features/auth/forms/reset-password-form'
+import { parseApiResponse } from '@/lib/api'
 
 interface ResetPasswordTokenPageProps {
   params: Promise<{
@@ -13,63 +14,34 @@ interface ResetPasswordTokenPageProps {
   }>
 }
 
-function RenderExpired(): ReactNode {
-  return (
-    <>
-      <h1 className="text-center text-sm font-semibold text-gray-700">
-        TOKEN EXPIRED
-      </h1>
-      <p className="mt-12 text-center">
-        Your token has expired. Please request a new one from /reset-password.
-      </p>
-      <div className="mt-4 flex justify-center">
-        <GhostLink href="/login">Back to login</GhostLink>
-      </div>
-    </>
-  )
-}
+const ResetPasswordParamsPage = async ({
+  params,
+}: ResetPasswordTokenPageProps) => {
+  const { resetPasswordToken } = await params
 
-function RenderSuccess({
-  resetPasswordToken,
-}: {
-  resetPasswordToken: string
-}): ReactNode {
+  if (!resetPasswordToken) {
+    return
+  }
+
+  const res = await verifyResetPasswordTokenApi({ resetPasswordToken })
+
+  const [err] = await until(() => parseApiResponse(res))
+
+  if (err) {
+    notFound()
+  }
+
   return (
     <>
       <h1 className="text-center text-sm font-semibold text-gray-700">
         SET YOUR NEW PASSWORD
       </h1>
-      <ResetPasswordForm
-        className="mt-12"
-        resetPasswordToken={resetPasswordToken}
-      />
+      <ResetPasswordForm resetPasswordToken={resetPasswordToken} />
       <div className="mt-4 flex justify-center">
-        <GhostLink href="/login">Back to login</GhostLink>
+        <Link href="/login">Back to login</Link>
       </div>
     </>
   )
 }
 
-async function ResetPasswordTokenPage({
-  params,
-}: ResetPasswordTokenPageProps): Promise<ReactNode> {
-  const { resetPasswordToken } = await params
-
-  if (!resetPasswordToken) {
-    throw new Error('Something went wrong.')
-  }
-
-  try {
-    await getTokenResetPasswordApiAction(resetPasswordToken)
-  } catch (error) {
-    return error instanceof Error && error.message === 'Token expired.' ? (
-      <RenderExpired />
-    ) : (
-      notFound()
-    )
-  }
-
-  return <RenderSuccess resetPasswordToken={resetPasswordToken} />
-}
-
-export default ResetPasswordTokenPage
+export default ResetPasswordParamsPage

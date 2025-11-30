@@ -1,6 +1,6 @@
 import { AUTH_ENDPOINTS } from '@/api/auth/constants'
 import { KyRequest } from '@/lib/api'
-import { RefreshResponse } from '@/types/auth.types'
+import { RefreshResponse } from '@/packages/shared/types/auth.types'
 
 export const refreshApi = async (refreshToken: string) => {
   return await KyRequest<RefreshResponse>({

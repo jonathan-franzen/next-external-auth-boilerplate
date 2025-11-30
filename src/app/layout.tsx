@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 interface RootLayoutProps extends Readonly<{ children: ReactNode }> {}
 
-function RootLayout({ children }: RootLayoutProps) {
+const RootLayout = ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
       <body>

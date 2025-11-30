@@ -2,9 +2,9 @@
 
 import { ColumnDef } from '@tanstack/react-table'
 
-import { DataTable } from '@/components-new/table/data-table'
+import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/hooks/use-data-table'
-import { User } from '@/types/user.types'
+import { User } from '@/packages/shared/types/user.types'
 
 const userColumns: ColumnDef<User>[] = [
   {
@@ -33,16 +33,16 @@ const userColumns: ColumnDef<User>[] = [
 
 interface ListUsersTableProps {
   users: User[]
-  itemCount: number
+  usersCount: number
   pageSize: number
 }
 
 export const ListUsersTable = ({
   users,
-  itemCount,
+  usersCount,
   pageSize,
 }: ListUsersTableProps) => {
-  const { table } = useDataTable(userColumns, users, itemCount, pageSize)
+  const { table } = useDataTable(userColumns, users, usersCount, pageSize)
 
   return <DataTable columns={userColumns} table={table} />
 }

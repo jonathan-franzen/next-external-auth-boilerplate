@@ -1,9 +1,11 @@
 'use server'
 
-import { ReactNode } from 'react'
+import { until } from '@open-draft/until'
 
-import VerifyEmail from '@/components/page-specific/verify-email-token/verify-email'
-import { getAuthSessionValue } from '@/services/iron-session/iron-session.service'
+import { getSelfApi } from '@/api/user/get-self.api'
+import { RscError } from '@/components/rsc-error'
+import VerifyEmail from '@/features/auth/components/verify-email'
+import { parseApiResponse } from '@/lib/api'
 
 interface VerifyEmailTokenPageProps {
   params: Promise<{
@@ -11,19 +13,27 @@ interface VerifyEmailTokenPageProps {
   }>
 }
 
-async function VerifyEmailTokenPage({
-  params,
-}: VerifyEmailTokenPageProps): Promise<ReactNode> {
+const VerifyEmailParamsPage = async ({ params }: VerifyEmailTokenPageProps) => {
   const { verifyEmailToken } = await params
-  const me = await getAuthSessionValue('me')
 
   if (!verifyEmailToken) {
     return
   }
 
+  const res = await getSelfApi()
+
+  const [err, awaitedRes] = await until(() => parseApiResponse(res))
+
+  if (err) {
+    return <RscError err={err} />
+  }
+
   return (
-    <VerifyEmail isAuthenticated={!!me} verifyEmailToken={verifyEmailToken} />
+    <VerifyEmail
+      isAuthenticated={!!awaitedRes.data}
+      verifyEmailToken={verifyEmailToken}
+    />
   )
 }
 
-export default VerifyEmailTokenPage
+export default VerifyEmailParamsPage

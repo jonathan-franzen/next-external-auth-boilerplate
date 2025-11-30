@@ -8,8 +8,8 @@ import { loginApi } from '@/api/auth/login.api'
 import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
-import { getErrorMessage } from '@/utils/get-error-message'
-import { loginBody } from '@/validators/auth.validators'
+import { getErrorMessage } from '@/lib/errors'
+import { loginBody } from '@/packages/shared/validators/auth.validators'
 
 type LoginState = {
   email?: string

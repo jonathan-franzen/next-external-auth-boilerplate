@@ -1,6 +1,4 @@
-import { ReactNode } from 'react'
-
-function RootPage(): ReactNode {
+const RootPage = () => {
   return <></>
 }
 

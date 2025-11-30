@@ -3,8 +3,8 @@
 import { useActionState, useEffect } from 'react'
 import { toast } from 'sonner'
 
-import { Form } from '@/components-new/form/form'
-import { FormButton } from '@/components-new/form/form-button'
+import { Form } from '@/components/form/form'
+import { FormButton } from '@/components/form/form-button'
 import { logout } from '@/features/auth/actions/logout'
 
 export const LogoutForm = () => {

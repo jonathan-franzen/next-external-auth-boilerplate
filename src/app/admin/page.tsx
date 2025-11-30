@@ -1,11 +1,12 @@
 'use server'
 
+import { until } from '@open-draft/until'
 import { redirect } from 'next/navigation'
 
 import { getUsersApi } from '@/api/user/get-users.api'
-import { Text } from '@/components-new/text'
+import { RscError } from '@/components/rsc-error'
+import { Text } from '@/components/text'
 import { ListUsersTable } from '@/features/admin/tables/list-users-table'
-import { SaveAuthSession } from '@/features/auth/components/save-auth-session'
 import { parseApiResponse } from '@/lib/api'
 import { parseOrderBy, parsePage } from '@/lib/search-params'
 
@@ -27,7 +28,7 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
   const { order, orderBy } = parseOrderBy(orderByParam, orderParam)
   const page = parsePage(pageParam)
 
-  const { res, authSession } = await getUsersApi({
+  const res = await getUsersApi({
     pagination: { page: page, pageSize: 1 },
     filter: {},
     ...(orderBy
@@ -39,9 +40,13 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
       : {}),
   })
 
-  const { data, pageSize, count } = await parseApiResponse(res)
+  const [err, awaitedRed] = await until(() => parseApiResponse(res))
 
-  if (!data.length && page > 0) {
+  if (err) {
+    return <RscError err={err} />
+  }
+
+  if (!awaitedRed.data.length && page > 0) {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', '1')
 
@@ -50,13 +55,16 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
 
   return (
     <>
-      <SaveAuthSession authSession={authSession} />
       <div className="mt-12 mb-4 flex justify-between">
         <Text as="h4" variant="body">
           Listing all users
         </Text>
       </div>
-      <ListUsersTable users={data} itemCount={count} pageSize={pageSize} />
+      <ListUsersTable
+        users={awaitedRed.data}
+        usersCount={awaitedRed.count}
+        pageSize={awaitedRed.pageSize}
+      />
     </>
   )
 }

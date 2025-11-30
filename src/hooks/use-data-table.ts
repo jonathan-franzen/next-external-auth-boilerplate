@@ -6,17 +6,15 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 
 import { usePagination } from '@/hooks/use-pagination'
 import { useSorting } from '@/hooks/use-sorting'
-import { OrderDirection } from '@/types/common.types'
+import { OrderDirection } from '@/packages/shared/types/common.types'
 
 type UseDataTableResult<TData> = {
   table: Table<TData>
 }
-
-const NAVIGATION_THROTTLE_MS = 400
 
 export const useDataTable = <TData, TValue>(
   columns: ColumnDef<TData, TValue>[],
@@ -27,22 +25,12 @@ export const useDataTable = <TData, TValue>(
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const lastNavigationTimeRef = useRef(0)
 
   const { paginationState, pageCount } = usePagination(itemCount, pageSize)
   const { sortingState } = useSorting()
 
   const navigateWithParams = useCallback(
     (update: (params: URLSearchParams) => void) => {
-      const now = Date.now()
-      const diff = now - lastNavigationTimeRef.current
-
-      if (diff < NAVIGATION_THROTTLE_MS) {
-        return
-      }
-
-      lastNavigationTimeRef.current = now
-
       const params = new URLSearchParams(searchParams.toString())
       update(params)
       router.push(`${pathname}?${params.toString()}`)

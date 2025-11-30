@@ -1,11 +1,6 @@
 'use server'
 
-import { ReactNode } from 'react'
-
-import GhostButton from '@/components/common/ghost-button'
-import GoBack from '@/components/common/go-back'
-
-function UnauthorizedPage(): ReactNode {
+const UnauthorizedPage = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
@@ -19,9 +14,7 @@ function UnauthorizedPage(): ReactNode {
         </div>
       </div>
       <div className="mt-2 flex justify-center">
-        <GoBack>
-          <GhostButton>Go back</GhostButton>
-        </GoBack>
+        <button>Go back</button>
       </div>
     </div>
   )

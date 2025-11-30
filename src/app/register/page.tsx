@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { Text } from '@/components-new/text'
+import { Text } from '@/components/text'
 import { RegisterForm } from '@/features/auth/forms/register-form'
 
 const RegisterPage = () => {

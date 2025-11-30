@@ -2,9 +2,9 @@
 
 import { useActionState } from 'react'
 
-import { Form } from '@/components-new/form/form'
-import { FormButton } from '@/components-new/form/form-button'
-import { FormInput } from '@/components-new/form/form-input'
+import { Form } from '@/components/form/form'
+import { FormButton } from '@/components/form/form-button'
+import { FormInput } from '@/components/form/form-input'
 import { register } from '@/features/auth/actions/register'
 
 export const RegisterForm = () => {

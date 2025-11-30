@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 
-import { Text } from '@/components-new/text'
+import { Text } from '@/components/text'
 import { ChangePasswordForm } from '@/features/user-settings/forms/change-password-form'
 
 const ResetPasswordDashboardPage = () => {

@@ -1,13 +1,12 @@
 import { USER_ENDPOINTS } from '@/api/user/constants'
 import { authenticatedKyRequest } from '@/lib/api'
-import { GetSelfResponse } from '@/types/user.types'
+import { GetSelfResponse } from '@/packages/shared/types/user.types'
 
 export const getSelfApi = async () => {
-  const { res, authSession } = await authenticatedKyRequest<GetSelfResponse>({
+  const res = await authenticatedKyRequest<GetSelfResponse>({
     path: USER_ENDPOINTS.GET_SELF,
     method: 'GET',
-    isServerComponent: true,
   })
 
-  return { res, authSession }
+  return res
 }

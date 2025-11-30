@@ -7,8 +7,8 @@ import { changePasswordApi } from '@/api/user/change-password.api'
 import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
-import { getErrorMessage } from '@/utils/get-error-message'
-import { changePasswordBody } from '@/validators/user.validators'
+import { getErrorMessage } from '@/lib/errors'
+import { changePasswordBody } from '@/packages/shared/validators/user.validators'
 
 type ChangePasswordState = {
   password?: string

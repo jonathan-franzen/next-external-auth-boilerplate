@@ -1,10 +1,8 @@
 'use server'
 
-import { ReactNode } from 'react'
+import Link from 'next/link'
 
-import GhostLink from '@/components/common/ghost-link'
-
-function RootNotFound(): ReactNode {
+const RootNotFound = () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
@@ -17,7 +15,7 @@ function RootNotFound(): ReactNode {
       </div>
 
       <div className="mt-2 flex justify-center">
-        <GhostLink href="/">Back to home</GhostLink>
+        <Link href="/">Back to home</Link>
       </div>
     </div>
   )

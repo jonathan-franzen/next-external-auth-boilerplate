@@ -3,7 +3,7 @@ import { KyRequest } from '@/lib/api'
 import {
   ResendVerifyEmailRequestBody,
   ResendVerifyEmailResponse,
-} from '@/types/auth.types'
+} from '@/packages/shared/types/auth.types'
 
 export const resendVerifyEmailApi = async (
   data: ResendVerifyEmailRequestBody

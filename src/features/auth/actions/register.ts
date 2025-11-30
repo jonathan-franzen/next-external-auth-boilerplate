@@ -9,8 +9,8 @@ import { registerApi } from '@/api/auth/register.api'
 import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
-import { getErrorMessage } from '@/utils/get-error-message'
-import { registerBody } from '@/validators/auth.validators'
+import { getErrorMessage } from '@/lib/errors'
+import { registerBody } from '@/packages/shared/validators/auth.validators'
 
 type RegisterState = {
   email?: string
@@ -56,8 +56,6 @@ export const register = async (
       },
     }
   }
-
-  console.log('here')
 
   const registerRes = await registerApi({
     ...validatedFields.data,

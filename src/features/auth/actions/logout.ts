@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation'
 import { logoutApi } from '@/api/auth/logout.api'
 import { parseApiResponse } from '@/lib/api'
 import { destroyAuthSession } from '@/lib/auth-session'
-import { getErrorMessage } from '@/utils/get-error-message'
+import { getErrorMessage } from '@/lib/errors'
 
 type LogoutState = { error?: string } | null
 

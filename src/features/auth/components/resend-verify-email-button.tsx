@@ -4,9 +4,9 @@ import { until } from '@open-draft/until'
 import { useCallback, useTransition } from 'react'
 import { toast } from 'sonner'
 
-import { FormButton } from '@/components-new/form/form-button'
+import { FormButton } from '@/components/form/form-button'
 import { resendVerifyEmail } from '@/features/auth/actions/resend-verify-email'
-import { getErrorMessage } from '@/utils/get-error-message'
+import { getErrorMessage } from '@/lib/errors'
 
 interface ResendVerifyEmailButtonProps {
   email: string
