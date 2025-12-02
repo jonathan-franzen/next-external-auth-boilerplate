@@ -10,7 +10,7 @@ import { parseApiResponse } from '@/lib/api'
 
 interface ResetPasswordTokenPageProps {
   params: Promise<{
-    resetPasswordToken?: string
+    resetPasswordToken: string
   }>
 }
 
@@ -18,10 +18,6 @@ const ResetPasswordParamsPage = async ({
   params,
 }: ResetPasswordTokenPageProps) => {
   const { resetPasswordToken } = await params
-
-  if (!resetPasswordToken) {
-    return
-  }
 
   const res = await verifyResetPasswordTokenApi({ resetPasswordToken })
 

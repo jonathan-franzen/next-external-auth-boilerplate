@@ -16,6 +16,10 @@ interface KyRequestOptions extends Options {
   path: Input
 }
 
+interface AuthenticatedKyRequestOptions extends KyRequestOptions {
+  accessToken?: string
+}
+
 const withAuthHeader = (accessToken?: string, options?: Options): Options => {
   if (!accessToken) {
     return { ...options }
@@ -30,21 +34,22 @@ const withAuthHeader = (accessToken?: string, options?: Options): Options => {
   }
 }
 
-export const KyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
+export const kyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
   return api<T>(path, options)
 }
 
 export const authenticatedKyRequest = async <T>({
   path,
+  accessToken,
   ...options
-}: KyRequestOptions) => {
-  const { accessToken } = await getAuthSession()
+}: AuthenticatedKyRequestOptions) => {
+  const finalAccessToken = accessToken ?? (await getAuthSession()).accessToken
 
   const authenticatedOptions = {
-    ...withAuthHeader(accessToken, options),
+    ...withAuthHeader(finalAccessToken, options),
   }
 
-  return await KyRequest<T>({ path, ...authenticatedOptions })
+  return await kyRequest<T>({ path, ...authenticatedOptions })
 }
 
 export const refreshableKyRequest = async <T>({
@@ -57,7 +62,7 @@ export const refreshableKyRequest = async <T>({
     ...withAuthHeader(accessToken, options),
   }
 
-  const firstRes = await KyRequest<T>({ path, ...firstCallOptions })
+  const firstRes = await kyRequest<T>({ path, ...firstCallOptions })
 
   if (!refreshToken || firstRes.status !== 401) {
     return firstRes
@@ -93,7 +98,7 @@ export const refreshableKyRequest = async <T>({
     ...withAuthHeader(newAccessToken, options),
   }
 
-  return await KyRequest<T>({ path, ...retryOptions })
+  return await kyRequest<T>({ path, ...retryOptions })
 }
 
 export const parseApiResponse = async <T>(res: KyResponse<T>): Promise<T> => {

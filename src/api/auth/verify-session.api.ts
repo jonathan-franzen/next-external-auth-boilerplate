@@ -1,5 +1,5 @@
 import { AUTH_ENDPOINTS } from '@/api/auth/constants'
-import { KyRequest } from '@/lib/api'
+import { kyRequest } from '@/lib/api'
 import {
   VerifySessionRequestBody,
   VerifySessionResponse,
@@ -9,7 +9,7 @@ export const verifySessionApi = async (
   body: VerifySessionRequestBody,
   refreshToken: string
 ) => {
-  return await KyRequest<VerifySessionResponse | undefined>({
+  return await kyRequest<VerifySessionResponse | undefined>({
     path: AUTH_ENDPOINTS.VERIFY_SESSION,
     method: 'POST',
     credentials: 'include',

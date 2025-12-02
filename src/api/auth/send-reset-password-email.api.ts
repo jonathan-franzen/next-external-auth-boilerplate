@@ -1,5 +1,5 @@
 import { AUTH_ENDPOINTS } from '@/api/auth/constants'
-import { KyRequest } from '@/lib/api'
+import { kyRequest } from '@/lib/api'
 import {
   SendResetPasswordEmailRequestBody,
   SendResetPasswordEmailResponse,
@@ -8,7 +8,7 @@ import {
 export const sendResetPasswordEmailApi = async (
   data: SendResetPasswordEmailRequestBody
 ) => {
-  return await KyRequest<SendResetPasswordEmailResponse>({
+  return await kyRequest<SendResetPasswordEmailResponse>({
     path: AUTH_ENDPOINTS.SEND_RESET_PASSWORD_EMAIL,
     method: 'POST',
     json: data,

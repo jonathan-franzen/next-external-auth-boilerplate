@@ -1,5 +1,5 @@
 import { AUTH_ENDPOINTS } from '@/api/auth/constants'
-import { KyRequest } from '@/lib/api'
+import { kyRequest } from '@/lib/api'
 import {
   ResendVerifyEmailRequestBody,
   ResendVerifyEmailResponse,
@@ -8,7 +8,7 @@ import {
 export const resendVerifyEmailApi = async (
   data: ResendVerifyEmailRequestBody
 ) => {
-  return await KyRequest<ResendVerifyEmailResponse>({
+  return await kyRequest<ResendVerifyEmailResponse>({
     path: AUTH_ENDPOINTS.RESEND_VERIFY_EMAIL,
     method: 'POST',
     json: data,
