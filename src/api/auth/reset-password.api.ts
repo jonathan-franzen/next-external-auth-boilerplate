@@ -10,8 +10,6 @@ export const resetPasswordApi = async (
   params: ResetPasswordTokenParams,
   body: ResetPasswordRequestBody
 ) => {
-  console.log('yeyeye222')
-
   const res = await refreshableKyRequest<ResetPasswordResponse>({
     path: AUTH_ENDPOINTS.RESET_PASSWORD(params.resetPasswordToken),
     method: 'POST',

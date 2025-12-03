@@ -1,6 +1,6 @@
 'use server'
 
-import { getIronSession, IronSessionData } from 'iron-session'
+import { AuthSessionData, getIronSession } from 'iron-session'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
@@ -9,7 +9,7 @@ import { IRON_SESSION_SECRET } from '@/constants/environment.constants'
 import { User } from '@/packages/shared/types/user.types'
 
 declare module 'iron-session' {
-  interface IronSessionData {
+  interface AuthSessionData {
     accessToken?: string
     self?: User
     refreshToken?: string
@@ -29,30 +29,27 @@ const sessionOptions = {
 
 export const getAuthSession = async () => {
   const cookieStore = await cookies()
-  return await getIronSession<IronSessionData>(cookieStore, sessionOptions)
+  return await getIronSession<AuthSessionData>(cookieStore, sessionOptions)
 }
 
 export async function getMiddlewareAuthSession(
   req: NextRequest,
   res: NextResponse
 ) {
-  return await getIronSession<IronSessionData>(req, res, sessionOptions)
+  return await getIronSession<AuthSessionData>(req, res, sessionOptions)
 }
 
 export const getSelfFromAuthSession = async () => {
   const { self } = await getAuthSession()
 
   if (!self) {
-    console.log('not got self')
-
     return redirect('/login')
   }
-  console.log('got self')
 
   return self
 }
 
-export const updateAuthSession = async (updates: Partial<IronSessionData>) => {
+export const updateAuthSession = async (updates: Partial<AuthSessionData>) => {
   const session = await getAuthSession()
 
   Object.assign(session, updates)

@@ -13,9 +13,6 @@ const DashboardPage = async () => {
   return (
     <div className="flex h-full flex-col justify-between">
       <div>
-        <Text as="h3" variant="heading">
-          WELCOME, {self.firstName.toUpperCase()}
-        </Text>
         <ul className="mt-12 flex flex-col gap-2">
           <li>
             <Text as="p" variant="body">

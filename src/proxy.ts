@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { verifySession } from '@/proxies/verify-session'
+import { routeGuard } from '@/proxies/route-guard'
 
 const proxy = async (req: NextRequest) => {
   const isServerAction =
@@ -8,7 +8,7 @@ const proxy = async (req: NextRequest) => {
     req.nextUrl.searchParams.has('__serverActionId')
 
   if (!isServerAction) {
-    return await verifySession(req)
+    return await routeGuard(req)
   }
 
   return NextResponse.next()

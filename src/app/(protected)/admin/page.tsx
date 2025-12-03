@@ -1,6 +1,7 @@
 'use server'
 
 import { until } from '@open-draft/until'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { getUsersApi } from '@/api/user/get-users.api'
@@ -40,13 +41,13 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
       : {}),
   })
 
-  const [err, awaitedRed] = await until(() => parseApiResponse(res))
+  const [err, awaitedRes] = await until(() => parseApiResponse(res))
 
   if (err) {
     return <RscError err={err} />
   }
 
-  if (!awaitedRed.data.length && page > 0) {
+  if (!awaitedRes.data.length && page > 0) {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', '1')
 
@@ -54,18 +55,24 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
   }
 
   return (
-    <>
+    <div className="flex h-full flex-col justify-between">
+      <h1 className="text-center text-sm font-semibold text-gray-700">
+        PROTECTED ADMIN PAGE
+      </h1>
       <div className="mt-12 mb-4 flex justify-between">
         <Text as="h4" variant="body">
           Listing all users
         </Text>
       </div>
       <ListUsersTable
-        users={awaitedRed.data}
-        usersCount={awaitedRed.count}
-        pageSize={awaitedRed.pageSize}
+        users={awaitedRes.data}
+        usersCount={awaitedRes.count}
+        pageSize={awaitedRes.pageSize}
       />
-    </>
+      <Link className="mt-2 flex justify-center" href="/dashboard">
+        Back to dashboard
+      </Link>
+    </div>
   )
 }
 
