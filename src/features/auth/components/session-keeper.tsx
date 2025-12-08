@@ -1,27 +1,46 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { ACCESS_TOKEN_LIFETIME } from '@/constants/auth.constants'
 import { verifySession } from '@/features/auth/actions/verify-session'
 
-export function SessionKeeper() {
-  useEffect(() => {
-    let isMounted = true
+let verifyPromise: Promise<void> | null = null
 
-    void verifySession()
+export function SessionKeeper() {
+  const mountedRef = useRef(true)
+
+  useEffect(() => {
+    async function verify() {
+      if (verifyPromise) {
+        await verifyPromise
+        return
+      }
+
+      verifyPromise = (async () => {
+        try {
+          await verifySession()
+        } finally {
+          verifyPromise = null
+        }
+      })()
+
+      await verifyPromise
+    }
+
+    void verify()
 
     const id = setInterval(
       () => {
-        if (isMounted) {
-          void verifySession()
+        if (mountedRef.current) {
+          void verify()
         }
       },
       (ACCESS_TOKEN_LIFETIME * 1000) / 3
     )
 
     return () => {
-      isMounted = false
+      mountedRef.current = false
       clearInterval(id)
     }
   }, [])
