@@ -5,7 +5,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { NextRequest, NextResponse } from 'next/server'
 
-import { IRON_SESSION_SECRET } from '@/constants/environment.constants'
+import { IRON_SESSION_SECRET } from '@/config/env.config'
 import { User } from '@/packages/shared/types/user.types'
 
 declare module 'iron-session' {

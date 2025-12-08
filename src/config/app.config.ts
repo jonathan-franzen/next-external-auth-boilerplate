@@ -1,3 +1,5 @@
+export const ACCESS_TOKEN_LIFETIME = 60 * 10 // 10 minutes
+
 export const PUBLIC_ROUTES_PATHS = [
   '/login',
   '/register',

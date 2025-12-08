@@ -1,6 +1,6 @@
 import ky from 'ky'
 
-import { BACKEND_URL } from '@/constants/environment.constants'
+import { BACKEND_URL } from '@/config/env.config'
 import { version } from '@@/package.json'
 
 const baseHeaders = {

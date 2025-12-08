@@ -4,7 +4,7 @@ import {
   ADMIN_ROUTE_PATHS,
   PUBLIC_ROUTES_PATHS,
   VERIFY_EMAIL_ROUTES_PATHS,
-} from '@/constants/routes.constants'
+} from '@/config/app.config'
 import {
   destroyAuthSession,
   getMiddlewareAuthSession,

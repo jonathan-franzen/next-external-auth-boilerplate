@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 
-import { ACCESS_TOKEN_LIFETIME } from '@/constants/auth.constants'
+import { ACCESS_TOKEN_LIFETIME } from '@/config/app.config'
 import { verifySession } from '@/features/auth/actions/verify-session'
 
 let verifyPromise: Promise<void> | null = null
