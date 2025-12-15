@@ -1,10 +1,16 @@
 'use server'
 
 import { verifyEmailApi } from '@/api/auth/verify-email.api'
-import { parseApiResponse } from '@/lib/api'
+import { getAuthSession, updateAuthSession } from '@/lib/auth-session'
 
 export const verifyEmail = async (verifyEmailToken: string) => {
   const res = await verifyEmailApi({ verifyEmailToken })
 
-  return await parseApiResponse(res)
+  const { self } = await getAuthSession()
+
+  if (self) {
+    await updateAuthSession({ self: { ...self, emailVerifiedAt: new Date() } })
+  }
+
+  return { ...res, self }
 }

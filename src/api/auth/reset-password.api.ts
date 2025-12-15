@@ -16,5 +16,5 @@ export const resetPasswordApi = async (
     json: body,
   })
 
-  return res
+  return res.json()
 }

@@ -6,7 +6,6 @@ import { z } from 'zod'
 
 import { loginApi } from '@/api/auth/login.api'
 import { registerApi } from '@/api/auth/register.api'
-import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
 import { getErrorMessage } from '@/lib/errors'
@@ -57,11 +56,11 @@ export const register = async (
     }
   }
 
-  const registerRes = await registerApi({
-    ...validatedFields.data,
-  })
-
-  const [registerErr] = await until(() => parseApiResponse(registerRes))
+  const [registerErr] = await until(() =>
+    registerApi({
+      ...validatedFields.data,
+    })
+  )
 
   if (registerErr) {
     return {
@@ -75,13 +74,11 @@ export const register = async (
     }
   }
 
-  const loginRes = await loginApi({
-    email: validatedFields.data.email,
-    password: validatedFields.data.password,
-  })
-
-  const [loginErr, awaitedLoginRes] = await until(() =>
-    parseApiResponse(loginRes)
+  const [loginErr, loginRes] = await until(() =>
+    loginApi({
+      email: validatedFields.data.email,
+      password: validatedFields.data.password,
+    })
   )
 
   if (loginErr) {
@@ -96,15 +93,12 @@ export const register = async (
     }
   }
 
-  const refreshToken = getSetCookieValue(
-    loginRes.headers.getSetCookie(),
-    'refreshToken'
-  )
+  const refreshToken = getSetCookieValue(loginRes.setCookie, 'refreshToken')
 
   await updateAuthSession({
     refreshToken,
-    accessToken: awaitedLoginRes.data.accessToken,
-    self: awaitedLoginRes.data.user,
+    accessToken: loginRes.data.accessToken,
+    self: loginRes.data.user,
   })
 
   return redirect('/verify-email')

@@ -8,5 +8,5 @@ export const getSelfApi = async () => {
     method: 'GET',
   })
 
-  return res
+  return res.json()
 }

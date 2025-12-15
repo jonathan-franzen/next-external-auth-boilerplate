@@ -1,6 +1,8 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { Edit } from 'lucide-react'
+import Link from 'next/link'
 
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/hooks/use-data-table'
@@ -29,6 +31,15 @@ const userColumns: ColumnDef<User>[] = [
       <span>{new Date(row.original.createdAt).toLocaleString()}</span>
     ),
   },
+  {
+    accessorKey: 'edit',
+    header: '',
+    cell: ({ row }) => (
+      <Link href={`/admin/users/${row.original.id}/edit`}>
+        <Edit />
+      </Link>
+    ),
+  },
 ]
 
 interface ListUsersTableProps {
@@ -44,5 +55,9 @@ export const ListUsersTable = ({
 }: ListUsersTableProps) => {
   const { table } = useDataTable(userColumns, users, usersCount, pageSize)
 
-  return <DataTable columns={userColumns} table={table} />
+  return (
+    <div className="min-h-0 flex-1">
+      <DataTable columns={userColumns} table={table} />
+    </div>
+  )
 }

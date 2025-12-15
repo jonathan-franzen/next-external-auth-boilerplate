@@ -2,7 +2,7 @@
 
 import { until } from '@open-draft/until'
 import createHttpError from 'http-errors'
-import { Input, KyResponse, Options } from 'ky'
+import { Input, Options } from 'ky'
 import { redirect } from 'next/navigation'
 
 import { refreshApi } from '@/api/auth/refresh.api'
@@ -35,7 +35,19 @@ const withAuthHeader = (accessToken?: string, options?: Options): Options => {
 }
 
 export const kyRequest = async <T>({ path, ...options }: KyRequestOptions) => {
-  return api<T>(path, options)
+  const res = await api<T>(path, options)
+
+  if (!res.ok) {
+    const [err, data] = await until(() => res.json<ErrorResponse>())
+
+    if (err) {
+      throw createHttpError(res.status, err.message)
+    }
+
+    throw createHttpError(res.status, data.message)
+  }
+
+  return res
 }
 
 export const authenticatedKyRequest = async <T>({
@@ -68,11 +80,7 @@ export const refreshableKyRequest = async <T>({
     return firstRes
   }
 
-  const refreshRes = await refreshApi(refreshToken)
-
-  const [refreshErr, awaitedRefreshRes] = await until(() =>
-    parseApiResponse(refreshRes)
-  )
+  const [refreshErr, refreshRes] = await until(() => refreshApi(refreshToken))
 
   if (refreshErr) {
     if (isTokenExpiredError(refreshErr)) {
@@ -82,10 +90,10 @@ export const refreshableKyRequest = async <T>({
     throw refreshErr
   }
 
-  const newAccessToken = awaitedRefreshRes.data.accessToken
+  const newAccessToken = refreshRes.data.accessToken
 
   const newRefreshToken = getSetCookieValue(
-    refreshRes.headers.getSetCookie(),
+    refreshRes.setCookie,
     'refreshToken'
   )
 
@@ -99,22 +107,4 @@ export const refreshableKyRequest = async <T>({
   }
 
   return await kyRequest<T>({ path, ...retryOptions })
-}
-
-export const parseApiResponse = async <T>(res: KyResponse<T>): Promise<T> => {
-  if (!res.ok) {
-    const [err, data] = await until(() => res.json<ErrorResponse>())
-
-    if (err) {
-      throw createHttpError(res.status, err.message)
-    }
-
-    throw createHttpError(res.status, data.message)
-  }
-
-  if (res.status === 204) {
-    return null as T
-  }
-
-  return await res.json()
 }

@@ -4,7 +4,6 @@ import { until } from '@open-draft/until'
 import { redirect } from 'next/navigation'
 
 import { verifySessionApi } from '@/api/auth/verify-session.api'
-import { parseApiResponse } from '@/lib/api'
 import {
   destroyAuthSession,
   getAuthSession,
@@ -17,9 +16,9 @@ export const verifySession = async () => {
   const { accessToken, refreshToken } = await getAuthSession()
 
   if (accessToken && refreshToken) {
-    const res = await verifySessionApi({ accessToken }, refreshToken)
-
-    const [err, awaitedRes] = await until(() => parseApiResponse(res))
+    const [err, res] = await until(() =>
+      verifySessionApi({ accessToken }, refreshToken)
+    )
 
     if (err) {
       await destroyAuthSession()
@@ -31,13 +30,10 @@ export const verifySession = async () => {
       throw err
     }
 
-    if (awaitedRes?.data) {
+    if (res.data?.accessToken) {
       await updateAuthSession({
-        accessToken: awaitedRes.data.accessToken,
-        refreshToken: getSetCookieValue(
-          res.headers.getSetCookie(),
-          'refreshToken'
-        ),
+        accessToken: res.data.accessToken,
+        refreshToken: getSetCookieValue(res.setCookie, 'refreshToken'),
       })
     }
   }

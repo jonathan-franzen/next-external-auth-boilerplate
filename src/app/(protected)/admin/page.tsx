@@ -8,7 +8,6 @@ import { getUsersApi } from '@/api/user/get-users.api'
 import { RscError } from '@/components/rsc-error'
 import { Text } from '@/components/text'
 import { ListUsersTable } from '@/features/admin/tables/list-users-table'
-import { parseApiResponse } from '@/lib/api'
 import { parseOrderBy, parsePage } from '@/lib/search-params'
 
 interface AdminPageProps {
@@ -29,25 +28,25 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
   const { order, orderBy } = parseOrderBy(orderByParam, orderParam)
   const page = parsePage(pageParam)
 
-  const res = await getUsersApi({
-    pagination: { page: page, pageSize: 1 },
-    filter: {},
-    ...(orderBy
-      ? {
-          orderBy: {
-            [orderBy]: order,
-          },
-        }
-      : {}),
-  })
-
-  const [err, awaitedRes] = await until(() => parseApiResponse(res))
+  const [err, res] = await until(() =>
+    getUsersApi({
+      pagination: { page: page, pageSize: 20 },
+      filter: {},
+      ...(orderBy
+        ? {
+            orderBy: {
+              [orderBy]: order,
+            },
+          }
+        : {}),
+    })
+  )
 
   if (err) {
     return <RscError err={err} />
   }
 
-  if (!awaitedRes.data.length && page > 0) {
+  if (!res.data.length && page > 0) {
     const params = new URLSearchParams(searchParams.toString())
     params.set('page', '1')
 
@@ -65,9 +64,9 @@ const AdminPage = async ({ searchParams }: AdminPageProps) => {
         </Text>
       </div>
       <ListUsersTable
-        users={awaitedRes.data}
-        usersCount={awaitedRes.count}
-        pageSize={awaitedRes.pageSize}
+        users={res.data}
+        usersCount={res.count}
+        pageSize={res.pageSize}
       />
       <Link className="mt-2 flex justify-center" href="/dashboard">
         Back to dashboard

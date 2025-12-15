@@ -12,5 +12,7 @@ export const changePasswordApi = async (body: ChangePasswordRequestBody) => {
     json: body,
   })
 
-  return res
+  const data = await res.json()
+
+  return { ...data, setCookie: res.headers.getSetCookie() }
 }

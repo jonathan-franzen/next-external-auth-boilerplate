@@ -4,7 +4,6 @@ import { until } from '@open-draft/until'
 import { z } from 'zod'
 
 import { resetPasswordApi } from '@/api/auth/reset-password.api'
-import { parseApiResponse } from '@/lib/api'
 import { getErrorMessage } from '@/lib/errors'
 import { resetPasswordBody } from '@/packages/shared/validators/auth.validators'
 
@@ -39,14 +38,14 @@ export const resetPassword = async (
     }
   }
 
-  const res = await resetPasswordApi(
-    { resetPasswordToken },
-    {
-      newPassword: validatedFields.data.newPassword,
-    }
+  const [err, res] = await until(() =>
+    resetPasswordApi(
+      { resetPasswordToken },
+      {
+        newPassword: validatedFields.data.newPassword,
+      }
+    )
   )
-
-  const [err, awaitedRes] = await until(() => parseApiResponse(res))
 
   if (err) {
     return {
@@ -58,6 +57,6 @@ export const resetPassword = async (
   }
 
   return {
-    message: awaitedRes.message,
+    message: res.message,
   }
 }

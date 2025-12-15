@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
 import { loginApi } from '@/api/auth/login.api'
-import { parseApiResponse } from '@/lib/api'
 import { updateAuthSession } from '@/lib/auth-session'
 import { getSetCookieValue } from '@/lib/cookies'
 import { getErrorMessage } from '@/lib/errors'
@@ -46,11 +45,11 @@ export const login = async (
     }
   }
 
-  const res = await loginApi({
-    ...validatedFields.data,
-  })
-
-  const [err, awaitedRes] = await until(() => parseApiResponse(res))
+  const [err, res] = await until(() =>
+    loginApi({
+      ...validatedFields.data,
+    })
+  )
 
   if (err) {
     return {
@@ -62,15 +61,12 @@ export const login = async (
     }
   }
 
-  const refreshToken = getSetCookieValue(
-    res.headers.getSetCookie(),
-    'refreshToken'
-  )
+  const refreshToken = getSetCookieValue(res.setCookie, 'refreshToken')
 
   await updateAuthSession({
     refreshToken,
-    accessToken: awaitedRes.data.accessToken,
-    self: awaitedRes.data.user,
+    accessToken: res.data.accessToken,
+    self: res.data.user,
   })
 
   return redirect('/dashboard')

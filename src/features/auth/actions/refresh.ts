@@ -4,7 +4,6 @@ import { until } from '@open-draft/until'
 import { redirect } from 'next/navigation'
 
 import { refreshApi } from '@/api/auth/refresh.api'
-import { parseApiResponse } from '@/lib/api'
 import {
   destroyAuthSession,
   getAuthSession,
@@ -17,9 +16,7 @@ export const refresh = async () => {
   const { accessToken, refreshToken } = await getAuthSession()
 
   if (accessToken && refreshToken) {
-    const res = await refreshApi(refreshToken)
-
-    const [err, awaitedRes] = await until(() => parseApiResponse(res))
+    const [err, res] = await until(() => refreshApi(refreshToken))
 
     if (err) {
       await destroyAuthSession()
@@ -31,14 +28,9 @@ export const refresh = async () => {
       throw err
     }
 
-    if (awaitedRes?.data) {
-      await updateAuthSession({
-        accessToken: awaitedRes.data.accessToken,
-        refreshToken: getSetCookieValue(
-          res.headers.getSetCookie(),
-          'refreshToken'
-        ),
-      })
-    }
+    await updateAuthSession({
+      accessToken: res.data.accessToken,
+      refreshToken: getSetCookieValue(res.setCookie, 'refreshToken'),
+    })
   }
 }

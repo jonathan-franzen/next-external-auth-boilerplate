@@ -26,7 +26,11 @@ const VerifyEmail = ({ verifyEmailToken }: VerifyEmailProps) => {
         router.push('/verify-email')
       } else {
         toast.success(res.message)
-        router.push('/dashboard')
+        if (res.self) {
+          router.push('/dashboard')
+        } else {
+          router.push('/login')
+        }
       }
     })
   }, [verifyEmailToken])

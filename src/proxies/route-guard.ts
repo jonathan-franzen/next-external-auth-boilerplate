@@ -41,6 +41,15 @@ export const routeGuard = async (req: NextRequest) => {
     return nextRes
   }
 
+  /* If email is verified, redirect away from verify routes */
+  if (isVerifyRoute) {
+    if (self?.emailVerifiedAt) {
+      return redirect('/dashboard', req)
+    }
+
+    return nextRes
+  }
+
   if (!self?.id) {
     await destroyAuthSession()
 
@@ -52,15 +61,6 @@ export const routeGuard = async (req: NextRequest) => {
   }
 
   /* Redirects */
-
-  /* If email is verified, redirect away from verify routes */
-  if (isVerifyRoute) {
-    if (self.emailVerifiedAt) {
-      return redirect('/dashboard', req)
-    }
-
-    return nextRes
-  }
 
   /* Redirect to verify email if not verified */
   if (!self.emailVerifiedAt) {

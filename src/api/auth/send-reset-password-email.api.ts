@@ -8,9 +8,11 @@ import {
 export const sendResetPasswordEmailApi = async (
   data: SendResetPasswordEmailRequestBody
 ) => {
-  return await kyRequest<SendResetPasswordEmailResponse>({
+  const res = await kyRequest<SendResetPasswordEmailResponse>({
     path: AUTH_ENDPOINTS.SEND_RESET_PASSWORD_EMAIL,
     method: 'POST',
     json: data,
   })
+
+  return res.json()
 }

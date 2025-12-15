@@ -6,8 +6,10 @@ import {
 } from '@/packages/shared/types/auth.types'
 
 export const verifyEmailApi = async (params: VerifyEmailTokenParams) => {
-  return await kyRequest<ResendVerifyEmailResponse>({
+  const res = await kyRequest<ResendVerifyEmailResponse>({
     path: AUTH_ENDPOINTS.VERIFY_EMAIL(params.verifyEmailToken),
     method: 'POST',
   })
+
+  return res.json()
 }

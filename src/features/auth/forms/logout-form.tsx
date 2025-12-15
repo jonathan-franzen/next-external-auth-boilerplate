@@ -11,8 +11,8 @@ export const LogoutForm = () => {
   const [state, actionLogout, isPending] = useActionState(logout, null)
 
   useEffect(() => {
-    if (state?.error) {
-      toast.error(state.error)
+    if (state?.err) {
+      toast.error(state.err)
     }
   }, [state])
 

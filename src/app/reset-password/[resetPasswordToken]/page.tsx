@@ -6,7 +6,6 @@ import { notFound } from 'next/navigation'
 
 import { verifyResetPasswordTokenApi } from '@/api/auth/verify-reset-password-token.api'
 import { ResetPasswordForm } from '@/features/auth/forms/reset-password-form'
-import { parseApiResponse } from '@/lib/api'
 
 interface ResetPasswordTokenPageProps {
   params: Promise<{
@@ -19,9 +18,9 @@ const ResetPasswordParamsPage = async ({
 }: ResetPasswordTokenPageProps) => {
   const { resetPasswordToken } = await params
 
-  const res = await verifyResetPasswordTokenApi({ resetPasswordToken })
-
-  const [err] = await until(() => parseApiResponse(res))
+  const [err] = await until(() =>
+    verifyResetPasswordTokenApi({ resetPasswordToken })
+  )
 
   if (err) {
     notFound()

@@ -14,5 +14,5 @@ export const getUsersApi = async (body: ListUsersRequestBody) => {
     json: body,
   })
 
-  return res
+  return res.json()
 }

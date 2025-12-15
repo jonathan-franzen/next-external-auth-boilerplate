@@ -8,8 +8,10 @@ import {
 export const verifyResetPasswordTokenApi = async (
   params: VerifyResetPasswordTokenParams
 ) => {
-  return await kyRequest<SendResetPasswordEmailResponse>({
+  const res = await kyRequest<SendResetPasswordEmailResponse>({
     path: AUTH_ENDPOINTS.VERIFY_RESET_PASSWORD_TOKEN(params.resetPasswordToken),
     method: 'GET',
   })
+
+  return res.json()
 }

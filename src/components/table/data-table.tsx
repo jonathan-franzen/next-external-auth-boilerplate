@@ -28,55 +28,25 @@ export function DataTable<TData, TValue>({
   const pageCount = table.getPageCount()
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border">
+    <div className="flex h-full flex-col gap-4">
+      <div className="h-full overflow-scroll rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="top-0 z-10 bg-green-300">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const canSort = header.column.getCanSort()
-                  const sortDir = header.column.getIsSorted()
-
-                  return (
-                    <TableHead key={header.id}>
-                      {canSort ? (
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1"
-                          onClick={header.column.getToggleSortingHandler()}
-                          aria-sort={
-                            sortDir === 'asc'
-                              ? 'ascending'
-                              : sortDir === 'desc'
-                                ? 'descending'
-                                : 'none'
-                          }
-                        >
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                          {sortDir === 'desc'
-                            ? '↓'
-                            : sortDir === 'asc'
-                              ? '↑'
-                              : ''}
-                        </button>
-                      ) : (
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )
-                      )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
 
-          <TableBody>
+          <TableBody className="min-h-0 flex-1 overflow-y-scroll">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
@@ -105,8 +75,6 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-
-      {/* Pagination controls */}
       <div className="flex items-center justify-between">
         <div className="text-muted-foreground text-sm">
           Page {pageIndex + 1} of {pageCount}

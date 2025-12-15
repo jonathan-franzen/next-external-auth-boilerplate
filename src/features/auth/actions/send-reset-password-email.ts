@@ -4,7 +4,6 @@ import { until } from '@open-draft/until'
 import { z } from 'zod'
 
 import { sendResetPasswordEmailApi } from '@/api/auth/send-reset-password-email.api'
-import { parseApiResponse } from '@/lib/api'
 import { getErrorMessage } from '@/lib/errors'
 import { sendResetPasswordEmailBody } from '@/packages/shared/validators/auth.validators'
 
@@ -38,11 +37,11 @@ export const sendResetPasswordEmail = async (
     }
   }
 
-  const res = await sendResetPasswordEmailApi({
-    ...validatedFields.data,
-  })
-
-  const [err, awaitedRes] = await until(() => parseApiResponse(res))
+  const [err, res] = await until(() =>
+    sendResetPasswordEmailApi({
+      ...validatedFields.data,
+    })
+  )
 
   if (err) {
     return {
@@ -54,6 +53,6 @@ export const sendResetPasswordEmail = async (
   }
 
   return {
-    message: awaitedRes.message,
+    message: res.message,
   }
 }
